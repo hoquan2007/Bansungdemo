@@ -76,6 +76,8 @@ export const ROUND_MS = 180_000; // 3 minutes, as requested
 // doesn't feel like the mode was played at all.
 export const MODE_ROUND_MS = {
   tdm: ROUND_MS,
+  duel: ROUND_MS,
+  squads: ROUND_MS,
   ffa: ROUND_MS,
   gungame: 330_000, // 5m30
   // The island is deliberately huge and the circle closes in several readable
@@ -151,7 +153,7 @@ export const EMPTY_ROOM_TTL_MS = 60_000;
 // be that person.
 export const LOBBY_GRACE_MS = 45_000;
 
-export const SCORE_LIMIT = { tdm: 75, ffa: 30, gungame: null }; // null = no cap
+export const SCORE_LIMIT = { tdm: 75, duel: 10, squads: 25, ffa: 30, gungame: null }; // null = no cap
 
 // ------------------------------------------------------------------- rooms
 // No 0/O/1/I/L — these get misread when someone reads a code out loud.

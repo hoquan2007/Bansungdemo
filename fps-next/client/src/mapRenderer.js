@@ -9,6 +9,7 @@ import * as THREE from 'three';
 import { VIEW_DISTANCE } from '@shared/constants.js';
 import { loadModel, instantiate } from './models.js';
 import { createIslandScenery, disposeIslandScenery } from './islandScenery.js';
+import { createHighlandsScenery, disposeHighlandsScenery } from './highlandsScenery.js';
 
 const UNIT_CUBE = new THREE.BoxGeometry(1, 1, 1);
 const SURFACE_PLANE = new THREE.PlaneGeometry(1, 1);
@@ -319,7 +320,8 @@ export function loadMap(world, map) {
   const surfaces = buildSurfaces(map, mesh);
   world.scene.add(surfaces);
 
-  const scenery = map.id === 'island' ? createIslandScenery(map) : null;
+  const scenery = map.id === 'island' ? createIslandScenery(map)
+    : map.id === 'highlands' ? createHighlandsScenery(map) : null;
   if (scenery) world.scene.add(scenery);
 
   world.current = {
@@ -700,7 +702,7 @@ export function unloadMap(world) {
     world.sky = null;
   }
   if (!world.current) return;
-  const { mesh, props, surfaces, scenery } = world.current;
+  const { map, mesh, props, surfaces, scenery } = world.current;
   world.scene.remove(mesh);
   mesh.material.map?.dispose();
   mesh.material.dispose();
@@ -721,7 +723,8 @@ export function unloadMap(world) {
   }
   if (scenery) {
     world.scene.remove(scenery);
-    disposeIslandScenery(scenery);
+    if (map.id === 'highlands') disposeHighlandsScenery(scenery);
+    else disposeIslandScenery(scenery);
   }
   world.current = null;
 }

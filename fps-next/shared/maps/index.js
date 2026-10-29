@@ -7,11 +7,13 @@ import island from './island.js';
 import courtyard from './courtyard.js';
 import foundry from './foundry.js';
 import switchyard from './switchyard.js';
+import highlands from './highlands.js';
 
 // Competitive maps, in rotation order.
 export const ROTATION = ['warehouse', 'rooftops', 'alley', 'courtyard', 'foundry', 'switchyard'];
+export const LARGE_TEAM_MAPS = ['island', 'highlands'];
 
-const RAW = { warehouse, rooftops, alley, courtyard, foundry, switchyard, practice, island };
+const RAW = { warehouse, rooftops, alley, courtyard, foundry, switchyard, practice, island, highlands };
 
 // Boxes are compiled to min/max form once, on first request, and cached. Both
 // the client and the server go through here so neither can end up with a
@@ -73,7 +75,7 @@ export function nextMap(currentId) {
 
 /** Map metadata for menus — no geometry, so it's cheap to send. */
 export function mapList() {
-  return [...ROTATION, 'island'].map((id) => ({
+  return [...ROTATION, ...LARGE_TEAM_MAPS].map((id) => ({
     id,
     name: RAW[id].name,
     blurb: RAW[id].blurb,

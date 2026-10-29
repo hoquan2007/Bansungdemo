@@ -8,7 +8,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 
-import { getMap, MAP_IDS, ROTATION, nextMap, mapList } from '../shared/maps/index.js';
+import { getMap, MAP_IDS, ROTATION, LARGE_TEAM_MAPS, nextMap, mapList } from '../shared/maps/index.js';
 import { playerOverlapsAny, raycastBoxes, pushOutOfSolids } from '../shared/collision.js';
 import {
   PLAYER_HEIGHT as H, PLAYER_RADIUS as R, MAX_PLAYERS, ARENA_MAX_PLAYERS, BR_MAX_PLAYERS,
@@ -18,7 +18,8 @@ test('rotation contains all six competitive maps and cycles', () => {
   assert.deepEqual(ROTATION, ['warehouse', 'rooftops', 'alley', 'courtyard', 'foundry', 'switchyard']);
   assert.equal(nextMap('warehouse'), 'rooftops');
   assert.equal(nextMap('switchyard'), 'warehouse', 'rotation should wrap');
-  assert.equal(mapList().length, 7, 'six compact arenas plus the large island');
+  assert.deepEqual(LARGE_TEAM_MAPS, ['island', 'highlands']);
+  assert.equal(mapList().length, 8, 'six compact arenas plus two large maps');
 });
 
 test('the practice range is marked single player and is not in rotation', () => {
@@ -150,15 +151,15 @@ for (const id of MAP_IDS) {
       assert.ok(map.spawns.ffa.length >= 1);
       return;
     }
-    // Compact arena modes have eight slots; island team modes support sixteen.
-    const capacity = id === 'island' ? MAX_PLAYERS : ARENA_MAX_PLAYERS;
+    // Compact arena modes have eight slots; large team maps support sixteen.
+    const capacity = LARGE_TEAM_MAPS.includes(id) ? MAX_PLAYERS : ARENA_MAX_PLAYERS;
     assert.ok(
       map.spawns.A.length >= capacity / 2,
       `team A has ${map.spawns.A.length} spawns, needs ${capacity / 2}`,
     );
     assert.ok(map.spawns.B.length >= capacity / 2, `team B has too few spawns`);
     assert.ok(
-      map.spawns.ffa.length >= (id === 'island' ? BR_MAX_PLAYERS : ARENA_MAX_PLAYERS),
+      map.spawns.ffa.length >= (LARGE_TEAM_MAPS.includes(id) ? BR_MAX_PLAYERS : ARENA_MAX_PLAYERS),
       `FFA has ${map.spawns.ffa.length} spawns, needs at least ${capacity}`,
     );
   });

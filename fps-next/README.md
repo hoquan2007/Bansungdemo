@@ -1,14 +1,17 @@
-# Arena
+# Crown / Strike — Arena FPS
 
-A browser multiplayer FPS for playing with friends. No accounts or installs:
+Crown / Strike is an original browser multiplayer FPS inspired by competitive
+FPS game portals, including AstraStrike. No accounts or installs are needed:
 share a room code and play. Crown Island supports up to 16 people in TDM
 (2–4 balanced teams) or solo Battle Royale (remaining seats can be AI bots).
 Six compact arenas support up to 8 people in the smaller modes, plus a
 single-player practice range. The visual style is currently stylized; a
 realistic character/terrain upgrade is planned in [the roadmap](docs/DEVELOPMENT_ROADMAP.md).
 
-**Desktop only.** It needs a mouse and a keyboard (pointer lock and mouse aim),
-so phones and tablets are out.
+**Gameplay is desktop only.** The landing page adapts to mobile screens, but
+the 3D match needs a desktop browser with pointer lock, keyboard/trackpad or a
+supported controller. The menu design and current implementation are documented
+in [ASTRASTRIKE_REFERENCE.md](docs/ASTRASTRIKE_REFERENCE.md).
 
 ---
 
@@ -35,7 +38,10 @@ npm start
 Then open **http://localhost:3000**. Node.js 22 or newer is required.
 
 To let people on your network join without deploying, give them
-`http://<your-lan-ip>:5173`.
+`http://<your-lan-ip>:5173` (provided your firewall and local network allow it).
+For friends outside your local network, deploy a persistent WebSocket server;
+see the [current repo-specific deployment steps](DEPLOY.md#deploy-the-current-github-monorepo-for-friends-crown--strike).
+A static frontend deployment alone cannot host multiplayer rooms.
 
 ## Playing
 
@@ -96,15 +102,21 @@ scheme, so it always shows the bindings you actually have.
 | Quick-pick gun type | `1`–`6` while dead or paused |
 | Back to lobby | `L` on the results screen |
 
-**Modes.** Team Deathmatch (auto-balanced teams, friendly fire off),
+**Modes.** Sniper Duel (1v1, two teams, fixed sniper loadout, first to ten),
+Rifle 2v2 (four players, two teams, fixed rifle loadout, first to 25),
+Team Warfare/Team Deathmatch (up to 16 players, 2–4 auto-balanced teams,
+friendly fire off),
 Free-for-all, Gun Game (every kill promotes you up
 pistol → SMG → shotgun → rifle → sniper → knife; win with a knife kill),
 co-op Survival waves, and a 16-player Battle Royale with parachute drops, ground
 loot, destructible rovers, named districts, a generated gradient sky, an adaptive closing
 zone and spectators.
 
-**Lobby.** Players gather up to the selected mode's capacity, shown as open
-slots — split by team in TDM — with everyone's ready state. It starts when
+**Lobby.** Select a mode tile or choose a mode in Create Room, then copy the
+invite link or share the four-character code with friends. They open the same
+host and enter your code under Join Room; a `#CODE` URL pre-fills the code.
+Players gather up to the selected mode's capacity, shown as open
+slots — split by team in TDM, Sniper Duel and Rifle 2v2 — with everyone's ready state. It starts when
 everybody has readied up, and the host (whoever arrived first) can force it or
 change the mode and map. If someone wanders off, a 45-second clock starts once at
 least two people are ready and the match goes without them, so a lobby can't

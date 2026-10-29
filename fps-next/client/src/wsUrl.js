@@ -28,3 +28,9 @@ export function resolveSocketUrl(pageUrl, override = '') {
   if (url.pathname === '/') url.pathname = '/ws';
   return url.href;
 }
+
+/** Render free services can take around a minute to wake on the first connection. */
+export function socketOpenTimeoutMs(socketUrl) {
+  const hostname = new URL(socketUrl).hostname.toLowerCase();
+  return hostname.endsWith('.onrender.com') ? 90_000 : 8_000;
+}

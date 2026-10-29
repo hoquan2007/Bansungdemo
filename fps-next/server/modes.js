@@ -4,9 +4,10 @@
 
 import { TEAMS, TEAM_IDS, SCORE_LIMIT, MAX_PLAYERS, ARENA_MAX_PLAYERS, BR_MAX_PLAYERS } from '../shared/constants.js';
 import { PRIMARY_IDS, GUNGAME_LADDER, loadoutForPrimary } from '../shared/weapons.js';
+import { LARGE_TEAM_MAPS } from '../shared/maps/index.js';
 
 export function isTeamMode(mode) {
-  return mode === 'tdm';
+  return mode === 'tdm' || mode === 'duel' || mode === 'squads';
 }
 
 /**
@@ -14,7 +15,7 @@ export function isTeamMode(mode) {
  * show team scores. Survival is co-op: humans are team A, the AI are team B.
  */
 export function hasSides(mode) {
-  return mode === 'tdm' || mode === 'waves';
+  return isTeamMode(mode) || mode === 'waves';
 }
 
 export function isSurvival(mode) {
@@ -27,8 +28,10 @@ export function isBattleRoyale(mode) {
 
 /** How many slots this mode's lobby has. Large island modes hold sixteen. */
 export function capacityFor(mode, mapId = 'island') {
+  if (mode === 'duel') return 2;
+  if (mode === 'squads') return 4;
   if (isBattleRoyale(mode)) return BR_MAX_PLAYERS;
-  return isTeamMode(mode) && mapId === 'island' ? MAX_PLAYERS : ARENA_MAX_PLAYERS;
+  return isTeamMode(mode) && LARGE_TEAM_MAPS.includes(mapId) ? MAX_PLAYERS : ARENA_MAX_PLAYERS;
 }
 
 export function activeTeams(room) {
@@ -42,8 +45,8 @@ export function emptyScores(room) {
 /** Battle royale is played on one purpose-built map, never the rotation. */
 export function mapForMode(mode, current) {
   if (isBattleRoyale(mode)) return 'island';
-  if (isTeamMode(mode)) return 'island';
-  return current === 'island' ? 'warehouse' : current;
+  if (mode === 'tdm') return LARGE_TEAM_MAPS.includes(current) ? current : 'island';
+  return LARGE_TEAM_MAPS.includes(current) ? 'warehouse' : current;
 }
 
 /**
@@ -96,6 +99,9 @@ export function rebalance(room) {
 }
 
 export function loadoutFor(room, player) {
+  // Skill-based versus queues have an identical loadout on both sides.
+  if (room.mode === 'duel') return loadoutForPrimary('sniper');
+  if (room.mode === 'squads') return loadoutForPrimary('rifle');
   // Battle royale: everyone lands with a pistol and a knife, whatever they picked
   // in the lobby. Finding a better gun is the mode; handing you your favourite at
   // the start would remove the reason to loot.
@@ -111,7 +117,7 @@ export function loadoutFor(room, player) {
 
 /** Does the player's own class choice decide their loadout in this mode? */
 export function usesClasses(mode) {
-  return mode !== 'gungame';
+  return mode !== 'gungame' && mode !== 'duel' && mode !== 'squads';
 }
 
 export function spawnPointsFor(room, map, player) {

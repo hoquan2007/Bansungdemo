@@ -322,7 +322,7 @@ function makeLabel(layer, name) {
 }
 
 function colorFor(mode, myTeam, theirTeam) {
-  if (mode !== 'tdm' || !theirTeam) return FFA_COLOR;
+  if (!['tdm', 'duel', 'squads'].includes(mode) || !theirTeam) return FFA_COLOR;
   return TEAM_COLORS[theirTeam] ?? TEAM_COLORS.B;
 }
 

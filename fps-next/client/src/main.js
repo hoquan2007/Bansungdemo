@@ -9,7 +9,7 @@ import {
   PHYSICS_DT, MIN_FOV, MAX_FOV, TEAMS, RESPAWN_DELAY_MS, MAX_PLAYERS, BARREL_RADIUS,
   BR_LOOT_RADIUS, EMOTE_COOLDOWN_MS, PITCH_LIMIT, PLAYER_HEIGHT, VEHICLE_USE_RADIUS,
 } from '@shared/constants.js';
-import { getMap, mapList } from '@shared/maps/index.js';
+import { getMap, mapList, LARGE_TEAM_MAPS } from '@shared/maps/index.js';
 import {
   ALL_WEAPON_IDS, getWeapon, PRIMARY_IDS, getPrimary,
   WEAPON_TYPES, weaponsOfType,
@@ -521,6 +521,14 @@ function clearError() {
 
 function setMenuBusy(busy) {
   for (const b of ['btn-quickplay', 'btn-join', 'btn-create', 'btn-practice']) dom[b].disabled = busy;
+  for (const button of document.querySelectorAll('[data-create-mode]')) button.disabled = busy;
+}
+
+function showServerConnection(connected) {
+  const status = document.getElementById('server-state');
+  if (!status) return;
+  status.textContent = connected ? 'SERVER CONNECTED' : 'CONNECT TO PLAY';
+  status.closest('.strike-online')?.classList.toggle('is-connected', connected);
 }
 
 dom['btn-practice'].addEventListener('click', () => {
@@ -534,6 +542,27 @@ dom['btn-create'].addEventListener('click', () =>
   enterMultiplayer(C2S.CREATE, { mode: dom['mode-select'].value }));
 dom['btn-join'].addEventListener('click', joinByCode);
 
+// The mode tiles and the room creator enter the same multiplayer flow.
+// A tile creates a shareable private room with the selected match rules.
+for (const button of document.querySelectorAll('[data-create-mode]')) {
+  button.addEventListener('click', () => {
+    dom['mode-select'].value = button.dataset.createMode;
+    enterMultiplayer(C2S.CREATE, { mode: button.dataset.createMode });
+  });
+}
+
+for (const button of document.querySelectorAll('[data-nav-target]')) {
+  button.addEventListener('click', () => {
+    const target = document.getElementById(button.dataset.navTarget);
+    if (!target) return;
+    if (target.tagName === 'DETAILS') target.open = true;
+    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    document.querySelectorAll('[data-nav-target]').forEach((nav) => {
+      nav.classList.toggle('active', nav === button);
+    });
+  });
+}
+
 function joinByCode() {
   const code = dom['room-code'].value.trim().toUpperCase();
   if (code.length !== 4) {
@@ -546,6 +575,10 @@ function joinByCode() {
 async function enterMultiplayer(action, payload) {
   clearError();
   setMenuBusy(true);
+  const serverState = document.getElementById('server-state');
+  if (serverState && !connection.connected) {
+    serverState.textContent = 'CONNECTING TO GAME SERVER…';
+  }
   audio.initAudio();
   audio.resumeAudio();
   const name = ensureNickname();
@@ -553,11 +586,13 @@ async function enterMultiplayer(action, payload) {
 
   try {
     if (!connection.connected) await net.connect(connection, { name });
+    showServerConnection(true);
     // The class travels with the join. Joining a match already in progress spawns
     // you immediately, so telling the server afterwards would always cost you
     // your first life on the wrong class.
     net.send(connection, action, { ...payload, primaryId: app.myGun });
   } catch (err) {
+    showServerConnection(false);
     showError(`Couldn’t reach the server. ${err.message}`);
   } finally {
     setMenuBusy(false);
@@ -669,6 +704,7 @@ function enterMatch() {
 function leaveToMenu() {
   exitLock();
   net.disconnect(connection);
+  showServerConnection(false);
   // Drop the pad's held state and let a different controller claim the slot.
   resetGamepad();
   clearAds();
@@ -864,7 +900,11 @@ function pauseVisible() {
  * cases the server ignores your choice, so offering the picker is a lie.
  */
 function gunChoiceMatters(mode) {
-  return mode !== 'gungame' && mode !== 'br';
+  return !['gungame', 'br', 'duel', 'squads'].includes(mode);
+}
+
+function teamMatch(mode) {
+  return mode === 'tdm' || mode === 'duel' || mode === 'squads';
 }
 
 function showPause(visible) {
@@ -988,7 +1028,7 @@ function renderLobby() {
 
   dom['lobby-slots'].replaceChildren();
 
-  if (m.mode === 'tdm') {
+  if (teamMatch(m.mode)) {
     // Split by team so the lobby shows the balance you'll actually play with.
     const count = Math.min(4, Math.max(2, m.teamCount ?? 2));
     const perTeam = Math.ceil(capacity / count);
@@ -1048,8 +1088,8 @@ function renderLobby() {
   mapSelect.classList.toggle('hidden', fixedMap);
   // Compact arenas cannot safely accommodate 3/4 independent spawn sectors.
   for (const opt of mapSelect.options) {
-    opt.disabled = (opt.value === 'island' && m.mode !== 'tdm') ||
-      (opt.value !== 'island' && m.mode === 'tdm' && (m.teamCount ?? 2) > 2);
+    opt.disabled = (LARGE_TEAM_MAPS.includes(opt.value) && m.mode !== 'tdm') ||
+      (!LARGE_TEAM_MAPS.includes(opt.value) && m.mode === 'tdm' && (m.teamCount ?? 2) > 2);
   }
 
   const difficultyHint = {
@@ -1215,6 +1255,7 @@ net.on(connection, S2C.ERROR, (msg) => {
 });
 
 net.on(connection, 'disconnected', () => {
+  showServerConnection(false);
   if (app.screen === 'menu') return;
 
   // Hold on to the room before leaveToMenu clears it. A dropped connection is
@@ -1480,7 +1521,7 @@ net.on(connection, S2C.SHOTS, (msg) => {
   // otherwise a full lobby of friendlies floods the dial and hides the one mark
   // that actually matters.
   const shooter = app.match.roster.get(msg.id);
-  const friendly = app.match.mode === 'tdm' && shooter?.team && shooter.team === app.match.myTeam;
+  const friendly = teamMatch(app.match.mode) && shooter?.team && shooter.team === app.match.myTeam;
   if (!friendly) noteGunfire(minimap, origin);
 });
 
@@ -1620,7 +1661,7 @@ function updateRoster(list) {
 }
 
 function syncModeUi() {
-  const teamMode = app.match.mode === 'tdm';
+  const teamMode = teamMatch(app.match.mode);
   hud.setTeamScoresVisible(teamMode);
   setTeamChatAvailable(chat, teamMode);
   hud.setBattleRoyaleVisible(app.match.mode === 'br');

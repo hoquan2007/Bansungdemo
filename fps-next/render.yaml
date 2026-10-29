@@ -1,7 +1,7 @@
 # Render Blueprint.
 #
-# With this file in the repo you don't have to configure anything by hand —
-# Render reads it and creates the service. See DEPLOY.md for the click-through.
+# Standalone fps-next checkout blueprint. For the Bansungdemo monorepo, use
+# the repository-root render.yaml (sets rootDir to fps-next) instead.
 #
 # Running on the free plan. What that actually costs you:
 #
@@ -21,16 +21,14 @@
 
 services:
   - type: web
-    name: arena
+    name: crown-strike-game
     runtime: docker
     dockerfilePath: ./Dockerfile
     dockerContext: .
 
     plan: free
-    # Closest Render region to the UK. Others: oregon, ohio, virginia, singapore.
-    # Latency is the one performance factor you actually control here, so pick
-    # whichever is nearest your office.
-    region: frankfurt
+    # Singapore minimizes round-trip latency for players in Viet Nam.
+    region: singapore
 
     healthCheckPath: /api/health
     autoDeployTrigger: commit

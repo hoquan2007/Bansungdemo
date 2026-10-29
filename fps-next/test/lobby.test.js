@@ -101,6 +101,96 @@ test('sixteen human players split into four independent squads of four', (t) => 
   assert.equal(room.phase, PHASE.COUNTDOWN);
 });
 
+test('host can choose Highlands for 16 humans in four teams and keep it across rounds', (t) => {
+  const { room, players } = makeRoom(t, 16);
+  room.handleLobbySet(players[0], { mapId: 'highlands', teamCount: 4 });
+  assert.equal(room.mapId, 'highlands');
+  assert.equal(room.capacity(), 16);
+  assert.equal(room.teamCount, 4);
+  assert.deepEqual(['A', 'B', 'C', 'D'].map((team) =>
+    players.filter((p) => p.team === team).length), [4, 4, 4, 4]);
+  for (const team of ['A', 'B', 'C', 'D']) {
+    assert.ok(room.map.spawns[team].length >= 4, `${team} must have four spawn slots`);
+  }
+  assert.equal(room.isFull(), true);
+  assert.equal(room.addPlayer({ id: 'overflow', name: 'Overflow', ws: fakeSocket() }), null);
+  room.handleLobbySet(players[0], { mapId: 'warehouse' });
+  assert.equal(room.mapId, 'highlands', 'small arenas cannot host 16 humans or four teams');
+  room.handleLobbySet(players[1], { mapId: 'island' });
+  assert.equal(room.mapId, 'highlands', 'only the host can change maps');
+  readyAll(room, players);
+  room.beginRound();
+  room.endRound({ reason: 'timeup', winnerTeam: 'A' });
+  assert.equal(room.phase, PHASE.SCOREBOARD);
+  assert.equal(room.phasePayload().nextMapId, 'highlands');
+  expirePhase(room);
+  assert.equal(room.mapId, 'highlands');
+});
+
+test('battle royale remains island-only after the host selects Highlands', (t) => {
+  const { room, players } = makeRoom(t, 3);
+  room.handleLobbySet(players[0], { mapId: 'highlands' });
+  assert.equal(room.mapId, 'highlands');
+  room.handleLobbySet(players[0], { mode: 'br', mapId: 'highlands' });
+  assert.equal(room.mode, 'br');
+  assert.equal(room.mapId, 'island');
+  room.handleLobbySet(players[0], { mapId: 'highlands' });
+  assert.equal(room.mapId, 'island');
+});
+
+test('sniper duel admits two humans, locks both to sniper and starts at two ready', (t) => {
+  const { room, players } = makeRoom(t, 2, 'duel');
+  assert.equal(room.capacity(), 2);
+  assert.equal(room.minPlayers(), 2);
+  assert.deepEqual(players.map((p) => p.team), ['A', 'B']);
+  for (const player of players) {
+    assert.deepEqual(player.inventory, loadoutForPrimary('sniper'));
+  }
+  assert.equal(room.mapId === 'island', false);
+  assert.equal(room.addPlayer({ id: 'third', name: 'Third', ws: fakeSocket() }), null);
+  room.teamScores.A = 9;
+  onKill(room, players[0], players[1], 'sniper');
+  assert.equal(checkWin(room)?.winnerTeam, 'A');
+  readyAll(room, players);
+  assert.equal(room.phase, PHASE.COUNTDOWN);
+});
+
+test('rifle 2v2 needs four humans, balances teams and reserves only four slots', (t) => {
+  const { room, players } = makeRoom(t, 3, 'squads');
+  assert.equal(room.capacity(), 4);
+  assert.equal(room.minPlayers(), 4);
+  readyAll(room, players);
+  room.handleStart(players[0]);
+  assert.equal(room.phase, PHASE.LOBBY, 'three ready people cannot start a 2v2');
+  const fourth = room.addPlayer({ id: 'fourth', name: 'Fourth', ws: fakeSocket() });
+  assert.ok(fourth);
+  assert.deepEqual(['A', 'B'].map((team) => [...room.players.values()].filter((p) => p.team === team).length), [2, 2]);
+  assert.equal(room.addPlayer({ id: 'fifth', name: 'Fifth', ws: fakeSocket() }), null);
+  for (const player of room.players.values()) {
+    assert.deepEqual(player.inventory, loadoutForPrimary('rifle'));
+  }
+  room.teamScores.B = 24;
+  onKill(room, players[1], players[0], 'rifle');
+  assert.equal(checkWin(room)?.winnerTeam, 'B');
+  room.handleReady(fourth, { ready: true });
+  assert.equal(room.phase, PHASE.COUNTDOWN);
+});
+
+test('host switching from four-team warfare to rifle 2v2 resets team membership and guns', (t) => {
+  const { room, players } = makeRoom(t, 4);
+  room.handleLobbySet(players[0], { teamCount: 4 });
+  assert.equal(room.teamCount, 4);
+  room.handleLobbySet(players[1], { mode: 'squads' });
+  assert.equal(room.mode, 'tdm', 'guests cannot change modes');
+  room.handleLobbySet(players[0], { mode: 'squads' });
+  assert.equal(room.mode, 'squads');
+  assert.equal(room.teamCount, 2);
+  assert.deepEqual(Object.keys(room.teamScores), ['A', 'B']);
+  assert.deepEqual(['A', 'B'].map((team) => players.filter((p) => p.team === team).length), [2, 2]);
+  assert.ok(players.every((p) => p.inventory[0] === 'rifle'));
+  assert.equal(room.mapId === 'island', false);
+});
+
 test('three teams stay balanced, and guests cannot change team count', (t) => {
   const { room, players } = makeRoom(t, 16);
   room.handleLobbySet(players[1], { teamCount: 4 });

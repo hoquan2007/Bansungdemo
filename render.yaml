@@ -1,0 +1,18 @@
+# Render Blueprint for hoquan2007/Bansungdemo.
+# Connect the repository at the root; fps-next contains the full game service.
+# Review the target branch before creating a public deployment.
+services:
+  - type: web
+    name: crown-strike-game
+    runtime: docker
+    branch: codex/astrastrike-inspired-menu
+    rootDir: fps-next
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    region: singapore
+    plan: free
+    healthCheckPath: /api/health
+    autoDeployTrigger: commit
+    envVars:
+      - key: NODE_ENV
+        value: production

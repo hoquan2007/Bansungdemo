@@ -362,7 +362,7 @@ export function showScoreboard(visible, data = null) {
   if (!visible || !data) return;
 
   const { title, mode, players, myId } = data;
-  const teamMode = mode === 'tdm';
+  const teamMode = ['tdm', 'duel', 'squads'].includes(mode);
 
   const rows = [...players].sort((a, b) => b.score - a.score || a.deaths - b.deaths);
 
@@ -397,7 +397,7 @@ export function showResults(visible, data = null) {
   if (!visible || !data) return;
 
   const { result, resultText, mode, players, myId, teamScores } = data;
-  const teamMode = mode === 'tdm';
+  const teamMode = ['tdm', 'duel', 'squads'].includes(mode);
 
   // ---- headline, in the winning team's colour ----
   const headline = el['rs-headline'];

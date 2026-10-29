@@ -146,10 +146,20 @@ async function run() {
   }
   await evaluate(`(() => { const el = document.querySelector('#lobby-team-count-select'); el.value='4'; el.dispatchEvent(new Event('change', {bubbles:true})); })()`);
   await waitFor(`document.querySelectorAll('#lobby-slots .slot-col').length === 4`);
+  const requestedMap = process.env.SMOKE_MAP;
+  if (requestedMap) {
+    assert.equal(await evaluate(`!!document.querySelector('#lobby-map-select option[value="${requestedMap}"]')`), true,
+      `Unknown smoke map: ${requestedMap}`);
+    await evaluate(`(() => { const el = document.querySelector('#lobby-map-select'); el.value = '${requestedMap}'; el.dispatchEvent(new Event('change', {bubbles:true})); })()`);
+    await waitFor(`document.querySelector('#lobby-map-select').value === '${requestedMap}'`);
+  }
 
   const guest = await connect(`ws://127.0.0.1:${port}/ws`);
   guest.send(encode(C2S.HELLO, { name: 'BrowserGuest' }));
   const guestJoin = await sendAndWait(guest, encode(C2S.JOIN, { code: roomCode }), (msg) => msg?.m === S2C.JOINED);
+  if (requestedMap) {
+    assert.equal(guestJoin.mapId, requestedMap, `Server rejected requested map ${requestedMap}`);
+  }
   let live = false;
   let lastSnapshot = null;
   let shotsSeen = 0;
@@ -215,7 +225,7 @@ async function run() {
   await sleep(250);
   const shot = await command('Page.captureScreenshot', { format: 'png', captureBeyondViewport: false });
   writeFileSync(screenshot, Buffer.from(shot.data, 'base64'));
-  console.log(JSON.stringify({ ok: true, roomCode, ...result, pointerLocked, emulatedPointerLock, movementMeters, shotConfirmed, screenshot }));
+  console.log(JSON.stringify({ ok: true, roomCode, requestedMap: requestedMap ?? 'island', ...result, pointerLocked, emulatedPointerLock, movementMeters, shotConfirmed, screenshot }));
 }
 
 try {
