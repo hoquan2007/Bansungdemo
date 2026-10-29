@@ -40,8 +40,8 @@ Then open **http://localhost:3000**. Node.js 22 or newer is required.
 To let people on your network join without deploying, give them
 `http://<your-lan-ip>:5173` (provided your firewall and local network allow it).
 For friends outside your local network, deploy a persistent WebSocket server;
-see [DEPLOY.md](DEPLOY.md). A static frontend deployment alone cannot host
-multiplayer rooms.
+see the [current repo-specific deployment steps](DEPLOY.md#deploy-the-current-github-monorepo-for-friends-crown--strike).
+A static frontend deployment alone cannot host multiplayer rooms.
 
 ## Playing
 

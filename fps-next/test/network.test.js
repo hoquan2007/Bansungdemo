@@ -187,3 +187,46 @@ test('two human players exchange validated movement snapshots and live weapon sh
   const observed = await shot;
   assert.equal(observed.w, spawn.weapon);
 });
+
+for (const [mode, capacity, firstWeapon] of [
+  ['duel', 2, 'sniper'],
+  ['squads', 4, 'rifle'],
+]) {
+  test(`${mode} creates an actual ${capacity}-player WebSocket lobby with fixed guns and starts`, async (t) => {
+    const { child, ready } = bootServer();
+    const clients = [];
+    t.after(() => {
+      for (const client of clients) client.socket.terminate();
+      if (child.exitCode === null) child.kill();
+    });
+
+    const port = await ready;
+    const host = await connect(port);
+    clients.push(host);
+    host.send(C2S.HELLO, { name: 'DuelHost' });
+    host.send(C2S.CREATE, { mode });
+    const created = await host.wait((m) => m.m === S2C.JOINED);
+    assert.equal(created.mode, mode);
+    assert.equal(created.teamCount, 2);
+    assert.notEqual(created.mapId, 'island');
+    assert.equal(created.inventory[0], firstWeapon);
+
+    for (let i = 1; i < capacity; i++) {
+      const guest = await connect(port);
+      clients.push(guest);
+      guest.send(C2S.HELLO, { name: `DuelGuest${i}` });
+      guest.send(C2S.JOIN, { code: created.code });
+      const accepted = await guest.wait((m) => m.m === S2C.JOINED);
+      assert.equal(accepted.code, created.code);
+      assert.equal(accepted.inventory[0], firstWeapon);
+    }
+
+    const full = await host.wait((m) => m.m === S2C.LOBBY && m.roster?.length === capacity);
+    assert.equal(full.capacity, capacity);
+    assert.deepEqual(['A', 'B'].map((team) => full.roster.filter((p) => p.team === team).length),
+      [capacity / 2, capacity / 2]);
+
+    host.send(C2S.START);
+    await Promise.all(clients.map((c) => c.wait((m) => m.m === S2C.PHASE && m.phase === PHASE.COUNTDOWN)));
+  });
+}
