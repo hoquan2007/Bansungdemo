@@ -64,7 +64,7 @@ export class Room {
     this.teamScores = modes.emptyScores(this);
 
     // Battle royale has exactly one map; the arena modes rotate.
-    this.mapId = modes.isBattleRoyale(mode) || modes.isTeamMode(mode)
+    this.mapId = modes.isBattleRoyale(mode) || mode === 'tdm'
       ? 'island'
       : ROTATION[Math.floor(Math.random() * ROTATION.length)];
     this.map = getMap(this.mapId);
@@ -136,6 +136,7 @@ export class Room {
    */
   minPlayers() {
     if (modes.isSurvival(this.mode) || modes.isBattleRoyale(this.mode)) return 1;
+    if (this.mode === 'squads') return 4;
     return MIN_PLAYERS_TO_START;
   }
 
@@ -493,6 +494,7 @@ export class Room {
       MODES.includes(msg.mode)
     ) {
       this.mode = msg.mode;
+      if (this.mode === 'duel' || this.mode === 'squads') this.teamCount = 2;
       this.teamScores = modes.emptyScores(this);
 
       // Team assignment has to be redone from scratch. Reusing it would leave
@@ -1238,7 +1240,7 @@ export class Room {
   rotateMap() {
     // Battle royale always plays the island; the rotation is for the arena modes.
     if (modes.isBattleRoyale(this.mode) ||
-        (modes.isTeamMode(this.mode) && (this.mapId === 'island' || this.teamCount > 2 || this.players.size > ARENA_MAX_PLAYERS))) {
+        (this.mode === 'tdm' && (this.mapId === 'island' || this.teamCount > 2 || this.players.size > ARENA_MAX_PLAYERS))) {
       this.mapId = 'island';
       this.map = getMap(this.mapId);
       this.resetBarrels();

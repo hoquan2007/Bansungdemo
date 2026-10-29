@@ -14,6 +14,7 @@
     "dev:client": "vite",
     "build": "vite build",
     "smoke:browser": "node scripts/browser-smoke.mjs",
+    "smoke:menu": "node scripts/menu-smoke.mjs",
     "start": "node scripts/start.mjs",
     "test": "node --test \"test/**/*.test.js\"",
     "bots": "node server/bot.js"

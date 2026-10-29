@@ -213,7 +213,7 @@ export function drawFullMap(minimap, {
   for (const [id, state] of states ?? []) {
     if (id === myId || hasFlag(state.flags, FLAG.DEAD)) continue;
     const info = roster?.get(id);
-    const friendly = mode === 'tdm' && info?.team === myTeam;
+    const friendly = ['tdm', 'duel', 'squads'].includes(mode) && info?.team === myTeam;
     const memory = minimap.contacts.get(id);
     if (!friendly && (!memory || memory.until <= now)) continue;
     const pos = friendly ? state.pos : [memory.x, 0, memory.z];
@@ -371,7 +371,7 @@ export function drawMinimap(minimap, { map, player, states, myId, mode, myTeam, 
     }
 
     const info = roster?.get(id);
-    const friendly = mode === 'tdm' && info?.team && info.team === myTeam;
+    const friendly = ['tdm', 'duel', 'squads'].includes(mode) && info?.team && info.team === myTeam;
 
     let show = friendly;
     if (!friendly) {
@@ -393,7 +393,7 @@ export function drawMinimap(minimap, { map, player, states, myId, mode, myTeam, 
       }
     }
 
-    const colour = mode === 'tdm'
+    const colour = ['tdm', 'duel', 'squads'].includes(mode)
       ? (TEAM_COLORS[info?.team] ?? TEAM_COLORS.B)
       : FFA_COLOR;
     drawBlip(ctx, (state.pos[0] - player.pos[0]) * ppm, (state.pos[2] - player.pos[2]) * ppm,

@@ -10,3 +10,6 @@ Assets/
 
 # Working copies of upstream raw gun recordings and model archives.
 .asset-staging/
+
+# Local third-party research checkouts and tooling; never bundle upstream repos.
+.research/

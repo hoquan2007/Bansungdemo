@@ -3,8 +3,9 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Arena — browser FPS</title>
+    <title>CROWN / STRIKE — Multiplayer FPS</title>
     <link rel="stylesheet" href="./src/style.css" />
+    <link rel="stylesheet" href="./src/menu.css" />
   </head>
   <body>
     <canvas id="game"></canvas>
@@ -139,81 +140,97 @@
     <!-- ================= menu ================= -->
     <div id="menu">
       <div id="menu-inner">
-        <div class="system-kicker"><span>CROWN NETWORK</span><b>ONLINE</b></div>
-        <h1>ARENA</h1>
-        <p class="tagline">TACTICAL COMBAT SYSTEM // Drop in, gear up, and outlast 29 rivals.</p>
+        <header class="strike-header">
+          <a href="#menu" class="strike-brand" aria-label="Crown Strike home">
+            <span class="strike-brand-mark">C<span>✦</span></span>
+            <span>CROWN<span class="brand-slash">/</span>STRIKE<small>BROWSER COMBAT SYSTEM</small></span>
+          </a>
+          <nav class="strike-nav" aria-label="Main navigation">
+            <button type="button" data-nav-target="play-modes" class="active">PLAY</button>
+            <button type="button" data-nav-target="invite-panel">FRIENDS</button>
+            <button type="button" data-nav-target="settings">SETTINGS</button>
+          </nav>
+          <div class="strike-online"><span class="live-dot"></span><span id="server-state" role="status">CONNECT TO PLAY</span><b>16 MAX</b></div>
+        </header>
 
-        <label class="field">
-          <span>Your name</span>
-          <input id="nickname" maxlength="14" autocomplete="off" spellcheck="false" placeholder="pick a name" />
-        </label>
-
-        <div class="menu-actions">
-          <button id="btn-quickplay" class="primary">Play Battle Royale</button>
-          <button id="btn-practice" class="ghost">Practice range</button>
-        </div>
-
-        <div class="divider"><span>or</span></div>
-
-        <div class="room-row">
-          <input id="room-code" maxlength="4" autocomplete="off" spellcheck="false" placeholder="CODE" />
-          <button id="btn-join">Join</button>
-        </div>
-
-        <div class="create-row">
-          <select id="mode-select">
-            <option value="br">Battle Royale (30)</option>
-            <option value="tdm">Team Deathmatch</option>
-            <option value="ffa">Free-for-all</option>
-            <option value="gungame">Gun Game</option>
-            <option value="waves">Survival (solo/co-op)</option>
-          </select>
-          <button id="btn-create">Create room</button>
-        </div>
-
-        <div id="menu-error" class="hidden"></div>
-
-        <details id="settings">
-          <summary>Settings</summary>
-          <label class="slider">
-            <span>Mouse sensitivity <b id="sens-val">1.00</b></span>
-            <input id="sens" type="range" min="0.2" max="4" step="0.05" />
-          </label>
-          <label class="slider">
-            <span>Field of view <b id="fov-val">80</b></span>
-            <input id="fov" type="range" min="60" max="110" step="1" />
-          </label>
-          <label class="slider">
-            <span>Volume <b id="vol-val">70</b></span>
-            <input id="vol" type="range" min="0" max="100" step="1" />
-          </label>
-          <label class="check">
-            <input id="invert-y" type="checkbox" />
-            <span>Invert vertical look</span>
-          </label>
-          <div class="setting-group">
-            <span class="setting-label">Controls</span>
-            <button id="btn-scheme" class="ghost small" type="button">
-              <b id="scheme-name">Mouse &amp; keyboard</b> — change
-            </button>
+        <section class="strike-hero" aria-label="Crown Strike">
+          <div class="strike-hero-copy">
+            <div class="strike-eyebrow"><span class="live-dot"></span> REAL-TIME MULTIPLAYER <span class="eyebrow-rule"></span> FREE TO PLAY</div>
+            <h1>FIGHT<br /><em>TOGETHER.</em><br />WIN LOUDER.</h1>
+            <p class="tagline">No downloads. No waiting. Bring your squad, choose your battlefield, and jump straight into the fight.</p>
+            <div class="strike-hero-buttons">
+              <button id="btn-quickplay" class="primary strike-action" type="button">DROP INTO BATTLE ROYALE <span>↗</span></button>
+              <button id="btn-practice" class="ghost strike-secondary" type="button">SOLO TRAINING <span>↗</span></button>
+            </div>
+            <div class="strike-facts"><span><b>16</b> PLAYERS</span><span><b>04</b> TEAMS</span><span><b>05+</b> MAPS</span><span><b>0</b> INSTALLS</span></div>
           </div>
-          <label class="slider">
-            <span>Stick sensitivity <b id="pad-sens-val">1.00</b></span>
-            <input id="pad-sens" type="range" min="0.3" max="3" step="0.05" />
-          </label>
-          <label class="check">
-            <input id="ads-toggle" type="checkbox" />
-            <span>Aim is a toggle, not a hold</span>
-          </label>
-          <label class="check">
-            <input id="aim-assist" type="checkbox" />
-            <span>Aim assist (controller only)</span>
-          </label>
-          <label class="check">
-            <input id="shake" type="checkbox" />
-            <span>Camera shake on explosions</span>
-          </label>
-        </details>
+          <div class="strike-hero-art" aria-hidden="true">
+            <div class="strike-art-ring ring-outer"></div>
+            <div class="strike-art-ring ring-inner"></div>
+            <div class="strike-art-crosshair">+</div>
+            <div class="strike-art-grid"></div>
+            <div class="strike-art-label label-top">SECTOR 07 <span>◉ TARGET ACQUIRED</span></div>
+            <div class="strike-art-monogram">CS<span>.</span></div>
+            <div class="strike-art-label label-bottom">CROWN ISLAND<span>01 / 04</span></div>
+            <div class="strike-art-coordinate">51° 24′ 04″ N<br />LIVE OPERATIONS</div>
+          </div>
+          <div class="strike-hero-index" aria-hidden="true">01 — YOUR NEXT MATCH STARTS HERE</div>
+        </section>
+
+        <main class="strike-main">
+          <section id="play-modes" class="strike-mode-section" aria-labelledby="modes-heading">
+            <div class="strike-section-heading"><div><span class="strike-section-label">01 / GAME MODES</span><h2 id="modes-heading">CHOOSE YOUR FIGHT<span>.</span></h2></div><p>Every match is live.<br />Every round counts.</p></div>
+            <div class="strike-mode-grid">
+              <button class="strike-mode-card mode-duel" type="button" data-create-mode="duel">
+                <span class="mode-card-top"><span class="mode-card-index">01 / PRECISION</span><span class="mode-card-icon">↗</span></span>
+                <span class="mode-card-art" aria-hidden="true">✛</span>
+                <span class="mode-card-bottom"><strong>SNIPER DUEL</strong><span>1V1 · BOLT-ACTION · PRIVATE ROOM</span></span>
+              </button>
+              <button class="strike-mode-card mode-squads" type="button" data-create-mode="squads">
+                <span class="mode-card-top"><span class="mode-card-index">02 / TACTICS</span><span class="mode-card-icon">↗</span></span>
+                <span class="mode-card-art" aria-hidden="true">✦</span>
+                <span class="mode-card-bottom"><strong>RIFLE 2V2</strong><span>4 PLAYERS · TWO TEAMS · PRIVATE ROOM</span></span>
+              </button>
+              <button class="strike-mode-card mode-teams" type="button" data-create-mode="tdm">
+                <span class="mode-card-top"><span class="mode-card-index">03 / BIG BATTLES</span><span class="mode-card-icon">↗</span></span>
+                <span class="mode-card-art" aria-hidden="true">Ⅳ</span>
+                <span class="mode-card-bottom"><strong>TEAM WARFARE</strong><span>UP TO 16 PLAYERS · 2—4 TEAMS</span></span>
+              </button>
+              <button class="strike-mode-card mode-ffa" type="button" data-create-mode="ffa">
+                <span class="mode-card-top"><span class="mode-card-index">04 / EVERYONE VS EVERYONE</span><span class="mode-card-icon">↗</span></span>
+                <span class="mode-card-art" aria-hidden="true">×</span>
+                <span class="mode-card-bottom"><strong>FREE FOR ALL</strong><span>SOLO COMBAT · 8 PLAYERS</span></span>
+              </button>
+            </div>
+          </section>
+
+          <section class="strike-join-area" id="invite-panel" aria-labelledby="friend-heading">
+            <div class="strike-join-copy"><span class="strike-section-label">02 / BRING YOUR CREW</span><h2 id="friend-heading">PLAY WITH<br /><em>YOUR PEOPLE.</em></h2><p>Create a private room, copy its invitation link, and share it. Your friends join with the same four-character room code.</p><div class="join-decor">//// FRIENDLY FIRE: OFF</div></div>
+            <div class="strike-join-form">
+              <label class="field"><span>YOUR CALLSIGN</span><input id="nickname" maxlength="14" autocomplete="off" spellcheck="false" placeholder="Enter your name" /></label>
+              <div class="strike-form-caption">GOT AN INVITE? JOIN YOUR FRIENDS.</div>
+              <div class="room-row"><input id="room-code" aria-label="Four character room code" maxlength="4" autocomplete="off" spellcheck="false" placeholder="ROOM CODE" /><button id="btn-join" type="button">JOIN ROOM <span>→</span></button></div>
+              <div class="strike-form-caption">OR BUILD A MATCH OF YOUR OWN.</div>
+              <div class="create-row"><select id="mode-select" aria-label="Game mode"><option value="duel">Sniper Duel (1v1)</option><option value="squads">Rifle 2v2</option><option value="tdm">Team Warfare (up to 16)</option><option value="br">Battle Royale (16)</option><option value="ffa">Free-for-all</option><option value="gungame">Gun Game</option><option value="waves">Survival (solo/co-op)</option></select><button id="btn-create" class="primary" type="button">CREATE <span>↗</span></button></div>
+              <div id="menu-error" class="hidden" role="alert"></div>
+            </div>
+          </section>
+
+          <section class="strike-bottom-strip" aria-label="More game modes"><button type="button" data-create-mode="gungame"><b>GUN GAME</b><span>CLIMB THE WEAPON LADDER ↗</span></button><button type="button" data-create-mode="waves"><b>SURVIVAL</b><span>CO-OP AGAINST WAVES ↗</span></button><span>MORE MAPS. MORE WAYS TO FIGHT.</span></section>
+
+          <details id="settings" class="strike-settings"><summary>CONTROL SETTINGS <span>+</span></summary><div class="strike-settings-grid">
+            <label class="slider"><span>Mouse sensitivity <b id="sens-val">1.00</b></span><input id="sens" type="range" min="0.2" max="4" step="0.05" /></label>
+            <label class="slider"><span>Field of view <b id="fov-val">80</b></span><input id="fov" type="range" min="60" max="110" step="1" /></label>
+            <label class="slider"><span>Volume <b id="vol-val">70</b></span><input id="vol" type="range" min="0" max="100" step="1" /></label>
+            <label class="check"><input id="invert-y" type="checkbox" /><span>Invert vertical look</span></label>
+            <div class="setting-group"><span class="setting-label">Controls</span><button id="btn-scheme" class="ghost small" type="button"><b id="scheme-name">Mouse &amp; keyboard</b> — change</button></div>
+            <label class="slider"><span>Stick sensitivity <b id="pad-sens-val">1.00</b></span><input id="pad-sens" type="range" min="0.3" max="3" step="0.05" /></label>
+            <label class="check"><input id="ads-toggle" type="checkbox" /><span>Aim is a toggle, not a hold</span></label>
+            <label class="check"><input id="aim-assist" type="checkbox" /><span>Aim assist (controller only)</span></label>
+            <label class="check"><input id="shake" type="checkbox" /><span>Camera shake on explosions</span></label>
+          </div></details>
+        </main>
+        <div class="strike-page-foot"><span>© CROWN / STRIKE — BUILT FOR BROWSER COMBAT</span><span>NO ACCOUNT REQUIRED · PRIVATE ROOMS</span></div>
       </div>
       <footer id="menu-footer"></footer>
     </div>
@@ -288,6 +305,8 @@
           <div class="label">Host controls</div>
           <div class="host-row">
             <select id="lobby-mode-select">
+              <option value="duel">Sniper Duel (1v1)</option>
+              <option value="squads">Rifle 2v2</option>
               <option value="br">Battle Royale (30)</option>
               <option value="tdm">Team Deathmatch</option>
               <option value="ffa">Free-for-all</option>
