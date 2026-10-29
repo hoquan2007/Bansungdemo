@@ -1,0 +1,776 @@
+// Turns compiled map geometry into something you can look at.
+//
+// The entire level is one InstancedMesh over a unit cube — every wall, crate and
+// stair step is the same geometry with a different matrix and colour. A whole
+// map is one draw call, which is why we can get away with no asset pipeline and
+// still hold frame rate on a work laptop's integrated GPU.
+
+import * as THREE from 'three';
+import { VIEW_DISTANCE } from '@shared/constants.js';
+import { loadModel, instantiate } from './models.js';
+import { createIslandScenery, disposeIslandScenery } from './islandScenery.js';
+
+const UNIT_CUBE = new THREE.BoxGeometry(1, 1, 1);
+const SURFACE_PLANE = new THREE.PlaneGeometry(1, 1);
+// The sky is generated, not loaded.
+//
+// It used to be a six-face cubemap with no licence file and no traceable source,
+// which is not something to be redistributing from a public repo. Generating it
+// costs nothing, weighs nothing, and is actually better suited to the game: each
+// map already declares a skyColor and a fogColor, so the gradient can be built
+// from the map's own palette and the horizon always matches the fog it fades into.
+const SKY_RADIUS = 4000;
+const SKY_STOPS = 64;
+
+/**
+ * A vertical gradient from the fog colour at the horizon to the sky colour
+ * overhead, drawn into a 1-pixel-wide canvas and stretched across a sphere.
+ *
+ * Rendered on the inside of the sphere with depth writing off, so it sits behind
+ * everything without needing to be sorted against the level.
+ */
+function createSky(skyColor, fogColor) {
+  const canvas = document.createElement('canvas');
+  canvas.width = 1;
+  canvas.height = SKY_STOPS;
+  const ctx = canvas.getContext('2d');
+
+  const top = new THREE.Color(skyColor);
+  const horizon = new THREE.Color(fogColor);
+  // Lift the zenith slightly and settle the horizon down, which is what stops a
+  // flat two-colour blend from reading as a wall.
+  const zenith = top.clone().multiplyScalar(0.82);
+  const band = horizon.clone().lerp(top, 0.35);
+
+  const gradient = ctx.createLinearGradient(0, 0, 0, SKY_STOPS);
+  gradient.addColorStop(0, `#${zenith.getHexString()}`);
+  gradient.addColorStop(0.55, `#${top.getHexString()}`);
+  gradient.addColorStop(0.86, `#${band.getHexString()}`);
+  gradient.addColorStop(1, `#${horizon.getHexString()}`);
+  ctx.fillStyle = gradient;
+  ctx.fillRect(0, 0, 1, SKY_STOPS);
+
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.colorSpace = THREE.SRGBColorSpace;
+  // One pixel wide, so horizontal wrapping is meaningless; clamping avoids a
+  // seam where the sphere's UVs meet.
+  texture.wrapS = THREE.ClampToEdgeWrapping;
+  texture.wrapT = THREE.ClampToEdgeWrapping;
+
+  const mesh = new THREE.Mesh(
+    new THREE.SphereGeometry(SKY_RADIUS, 24, 16),
+    new THREE.MeshBasicMaterial({
+      map: texture,
+      side: THREE.BackSide,
+      depthWrite: false,
+      fog: false,
+    }),
+  );
+  mesh.frustumCulled = false;
+  // Drawn first, so it can never occlude the level.
+  mesh.renderOrder = -1;
+  return mesh;
+}
+
+function disposeSky(mesh) {
+  if (!mesh) return;
+  mesh.geometry.dispose();
+  mesh.material.map?.dispose();
+  mesh.material.dispose();
+}
+
+// ---------------------------------------------------------------- surfaces
+//
+// The whole level is one InstancedMesh, which is why it's cheap — but every
+// instance shares one material, and a box's UVs run 0..1 per face regardless of
+// how big the box is. Put a texture on that and a 60m floor gets a single
+// stretched tile.
+//
+// So the big surfaces are lifted out and drawn as individual meshes, each with
+// its own material whose UV repeat comes from that box's actual size. There are
+// only ever a handful of them per map — a floor, some walls, a roof — so the draw
+// call count barely moves.
+
+// Hand-painted textures rather than photographic ones, which is the whole reason
+// these work: the models are flat-shaded toon and a photograph of a wall next to
+// them looks like two different games. `metres` is world size per tile, kept
+// generous so the pattern reads as surface rather than as tiling.
+//
+// `tint` is how much of the map's authored colour to mix in. The painted textures
+// already carry their colour, so it's low — just enough that a red spawn wall is
+// still recognisably red. `concrete` is the desaturated one and takes the map's
+// colour almost whole.
+//
+// The first five names used to point at a "50 Free Stylized Wall Textures" pack
+// that shipped with no licence file of any kind. Redistributing that from a public
+// repo isn't defensible, so they were repointed at the Screaming Brain Studios
+// packs, which are explicitly CC0 and already here. The names are unchanged
+// because every map references them by name — only the source file moved.
+const TEXTURES = {
+  brick: { file: 'sbs/brick', metres: 5, tint: 0.3 },
+  blockwork: { file: 'sbs/stone', metres: 5, tint: 0.3 },
+  cobbles: { file: 'sbs/pavers', metres: 4, tint: 0.25 },
+  redbrick: { file: 'sbs/brick', metres: 5, tint: 0.2 },
+  concrete: { file: 'sbs/plaster', metres: 6, tint: 0.88 },
+  asphalt: { file: 'sbs/asphalt', metres: 7, tint: 0.42 },
+  sbsbrick: { file: 'sbs/brick', metres: 4.5, tint: 0.28 },
+  dirt: { file: 'sbs/dirt', metres: 5, tint: 0.36 },
+  grass: { file: 'sbs/grass', metres: 6, tint: 0.28 },
+  metal: { file: 'sbs/metal', metres: 5, tint: 0.58 },
+  pavers: { file: 'sbs/pavers', metres: 5, tint: 0.32 },
+  plaster: { file: 'sbs/plaster', metres: 5, tint: 0.72 },
+  roof: { file: 'sbs/roof', metres: 4.5, tint: 0.34 },
+  stone: { file: 'sbs/stone', metres: 5, tint: 0.38 },
+  water: { file: 'sbs/water', metres: 8, tint: 0.24 },
+  wood: { file: 'sbs/wood', metres: 4, tint: 0.42 },
+};
+
+/** Metres of world per texture tile, so tiling is consistent at any box size. */
+const textureCache = new Map();
+let maxTextureAnisotropy = 1;
+
+function getTexture(name) {
+  if (textureCache.has(name)) return textureCache.get(name);
+  const spec = TEXTURES[name];
+  const entry = {
+    metres: spec.metres,
+    tint: spec.tint,
+    // Cloning an unloaded Texture marks the clone for upload before it has any
+    // image data, which produces a warning for every textured surface. Wait for
+    // the source image, then clone it into each surface below.
+    ready: new THREE.TextureLoader().loadAsync(`textures/${spec.file}.jpg`)
+      .then((tex) => {
+        tex.wrapS = THREE.RepeatWrapping;
+        tex.wrapT = THREE.RepeatWrapping;
+        tex.colorSpace = THREE.SRGBColorSpace;
+        // Large BR surfaces are often viewed at a grazing angle. Mipmaps stop
+        // distance shimmer; anisotropic filtering keeps roads readable without
+        // the high-frequency sparkle that looked like texture flicker.
+        tex.minFilter = THREE.LinearMipmapLinearFilter;
+        tex.anisotropy = maxTextureAnisotropy;
+        return tex;
+      })
+      .catch(() => null),
+  };
+  textureCache.set(name, entry);
+  return entry;
+}
+
+/**
+ * Which texture a solid should wear, from its shape.
+ *
+ * Done by shape rather than by tagging every box in every map: a map author
+ * shouldn't have to label a floor as a floor, and it means maps added later are
+ * textured without touching them. An explicit `surface:name` tag wins if a map
+ * does want to be specific.
+ */
+function surfaceFor(solid, map) {
+  if (solid.tag?.startsWith('surface:')) return solid.tag.split(':')[1];
+
+  const w = solid.max[0] - solid.min[0];
+  const h = solid.max[1] - solid.min[1];
+  const d = solid.max[2] - solid.min[2];
+  const footprint = w * d;
+  const authored = map.materialTextures?.[solid.color];
+
+  // Big and flat: a floor, a roof panel or a deck. Checked before the wall test,
+  // because a 30x12 slab is a floor whatever its thickness — and Rooftops builds
+  // its roofs 2.5m thick, which a tighter limit here skipped entirely.
+  if (h <= 3 && footprint >= 60) return authored ?? map.groundTexture ?? 'concrete';
+  // Big and upright: a wall.
+  if (h >= 2.5 && Math.max(w, d) >= 10 && Math.min(w, d) <= 3) {
+    return authored ?? map.wallTexture ?? 'concrete';
+  }
+  return null;
+}
+
+/** Render-only stacking for authored floor overlays; collision remains perfectly flat. */
+function surfaceLayer(solid) {
+  if (!solid.tag?.startsWith('surface:')) return 0;
+  const layer = Number(solid.tag.split(':')[2]);
+  return Number.isFinite(layer) ? Math.max(1, layer) : 1;
+}
+
+export function createWorld(renderer) {
+  maxTextureAnisotropy = Math.min(8, renderer.capabilities.getMaxAnisotropy());
+  const scene = new THREE.Scene();
+
+  const hemi = new THREE.HemisphereLight(0xffffff, 0x444444, 0.6);
+  scene.add(hemi);
+
+  // A small unconditional ambient term. Hemisphere light alone leaves surfaces
+  // that face straight down — the whole underside of an indoor map's roof —
+  // effectively unlit, and a black ceiling reads as a missing polygon.
+  const fill = new THREE.AmbientLight(0xffffff, 0.35);
+  scene.add(fill);
+
+  const sun = new THREE.DirectionalLight(0xffffff, 1.0);
+  sun.castShadow = true;
+  sun.shadow.mapSize.set(2048, 2048);
+  sun.shadow.bias = -0.0006;
+  sun.shadow.normalBias = 0.03;
+  scene.add(sun);
+  scene.add(sun.target);
+
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFShadowMap;
+
+  return { scene, hemi, sun, current: null, sky: null };
+}
+
+/**
+ * Swap the world over to a map. Disposes whatever was there before — rounds
+ * rotate maps, so this runs repeatedly across a session and must not leak.
+ */
+export function loadMap(world, map) {
+  unloadMap(world);
+
+  const solids = map.solids;
+  const mesh = new THREE.InstancedMesh(
+    UNIT_CUBE,
+    new THREE.MeshLambertMaterial({ flatShading: true }),
+    solids.length,
+  );
+  mesh.castShadow = true;
+  mesh.receiveShadow = true;
+
+  const m = new THREE.Matrix4();
+  const colour = new THREE.Color();
+
+  for (let i = 0; i < solids.length; i++) {
+    const s = solids[i];
+    const sx = s.max[0] - s.min[0];
+    const sy = s.max[1] - s.min[1];
+    const sz = s.max[2] - s.min[2];
+    m.makeScale(sx, sy, sz);
+    m.setPosition((s.min[0] + s.max[0]) / 2, (s.min[1] + s.max[1]) / 2, (s.min[2] + s.max[2]) / 2);
+    mesh.setMatrixAt(i, m);
+
+    colour.setHex(s.color);
+    // Nudge each instance's brightness a little so large flat expanses of the
+    // same colour don't read as one solid mass.
+    const jitter = 0.94 + ((i * 2654435761) % 1000) / 1000 * 0.12;
+    colour.multiplyScalar(jitter);
+    mesh.setColorAt(i, colour);
+  }
+  mesh.instanceMatrix.needsUpdate = true;
+  if (mesh.instanceColor) mesh.instanceColor.needsUpdate = true;
+
+  world.scene.add(mesh);
+
+  // Small boxes stay in the single instanced draw call, but they no longer have
+  // to stay untextured. One subtle material tile per face gives short wall
+  // sections, stair risers and cover a surface without replacing hundreds of
+  // instances with hundreds of draw calls. Instance colours still tint the map,
+  // so its authored palette is preserved.
+  const detail = getTexture(map.detailTexture ?? map.wallTexture ?? 'plaster');
+  detail.ready.then((source) => {
+    if (!source || !mesh.parent) return;
+    const map2 = source.clone();
+    map2.repeat.set(1, 1);
+    mesh.material.map = map2;
+    mesh.material.needsUpdate = true;
+  });
+
+  // ---- atmosphere ----
+  // A flat colour behind the gradient sphere, so there is never a frame of void
+  // while the sky mesh is being built.
+  world.scene.background = new THREE.Color(map.skyColor);
+  disposeSky(world.sky);
+  world.sky = createSky(map.skyColor, map.fogColor);
+  world.scene.add(world.sky);
+
+  world.scene.fog = new THREE.FogExp2(map.fogColor, map.fogDensity ?? 0.01);
+  world.hemi.intensity = map.ambientLight ?? 0.6;
+  // Downward-facing surfaces take the hemisphere's ground colour, and on an
+  // indoor map that includes the entire underside of the roof. Too dark a value
+  // renders the ceiling pure black, which reads as a hole rather than a roof.
+  world.hemi.groundColor = new THREE.Color(map.fogColor).multiplyScalar(0.85);
+
+  // ---- sun and shadow volume sized to the map ----
+  const b = map.bounds;
+  const spanX = b.max[0] - b.min[0];
+  const spanZ = b.max[2] - b.min[2];
+  const radius = Math.max(spanX, spanZ) * 0.72;
+  const centre = [(b.min[0] + b.max[0]) / 2, b.min[1], (b.min[2] + b.max[2]) / 2];
+
+  const dir = map.sunDirection ?? [0.4, 1, 0.3];
+  const dlen = Math.hypot(...dir) || 1;
+  world.sun.intensity = map.sunIntensity ?? 0.9;
+  world.sun.position.set(
+    centre[0] + (dir[0] / dlen) * radius,
+    centre[1] + (dir[1] / dlen) * radius,
+    centre[2] + (dir[2] / dlen) * radius,
+  );
+  world.sun.target.position.set(centre[0], centre[1], centre[2]);
+
+  const cam = world.sun.shadow.camera;
+  cam.left = -radius;
+  cam.right = radius;
+  cam.top = radius;
+  cam.bottom = -radius;
+  cam.near = 0.5;
+  cam.far = radius * 3;
+  cam.updateProjectionMatrix();
+
+  const props = new THREE.Group();
+  world.scene.add(props);
+
+  const surfaces = buildSurfaces(map, mesh);
+  world.scene.add(surfaces);
+
+  const scenery = map.id === 'island' ? createIslandScenery(map) : null;
+  if (scenery) world.scene.add(scenery);
+
+  world.current = {
+    map, mesh, props, surfaces, scenery,
+    generation: ++loadGeneration,
+    propByIndex: new Map(),
+  };
+
+  dressMap(world, map, mesh, props, world.current.generation);
+  scatterProps(world, map, props, world.current.generation);
+
+  return mesh;
+}
+
+/**
+ * Draw the map's large surfaces as textured meshes, and hide the instances they
+ * replace. Same geometry, same position, same collision — the box is simply
+ * scaled to nothing in the instanced mesh so you see the textured version.
+ */
+function buildSurfaces(map, mesh) {
+  const group = new THREE.Group();
+  const hidden = new THREE.Matrix4().makeScale(0, 0, 0);
+  let replaced = 0;
+
+  map.solids.forEach((solid, index) => {
+    // Props draw their own model; don't texture them as well.
+    if (solid.tag === 'crate' || solid.tag?.startsWith('prop:')) return;
+    if (solid.tag?.startsWith('barrel:')) return;
+    const name = surfaceFor(solid, map);
+    if (!name || !TEXTURES[name]) return;
+
+    const tex = getTexture(name);
+    const w = solid.max[0] - solid.min[0];
+    const h = solid.max[1] - solid.min[1];
+    const d = solid.max[2] - solid.min[2];
+
+    // Repeat comes from the two dimensions of the box's largest face, in the
+    // order that face's UVs actually run. Sorting the dimensions and using the
+    // top two is not the same thing: a 60x142 floor then gets 35 repeats across
+    // its 60m width and 15 along its 142m length, and the texture visibly smears
+    // down the room. BoxGeometry's convention is U along X then Z, V along Y then
+    // Z, so which axis is thin decides the pair.
+    const thinnest = Math.min(w, h, d);
+    let repeatU;
+    let repeatV;
+    if (thinnest === h) {
+      [repeatU, repeatV] = [w, d]; // floor or roof: looking at the ±Y faces
+    } else if (thinnest === d) {
+      [repeatU, repeatV] = [w, h]; // wall facing along Z
+    } else {
+      [repeatU, repeatV] = [d, h]; // wall facing along X
+    }
+    repeatU = Math.max(1, Math.round(repeatU / tex.metres));
+    repeatV = Math.max(1, Math.round(repeatV / tex.metres));
+
+    // Mix the map's authored colour in by the texture's own weight: a painted
+    // brick brings its colour with it and only wants a hint of the palette, while
+    // the desaturated concrete wants nearly all of it.
+    const tint = new THREE.Color(0xffffff).lerp(new THREE.Color(solid.color), tex.tint);
+
+    const layer = surfaceLayer(solid);
+    const material = new THREE.MeshLambertMaterial({
+      color: tint,
+      // Roads, runways and fields are collision-flush with the island floor.
+      // A tiny bounded offset resolves the last sub-pixel tie. The old offset
+      // grew into the tens of thousands of depth units, which could pull a road
+      // in front of entire buildings when viewed from parachute altitude.
+      polygonOffset: layer > 0,
+      polygonOffsetFactor: layer > 0 ? -1 : 0,
+      polygonOffsetUnits: layer > 0 ? -layer * 3 : 0,
+    });
+
+    // Authored terrain paint only needs a top face. Drawing it as another full
+    // box put a second underside and four enormous side faces into the depth
+    // buffer; from a high drop those faces could obscure the buildings they
+    // surrounded. A real plane is both cheaper and unambiguous.
+    const surface = new THREE.Mesh(layer > 0 ? SURFACE_PLANE : UNIT_CUBE, material);
+    if (layer > 0) {
+      surface.scale.set(w, d, 1);
+      surface.rotation.x = -Math.PI / 2;
+      surface.position.set(
+        (solid.min[0] + solid.max[0]) / 2,
+        solid.max[1] + layer * 0.006,
+        (solid.min[2] + solid.max[2]) / 2,
+      );
+      surface.renderOrder = layer;
+      surface.castShadow = false;
+    } else {
+      surface.scale.set(w, h, d);
+      surface.position.set(
+        (solid.min[0] + solid.max[0]) / 2,
+        (solid.min[1] + solid.max[1]) / 2,
+        (solid.min[2] + solid.max[2]) / 2,
+      );
+      surface.castShadow = true;
+    }
+    surface.receiveShadow = true;
+    group.add(surface);
+
+    tex.ready.then((source) => {
+      // A map can rotate while the image request is in flight. An orphaned box
+      // means its material has already been disposed; do not resurrect it or
+      // leak a cloned texture into the next round.
+      if (!source || !group.parent || !surface.parent) return;
+      const map2 = source.clone();
+      map2.repeat.set(repeatU, repeatV);
+      material.map = map2;
+      material.needsUpdate = true;
+    });
+
+    mesh.setMatrixAt(index, hidden);
+    replaced++;
+  });
+
+  if (replaced > 0) mesh.instanceMatrix.needsUpdate = true;
+  return group;
+}
+
+// Bumped on every map load so an in-flight model arriving after a map rotation
+// can tell it's late and drop its work rather than decorating the new map with
+// the old one's crates.
+let loadGeneration = 0;
+
+const PROP_URL = (file) => `models/props/${file}.gltf`;
+
+// Cargo that stands in for a tagged crate box. Alternating gives a stack some
+// variety without needing the maps to say which is which.
+const CRATE_MODELS = ['Crate', 'CardboardBoxes_3', 'Crate', 'WoodPlanks'];
+
+/**
+ * Draw models in place of the boxes tagged for them.
+ *
+ * The box stays exactly where it was and keeps colliding; it's simply scaled to
+ * nothing so you see the crate instead of the grey cube. That's the whole trick,
+ * and it's why this can't affect movement, hit registration, the server's view of
+ * the map or the navigation tests: none of them ever look at what's drawn.
+ */
+async function dressMap(world, map, mesh, props, generation) {
+  // Two kinds of tag: `crate`, which cycles through cargo for variety, and
+  // `prop:File`, where the map has asked for one specific model.
+  const wanted = [];
+  map.solids.forEach((s, i) => {
+    if (s.tag === 'crate') wanted.push({ index: i, file: null });
+    else if (s.tag?.startsWith('prop:')) wanted.push({ index: i, file: s.tag.slice(5) });
+    // Explosive barrels are drawn the same way, but kept in a registry so the
+    // one that just blew up can be found again by index.
+    else if (s.tag?.startsWith('barrel:')) wanted.push({ index: i, file: s.tag.slice(7) });
+  });
+  if (wanted.length === 0) return;
+
+  const files = [...new Set([...CRATE_MODELS, ...wanted.map((w) => w.file).filter(Boolean)])];
+  const loaded = new Map(
+    (await Promise.all(files.map((f) => loadModel(PROP_URL(f))))).map((m, i) => [files[i], m]),
+  );
+  // A map rotation happened while these were downloading.
+  if (world.current?.generation !== generation) return;
+
+  const hidden = new THREE.Matrix4().makeScale(0, 0, 0);
+  const box = new THREE.Box3();
+  const size = new THREE.Vector3();
+  const centre = new THREE.Vector3();
+  let placed = 0;
+
+  for (const { index, file } of wanted) {
+    const solid = map.solids[index];
+    const model = loaded.get(file ?? CRATE_MODELS[placed % CRATE_MODELS.length]);
+    if (!model) continue;
+
+    const instance = instantiate(model);
+    box.setFromObject(instance);
+    box.getSize(size);
+    if (size.x <= 0 || size.y <= 0 || size.z <= 0) continue;
+
+    // Fill the box on every axis independently. Crates are boxy, so stretching
+    // one to a slightly non-cubic solid reads as a different crate, not a bug.
+    instance.scale.set(
+      (solid.max[0] - solid.min[0]) / size.x,
+      (solid.max[1] - solid.min[1]) / size.y,
+      (solid.max[2] - solid.min[2]) / size.z,
+    );
+
+    // Re-measure after scaling to find where the model's own origin sits, which
+    // is not necessarily its centre.
+    instance.updateMatrixWorld(true);
+    box.setFromObject(instance).getCenter(centre);
+    instance.position.set(
+      (solid.min[0] + solid.max[0]) / 2 - centre.x,
+      (solid.min[1] + solid.max[1]) / 2 - centre.y,
+      (solid.min[2] + solid.max[2]) / 2 - centre.z,
+    );
+    // A quarter turn here and there so a row of crates isn't a row of clones.
+    instance.rotation.y = (index % 4) * (Math.PI / 2);
+
+    props.add(instance);
+    world.current?.propByIndex?.set(index, instance);
+    mesh.setMatrixAt(index, hidden);
+    placed++;
+  }
+
+  mesh.instanceMatrix.needsUpdate = true;
+}
+
+// Wall dressing.
+//
+// `standoff` is how far the prop's centre sits from the wall face, and `flat`
+// means the model's long side should run along the wall rather than out into the
+// room — the difference between pipes climbing a wall and pipes sticking out of
+// it. Everything here is kept small or flush: these are drawn, not collided
+// with, so anything big enough to read as cover would be a lie.
+// No ExplodingBarrel here on purpose. Barrels are now real, destructible map
+// objects placed by hand (see barrel() in maps/helpers.js). Scattering
+// identical-looking ones that *don't* explode would teach players the wrong
+// lesson about which barrels are worth shooting.
+const GROUND_PROPS = [
+  { file: 'Pipes', height: 4.2, standoff: 0.35, flat: true },
+  { file: 'Barrier_Single', height: 1.1, standoff: 0.9 },
+  { file: 'TrashContainer', height: 1.35, standoff: 0.95, flat: true },
+  { file: 'Pallet', height: 0.9, standoff: 0.35, flat: true },
+  { file: 'CardboardBoxes_1', height: 0.55, standoff: 0.7 },
+  { file: 'TrafficCone', height: 0.6, standoff: 1.1 },
+  { file: 'GasTank', height: 1.6, standoff: 0.6 },
+  { file: 'SackTrench', height: 1.0, standoff: 0.8, flat: true },
+];
+
+// Bolted high up, out of reach of even a jump, so these cost nothing at all.
+const HIGH_PROPS = [
+  { file: 'Sign', height: 1.0, standoff: 0.25, flat: true },
+  { file: 'Pipes', height: 3.0, standoff: 0.3, flat: true },
+];
+
+/** Deterministic 0..1 from two integers, so a map dresses the same every round. */
+function hash01(a, b) {
+  const n = Math.sin(a * 127.1 + b * 311.7) * 43758.5453;
+  return n - Math.floor(n);
+}
+
+/**
+ * Find the map's walls and stand things against them.
+ *
+ * Placement is derived from the geometry rather than authored per map, so every
+ * map — including any added later — gets dressed, and it's seeded by index rather
+ * than randomised so a room doesn't rearrange itself between rounds.
+ */
+async function scatterProps(world, map, props, generation) {
+  const bounds = map.bounds;
+  const centre = [(bounds.min[0] + bounds.max[0]) / 2, (bounds.min[2] + bounds.max[2]) / 2];
+
+  // A wall: tall, long in one horizontal axis, thin in the other.
+  const walls = map.solids.filter((s) => {
+    const w = s.max[0] - s.min[0];
+    const h = s.max[1] - s.min[1];
+    const d = s.max[2] - s.min[2];
+    if (h < 2.5) return false;
+    const thin = Math.min(w, d);
+    const long = Math.max(w, d);
+    return thin <= 2 && long >= 8;
+  });
+  if (walls.length === 0) return;
+
+  const spawns = Object.values(map.spawns ?? {}).flat();
+  const clearOfSpawns = (x, z) =>
+    spawns.every((p) => Math.hypot(p[0] - x, p[2] - z) > 5);
+
+  const files = [...new Set([...GROUND_PROPS, ...HIGH_PROPS].map((p) => p.file))];
+  const loaded = new Map(
+    (await Promise.all(files.map((f) => loadModel(PROP_URL(f))))).map((m, i) => [files[i], m]),
+  );
+  if (world.current?.generation !== generation) return;
+
+  const box = new THREE.Box3();
+  const size = new THREE.Vector3();
+  const centreOf = new THREE.Vector3();
+
+  /**
+   * `alongX` is the wall's direction. A flat prop is turned so its long side
+   * follows the wall; anything else gets a free spin so a row of barrels isn't a
+   * row of identical barrels.
+   */
+  const place = (spec, x, y, z, alongX, spin) => {
+    const model = loaded.get(spec.file);
+    if (!model) return;
+    const instance = instantiate(model);
+
+    box.setFromObject(instance).getSize(size);
+    if (size.y <= 0) return;
+    instance.scale.setScalar(spec.height / size.y);
+
+    if (spec.flat) {
+      const longSideIsX = size.x >= size.z;
+      instance.rotation.y = longSideIsX === alongX ? 0 : Math.PI / 2;
+    } else {
+      instance.rotation.y = spin;
+    }
+
+    // Rotate before measuring, then sit it ON y rather than centred on it.
+    instance.updateMatrixWorld(true);
+    box.setFromObject(instance);
+    box.getCenter(centreOf);
+    instance.position.set(x - centreOf.x, y - box.min.y, z - centreOf.z);
+    props.add(instance);
+  };
+
+  walls.forEach((wall, wi) => {
+    const alongX = wall.max[0] - wall.min[0] >= wall.max[2] - wall.min[2];
+    const long = alongX ? wall.max[0] - wall.min[0] : wall.max[2] - wall.min[2];
+    const steps = Math.floor(long / 7);
+    if (steps < 1) return;
+
+    // Which side of the wall faces the arena.
+    const wallMid = alongX
+      ? (wall.min[2] + wall.max[2]) / 2
+      : (wall.min[0] + wall.max[0]) / 2;
+    const inward = Math.sign((alongX ? centre[1] : centre[0]) - wallMid) || 1;
+    const thin = alongX ? 2 : 0;
+    const face = inward > 0 ? wall.max[thin] : wall.min[thin];
+
+    // Only the perimeter. Interior walls are fighting space, and a barrel in a
+    // doorway is a barrel in the way. Asked of the wall rather than of the prop:
+    // an outer wall can be 2m thick and stand 2m inside the declared bounds, so
+    // measuring from the prop rejects the whole perimeter.
+    const outerFace = inward > 0 ? wall.min[thin] : wall.max[thin];
+    const toBounds = Math.min(
+      Math.abs(outerFace - bounds.min[thin]),
+      Math.abs(outerFace - bounds.max[thin]),
+    );
+    if (toBounds > 3) return;
+
+    for (let i = 0; i < steps; i++) {
+      const t = (i + 0.5) / steps;
+      const alongPos = (alongX ? wall.min[0] : wall.min[2]) + t * long;
+      const r = hash01(wi, i);
+
+      // Leave gaps: a wall lined end to end with barrels looks authored by a
+      // script, which it is, and shouldn't look it.
+      if (r < 0.35) continue;
+
+      const spec = GROUND_PROPS[Math.floor(hash01(wi, i + 91) * GROUND_PROPS.length)];
+      const at = (offset) => ({
+        x: alongX ? alongPos : face + inward * offset,
+        z: alongX ? face + inward * offset : alongPos,
+      });
+
+      const ground = at(spec.standoff);
+      if (!clearOfSpawns(ground.x, ground.z)) continue;
+
+      // The wall's own base is the floor it stands on. The map's lower bound is
+      // not: on maps with a lethal drop it's the bottom of the void, which put
+      // every prop eleven metres under the level.
+      const groundY = wall.min[1];
+      const wallTop = wall.max[1];
+
+      place(spec, ground.x, groundY, ground.z, alongX, hash01(wi, i + 53) * Math.PI * 2);
+
+      // And something high on the same stretch, if the wall is tall enough for it
+      // to be genuinely out of reach.
+      if (wallTop - groundY > 6 && hash01(wi, i + 7) > 0.55) {
+        const high = HIGH_PROPS[Math.floor(hash01(wi, i + 29) * HIGH_PROPS.length)];
+        const up = at(high.standoff);
+        place(high, up.x, groundY + 3.6 + hash01(wi, i + 3) * 1.2, up.z, alongX, 0);
+      }
+    }
+  });
+}
+
+function disposeGroup(group) {
+  group.traverse((o) => {
+    if (!o.isMesh && !o.isSkinnedMesh) return;
+    for (const m of Array.isArray(o.material) ? o.material : [o.material]) m?.dispose();
+  });
+}
+
+export function unloadMap(world) {
+  // The sky is per-map (it's built from the map's palette) and lives outside
+  // world.current, so it has to be released even when there's no map loaded.
+  if (world.sky) {
+    world.scene.remove(world.sky);
+    disposeSky(world.sky);
+    world.sky = null;
+  }
+  if (!world.current) return;
+  const { mesh, props, surfaces, scenery } = world.current;
+  world.scene.remove(mesh);
+  mesh.material.map?.dispose();
+  mesh.material.dispose();
+  mesh.dispose();
+  if (props) {
+    world.scene.remove(props);
+    // Geometry belongs to the cached template and is reused by the next map.
+    disposeGroup(props);
+  }
+  if (surfaces) {
+    world.scene.remove(surfaces);
+    // Materials and their cloned textures are per-map; the source textures the
+    // clones came from stay cached for the next one.
+    for (const child of surfaces.children) {
+      child.material.map?.dispose();
+      child.material.dispose();
+    }
+  }
+  if (scenery) {
+    world.scene.remove(scenery);
+    disposeIslandScenery(scenery);
+  }
+  world.current = null;
+}
+
+/**
+ * Turn a barrel into a burnt-out husk.
+ *
+ * It stays where it is and keeps colliding, because the collision box lives in
+ * the shared, cached map data that every room on the server reads — mutating it
+ * for one match would silently change the level for all of them. A spent barrel
+ * being cover you can still hide behind is also just fine: it reads as debris,
+ * and the important thing (it can't be detonated again) is server state.
+ */
+export function scorchBarrel(world, index) {
+  const instance = world.current?.propByIndex?.get(index);
+  if (!instance || instance.userData.scorched) return;
+  instance.userData.scorched = true;
+
+  instance.traverse((node) => {
+    if (!node.isMesh && !node.isSkinnedMesh) return;
+    const mats = Array.isArray(node.material) ? node.material : [node.material];
+    // Cloned before recolouring: the loader shares materials between instances,
+    // so recolouring in place would blacken every barrel on the map at once.
+    const replaced = mats.map((m) => {
+      const c = m.clone();
+      c.color.multiplyScalar(0.16);
+      return c;
+    });
+    node.material = Array.isArray(node.material) ? replaced : replaced[0];
+  });
+
+  // Squat down a little, as if it's been blown open.
+  instance.scale.y *= 0.72;
+}
+
+export function createCamera(fov) {
+  // The world never needs to draw closer than the player's collision radius.
+  // Doubling the near plane materially improves depth precision across a 540m
+  // island, especially while looking down from the 92m battle-royale drop.
+  return new THREE.PerspectiveCamera(fov, window.innerWidth / window.innerHeight, 0.1, VIEW_DISTANCE);
+}
+
+export function createRenderer(canvas) {
+  const renderer = new THREE.WebGLRenderer({
+    canvas,
+    antialias: true,
+    powerPreference: 'high-performance',
+  });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  return renderer;
+}
