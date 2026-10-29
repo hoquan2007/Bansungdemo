@@ -13,6 +13,7 @@ import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader.js';
 import { MTLLoader } from 'three/examples/jsm/loaders/MTLLoader.js';
+import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader.js';
 import { clone as cloneSkinned } from 'three/examples/jsm/utils/SkeletonUtils.js';
 
 // GLTFLoader is safe to share: nothing here configures it per-call. OBJLoader is
@@ -48,14 +49,16 @@ function toLambert(material) {
   return lambert;
 }
 
-function prepare(scene) {
+function prepare(scene, preservePbr = false) {
   scene.traverse((node) => {
     if (!node.isMesh && !node.isSkinnedMesh) return;
     node.castShadow = true;
     node.receiveShadow = true;
-    node.material = Array.isArray(node.material)
-      ? node.material.map(toLambert)
-      : toLambert(node.material);
+    if (!preservePbr) {
+      node.material = Array.isArray(node.material)
+        ? node.material.map(toLambert)
+        : toLambert(node.material);
+    }
   });
   return scene;
 }
@@ -112,18 +115,44 @@ async function loadObjModel(url) {
   return { scene: prepare(object), animations: [] };
 }
 
+/** Detailed CC0 M4A1 FBX with optimized PBR maps; assets load on demand. */
+async function loadFbxModel(url) {
+  const scene = await new FBXLoader().loadAsync(url);
+  const stem = url.slice(0, -4);
+  const textures = await Promise.all(
+    ['Base_Color', 'Metallic', 'Normal', 'Roughness']
+      .map((kind) => new THREE.TextureLoader().loadAsync(`${stem}_${kind}.webp`)),
+  );
+  const [map, metalnessMap, normalMap, roughnessMap] = textures;
+  map.colorSpace = THREE.SRGBColorSpace;
+  // FBX UVs are already in the orientation expected by TextureLoader.
+  // The source metalness texture averages ~84% metallic. Its reflective detail
+  // needs the viewmodel's separate environment map; without one, it renders black.
+  const material = new THREE.MeshStandardMaterial({
+    map, metalnessMap, normalMap, roughnessMap,
+    color: 0xffffff, metalness: 0.5, roughness: 0.95, envMapIntensity: 0.7,
+  });
+  scene.traverse((node) => {
+    if (!node.isMesh) return;
+    node.material = material.clone();
+  });
+  return { scene: prepare(scene, true), animations: scene.animations ?? [] };
+}
+
 /**
  * Load a model, once. Resolves to null rather than rejecting — callers are
  * expected to carry on without it, so a failure isn't exceptional.
  *
- * Handles both .gltf and .obj; the extension decides.
+ * Handles glTF, OBJ and the textured M4A1 FBX; the extension decides.
  */
 export function loadModel(url) {
   if (cache.has(url)) return cache.get(url);
 
   const load = /\.obj$/i.test(url)
     ? loadObjModel(url)
-    : loader.loadAsync(url).then((gltf) => ({
+    : /\.fbx$/i.test(url)
+      ? loadFbxModel(url)
+      : loader.loadAsync(url).then((gltf) => ({
       scene: prepare(gltf.scene),
       animations: gltf.animations ?? [],
     }));

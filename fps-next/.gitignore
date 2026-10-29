@@ -7,3 +7,6 @@ dist
 # Source asset packs (CC0, Quaternius). Huge and not needed to build — only the
 # curated subset in client/public/models is committed.
 Assets/
+
+# Working copies of upstream raw gun recordings and model archives.
+.asset-staging/

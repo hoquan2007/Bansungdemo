@@ -8,6 +8,7 @@
 // versions live in, so it works either way.
 
 import * as THREE from 'three';
+import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 import { getWeapon, ALL_WEAPON_IDS } from '@shared/weapons.js';
 import { loadModel, instantiate } from './models.js';
 
@@ -21,6 +22,7 @@ import { loadModel, instantiate } from './models.js';
 const MODEL_SOURCES = {
   gltf: { dir: 'models/guns', ext: 'gltf', forward: '-x' },
   obj: { dir: 'models/guns-obj', ext: 'obj', forward: '+x' },
+  fbx: { dir: 'models/guns-real', ext: 'fbx', forward: '-z' },
 };
 
 /**
@@ -241,8 +243,15 @@ const BASE_PITCH = 0.02;
 //   - it needs its own lighting, not the map's (a gun in shadow reads as a bug)
 const VIEW_FOV = 50;
 
-export function createWeaponView() {
+export function createWeaponView(renderer) {
   const scene = new THREE.Scene();
+  // Dedicated HDR-like reflection lighting reveals the metal surfaces of the
+  // detailed gun while the map continues using its inexpensive world lighting.
+  const room = new RoomEnvironment();
+  const pmrem = new THREE.PMREMGenerator(renderer);
+  scene.environment = pmrem.fromScene(room, 0.05).texture;
+  room.dispose();
+  pmrem.dispose();
   const camera = new THREE.PerspectiveCamera(
     VIEW_FOV,
     window.innerWidth / window.innerHeight,
@@ -252,15 +261,15 @@ export function createWeaponView() {
   scene.add(camera);
 
   // Fixed studio lighting so the gun reads clearly on every map.
-  scene.add(new THREE.HemisphereLight(0xecf5f2, 0x292b31, 0.6));
+  scene.add(new THREE.HemisphereLight(0xecf5f2, 0x292b31, 0.9));
   // Flat dark MTL colours need a little frontal fill. Without it, faces turned
   // away from the key light collapse to black even though their material colour
   // loaded correctly.
-  scene.add(new THREE.AmbientLight(0xffffff, 0.2));
-  const key = new THREE.DirectionalLight(0xffefd0, 1.05);
+  scene.add(new THREE.AmbientLight(0xffffff, 0.3));
+  const key = new THREE.DirectionalLight(0xffefd0, 1.45);
   key.position.set(-0.6, 1, 0.75);
   scene.add(key);
-  const rim = new THREE.DirectionalLight(0xaed8ff, 0.28);
+  const rim = new THREE.DirectionalLight(0xaed8ff, 0.55);
   rim.position.set(1, -0.3, -0.6);
   scene.add(rim);
 
@@ -290,16 +299,32 @@ export function createWeaponView() {
       }
     }
 
-    // Muzzle flash: a cheap additive blob, hidden until a shot goes off.
-    const flash = new THREE.Mesh(
-      new THREE.SphereGeometry(0.07, 8, 6),
+    // A tight inner flash plus an elongated burst, visible for only a frame or two.
+    const flash = new THREE.Group();
+    const innerFlash = new THREE.Mesh(
+      new THREE.SphereGeometry(0.043, 8, 6),
       new THREE.MeshBasicMaterial({
-        color: 0xffd27a,
+        color: 0xfff5b8,
         transparent: true,
         blending: THREE.AdditiveBlending,
         depthWrite: false,
       }),
     );
+    flash.add(innerFlash);
+    const flare = new THREE.Mesh(
+      new THREE.ConeGeometry(0.063, 0.24, 5),
+      new THREE.MeshBasicMaterial({
+        color: 0xffa735,
+        transparent: true,
+        opacity: 0.78,
+        blending: THREE.AdditiveBlending,
+        depthWrite: false,
+        side: THREE.DoubleSide,
+      }),
+    );
+    flare.rotation.x = -Math.PI / 2;
+    flare.position.z = -0.095;
+    flash.add(flare);
     flash.position.set(...muzzleFor(id));
     flash.visible = false;
     group.add(flash);

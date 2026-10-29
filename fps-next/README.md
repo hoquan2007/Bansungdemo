@@ -299,8 +299,11 @@ lets us skip a physics engine entirely — collision is swept AABB against a box
 list. Visual models and textures load separately and fall back to built-in
 procedural shapes if an asset is unavailable.
 
-**All sound is synthesised at runtime** with WebAudio — gunshots are a filtered
-noise burst plus a low sine thump. No audio files, no licences.
+**Gunfire uses real CC0 field recordings** (five small WAV files, selected by
+weapon type) decoded into WebAudio on entering the game. Gunshots fall back to
+filtered-noise synthesis if samples cannot load. Local shots bypass the
+remote-voice limiter, and audio resumes on player input after tab switches.
+See [gun audio and model sources](docs/GUN_AUDIO_ASSETS.md) for exact credits.
 
 **The viewmodel renders in its own scene** with its own 50° camera. A gun held
 40cm from your face through a 110° world FOV looks like a canoe, and it would

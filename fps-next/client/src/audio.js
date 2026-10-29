@@ -1,15 +1,38 @@
-// All sound is synthesised at runtime with WebAudio. No files, no licences,
-// nothing to download, and a gunshot is only a handful of numbers anyway:
-// a burst of filtered noise with a fast decay, plus a low sine thump for body.
-//
-// Distance attenuation and stereo panning are applied for other players' shots,
-// which is most of what "positional audio" needs to be in a game this size.
+// Gunfire uses compact CC0 field recordings, decoded once into WebAudio buffers.
+// The synthesised version remains available while samples load or on failure.
+// Remote gunfire is distance-attenuated and panned; local gunfire has priority.
 
 import { settings } from './settings.js';
+import { createShotVoiceLimiter } from './shotVoices.js';
 
 let ctx = null;
 let master = null;
 let noiseBuffer = null;
+const sampleBuffers = new Map();
+const SAMPLE_NAMES = ['pistol', 'smg', 'rifle', 'shotgun', 'sniper'];
+const SHOT_SAMPLE_FOR_ID = {
+  pistol: 'pistol', revolver: 'pistol', machinepistol: 'pistol',
+  smg: 'smg', smg_compact: 'smg', smg_heavy: 'smg',
+  rifle: 'rifle', carbine: 'rifle', bullpup: 'rifle', lmg: 'rifle',
+  shotgun: 'shotgun', sawnoff: 'shotgun', autoshotgun: 'shotgun',
+  sniper: 'sniper', dmr: 'sniper', antimateriel: 'sniper',
+};
+const allowShotVoice = createShotVoiceLimiter();
+let pendingResumeShot = false;
+
+async function preloadShotSamples(context) {
+  const base = import.meta.env.BASE_URL ?? '/';
+  await Promise.all(SAMPLE_NAMES.map(async (name) => {
+    try {
+      const response = await fetch(`${base}audio/guns/${name}.wav`);
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      const buffer = await context.decodeAudioData(await response.arrayBuffer());
+      sampleBuffers.set(name, buffer);
+    } catch (err) {
+      console.warn(`[audio] ${name} sample unavailable; using synthesised gunshot`, err);
+    }
+  }));
+}
 
 export function initAudio() {
   if (ctx) return ctx;
@@ -26,12 +49,18 @@ export function initAudio() {
   const data = noiseBuffer.getChannelData(0);
   for (let i = 0; i < data.length; i++) data[i] = Math.random() * 2 - 1;
 
+  void preloadShotSamples(ctx);
+
   return ctx;
 }
 
-/** Browsers suspend the context until a user gesture. Call this on any click. */
+/** Browsers may suspend or interrupt audio until another user gesture. */
 export function resumeAudio() {
-  if (ctx?.state === 'suspended') ctx.resume();
+  if (ctx && ctx.state !== 'running') {
+    // Resume can reject when outside a gesture; a later gesture retries.
+    return ctx.resume().catch(() => {});
+  }
+  return Promise.resolve();
 }
 
 export function setVolume(v) {
@@ -62,36 +91,33 @@ function noiseSource() {
 // — still the far side of most maps.
 const AUDIBLE_FLOOR = 0.012;
 
-// Concurrency budget. Sixteen players on automatics can send many shots a
-// second, and each one creates and tears down a small graph; past a certain rate
-// the extra voices are inaudible mush that costs real CPU on a weak laptop. Shots
-// are dropped rather than queued, because a late gunshot is worse than none.
-const VOICE_WINDOW_S = 0.05;
-const VOICE_BUDGET = 12;
-let voiceWindowStart = 0;
-let voicesThisWindow = 0;
-
-function claimVoice(t) {
-  if (t - voiceWindowStart > VOICE_WINDOW_S) {
-    voiceWindowStart = t;
-    voicesThisWindow = 0;
-  }
-  if (voicesThisWindow >= VOICE_BUDGET) return false;
-  voicesThisWindow += 1;
-  return true;
-}
-
 /**
  * A gunshot. `audio` comes from the weapon table: { kind, freq, decay, gain }.
- * `pan` is -1..1 and `distance` in metres; both default to "it's your own gun".
+ * `local` reserves immediate playback for the player's own weapon.
  */
-export function playShot(audioSpec, { pan = 0, distance = 0 } = {}) {
+export function playShot(audioSpec, { pan = 0, distance = 0, local = true, weaponId = '' } = {}) {
   if (!ctx) return;
+  if (ctx.state !== 'running') {
+    // Preserve one local trigger while the AudioContext wakes up. Previously
+    // the shot that resumed a suspended tab was silently discarded.
+    if (local && !pendingResumeShot) {
+      pendingResumeShot = true;
+      void resumeAudio().then(() => {
+        pendingResumeShot = false;
+        if (ctx?.state === 'running') {
+          playShot(audioSpec, { pan, distance, local, weaponId });
+        }
+      });
+    } else {
+      void resumeAudio();
+    }
+    return;
+  }
   const t = now();
   const atten = 1 / (1 + distance * 0.06);
   const gain = audioSpec.gain * atten;
   if (gain < AUDIBLE_FLOOR) return;
-  if (!claimVoice(t)) return;
+  if (!allowShotVoice(t, local)) return;
 
   const out = ctx.createGain();
   out.gain.value = 1;
@@ -99,6 +125,32 @@ export function playShot(audioSpec, { pan = 0, distance = 0 } = {}) {
   panner.pan.value = Math.max(-1, Math.min(1, pan));
   out.connect(panner);
   panner.connect(master);
+
+  // Field recordings sound less synthetic, cost fewer nodes than generated
+  // noise and are ready to overlap in bursts (no HTMLAudioElement voice limit).
+  const sample = sampleBuffers.get(SHOT_SAMPLE_FOR_ID[weaponId]);
+  if (sample) {
+    const src = ctx.createBufferSource();
+    src.buffer = sample;
+    src.playbackRate.value = 0.965 + Math.random() * 0.07;
+    const filter = ctx.createBiquadFilter();
+    filter.type = 'lowpass';
+    filter.frequency.value = Math.max(850, 11000 - distance * 95);
+    const level = ctx.createGain();
+    level.gain.value = Math.min(1, gain * 1.25);
+    src.connect(filter);
+    filter.connect(level);
+    level.connect(out);
+    src.onended = () => {
+      src.disconnect();
+      filter.disconnect();
+      level.disconnect();
+      out.disconnect();
+      panner.disconnect();
+    };
+    src.start(t);
+    return;
+  }
 
   // ---- crack: filtered noise burst ----
   const noise = noiseSource();

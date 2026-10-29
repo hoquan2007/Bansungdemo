@@ -119,7 +119,7 @@ export const WEAPONS = {
     id: 'rifle',
     name: 'Assault Rifle',
     type: 'rifle',
-    model: 'gltf:AK',
+    model: 'fbx:M4A1',
     slot: 5,
     auto: true,
     damage: 25,

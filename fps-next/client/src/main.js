@@ -82,7 +82,7 @@ const world = createWorld(renderer);
 const camera = createCamera(settings.fov);
 
 const player = createLocalPlayer();
-const weaponView = createWeaponView();
+const weaponView = createWeaponView(renderer);
 const tracers = createTracers(world.scene);
 const impacts = createImpacts(world.scene);
 const explosions = createExplosions(world.scene);
@@ -1474,7 +1474,7 @@ net.on(connection, S2C.SHOTS, (msg) => {
 
   const eye = eyePosition(player);
   const { pan, distance } = audio.spatialise(origin, eye, player.yaw);
-  audio.playShot(weapon.audio, { pan, distance });
+  audio.playShot(weapon.audio, { pan, distance, local: false, weaponId: weapon.id });
 
   // Radar mark wherever an enemy fired. Teammates don't give themselves away —
   // otherwise a full lobby of friendlies floods the dial and hides the one mark
@@ -1726,6 +1726,14 @@ onLockChange((locked) => {
   }
 });
 
+// Some browsers suspend WebAudio when the tab is backgrounded. Re-unlock it on
+// actual input gestures, including returning to a paused or controller game.
+document.addEventListener('pointerdown', () => audio.resumeAudio(), { passive: true });
+window.addEventListener('keydown', () => audio.resumeAudio(), { passive: true });
+document.addEventListener('visibilitychange', () => {
+  if (!document.hidden) audio.resumeAudio();
+});
+
 window.addEventListener('keydown', (e) => {
   // Don't hijack keys while a select or a text field has focus.
   const typing = /^(INPUT|SELECT|TEXTAREA)$/.test(document.activeElement?.tagName ?? '');
@@ -1783,7 +1791,7 @@ function handleFiring(now, worldStates) {
 
   const weapon = shot.weapon;
   weaponViewFire(weaponView, now, weapon);
-  audio.playShot(weapon.audio);
+  audio.playShot(weapon.audio, { local: true, weaponId: weapon.id });
 
   muzzleWorldPosition(weaponView, camera, tmpMuzzle);
   const from = [tmpMuzzle.x, tmpMuzzle.y, tmpMuzzle.z];
