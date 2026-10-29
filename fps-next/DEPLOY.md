@@ -16,6 +16,8 @@ Render Blueprint for this layout. It selects the reviewed
 server process. Do not create another service from `fps-next/render.yaml` when
 using the monorepo Blueprint.
 
+Quick-start: [Open the Render one-click Blueprint for this exact branch](https://render.com/deploy?repo=https://github.com/hoquan2007/Bansungdemo/tree/codex/astrastrike-inspired-menu). Sign in and confirm the service in your own Render account. The link only opens the setup flow; it does not deploy by itself.
+
 1. In the [Render dashboard](https://dashboard.render.com/), connect the
    `hoquan2007/Bansungdemo` repository, then choose **New > Blueprint**.
    Select the `codex/astrastrike-inspired-menu` branch and the root

@@ -2,6 +2,8 @@
 
 > **Hai phiên bản trong cùng repository:** Bản Babylon.js + Colyseus ở thư mục gốc là nguyên mẫu ban đầu. Phiên bản đang tiếp tục phát triển là [fps-next](fps-next/README.md), dựa trên Three.js + WebSocket, có Crown Island 540 × 540 m, tối đa 16 người chia 2–4 đội và [lộ trình nâng cấp](fps-next/docs/DEVELOPMENT_ROADMAP.md). Để chạy phiên bản mới: `cd fps-next`, `npm install`, `npm run build`, `npm start` rồi mở `http://localhost:3000`.
 
+**Triển khai bản Crown / Strike mới để chơi qua Internet:** [Tạo máy chủ Render từ nhánh đang phát triển](https://render.com/deploy?repo=https://github.com/hoquan2007/Bansungdemo/tree/codex/astrastrike-inspired-menu), sau đó cấu hình `VITE_WS_URL` cho dự án Vercel `fffake` theo [hướng dẫn kết nối và kiểm thử](fps-next/DEPLOY.md). Bạn cần đăng nhập Render và xác nhận tạo dịch vụ trong tài khoản của mình; đường dẫn này không tự tạo máy chủ.
+
 Game FPS 3D nhiều người chơi trên trình duyệt, tạo phòng riêng với tối đa 16 người thuộc 2–4 đội đối kháng. Client dùng Babylon.js; server quản lý trận dùng Colyseus.
 
 ## Chạy thử trên máy
@@ -75,7 +77,7 @@ Bansungdemo/
 
 ## Deploy lên Vercel (Client) + Render/Railway (Server)
 
-**Quan trọng**: Vercel Serverless Functions **không hỗ trợ WebSocket persistent** mà Colyseus cần. Vì vậy tách làm 2 phần:
+**Quan trọng**: Vercel Functions đã hỗ trợ WebSocket, nhưng kiến trúc Colyseus hiện tại lưu phòng và trận trong bộ nhớ của một tiến trình liên tục. Do đó, với mã nguồn đang có, frontend Vercel vẫn cần một backend game chạy lâu dài trên Render/Railway hoặc máy chủ tương đương:
 
 ### 1. Client lên Vercel (static)
 

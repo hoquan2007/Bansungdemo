@@ -9,7 +9,7 @@
 
 import { CLIENT_SEND_HZ, INTERP_DELAY_MS } from '@shared/constants.js';
 import { C2S, S2C, decode, decodeSnapshot, encode } from '@shared/protocol.js';
-import { resolveSocketUrl } from './wsUrl.js';
+import { resolveSocketUrl, socketOpenTimeoutMs } from './wsUrl.js';
 
 const SEND_INTERVAL = 1000 / CLIENT_SEND_HZ;
 const BUFFER_LIMIT = 24;
@@ -54,13 +54,14 @@ export function connect(net, { name } = {}) {
     if (net.ws && net.connected) return resolve();
 
     net.intentionalClose = false;
-    const ws = new WebSocket(socketUrl());
+    const url = socketUrl();
+    const ws = new WebSocket(url);
     net.ws = ws;
 
     const openTimeout = setTimeout(() => {
       ws.close();
       reject(new Error('Connection timed out.'));
-    }, 8000);
+    }, socketOpenTimeoutMs(url));
 
     ws.addEventListener('open', () => {
       clearTimeout(openTimeout);

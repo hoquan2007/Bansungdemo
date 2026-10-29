@@ -575,6 +575,10 @@ function joinByCode() {
 async function enterMultiplayer(action, payload) {
   clearError();
   setMenuBusy(true);
+  const serverState = document.getElementById('server-state');
+  if (serverState && !connection.connected) {
+    serverState.textContent = 'CONNECTING TO GAME SERVER…';
+  }
   audio.initAudio();
   audio.resumeAudio();
   const name = ensureNickname();
