@@ -100,6 +100,8 @@ test('real WebSocket server admits 16 human players across 4 teams, rejects the 
   assert.equal(joined.mapId, 'island');
   assert.ok(code);
 
+  host.send(C2S.LOBBY_SET, { mapId: 'highlands' });
+  await host.wait((m) => m.m === S2C.LOBBY && m.mapId === 'highlands');
   host.send(C2S.LOBBY_SET, { teamCount: 4 });
   await host.wait((m) => m.m === S2C.LOBBY && m.teamCount === 4);
   host.send(C2S.SET_BOTS, { n: 15 });
@@ -119,6 +121,7 @@ test('real WebSocket server admits 16 human players across 4 teams, rejects the 
     [team, full.roster.filter((player) => player.team === team).length]));
   assert.deepEqual(teams, { A: 4, B: 4, C: 4, D: 4 });
   assert.equal(full.capacity, 16);
+  assert.equal(full.mapId, 'highlands');
 
   const overflow = await connect(port);
   clients.push(overflow);

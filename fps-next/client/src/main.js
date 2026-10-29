@@ -9,7 +9,7 @@ import {
   PHYSICS_DT, MIN_FOV, MAX_FOV, TEAMS, RESPAWN_DELAY_MS, MAX_PLAYERS, BARREL_RADIUS,
   BR_LOOT_RADIUS, EMOTE_COOLDOWN_MS, PITCH_LIMIT, PLAYER_HEIGHT, VEHICLE_USE_RADIUS,
 } from '@shared/constants.js';
-import { getMap, mapList } from '@shared/maps/index.js';
+import { getMap, mapList, LARGE_TEAM_MAPS } from '@shared/maps/index.js';
 import {
   ALL_WEAPON_IDS, getWeapon, PRIMARY_IDS, getPrimary,
   WEAPON_TYPES, weaponsOfType,
@@ -1088,8 +1088,8 @@ function renderLobby() {
   mapSelect.classList.toggle('hidden', fixedMap);
   // Compact arenas cannot safely accommodate 3/4 independent spawn sectors.
   for (const opt of mapSelect.options) {
-    opt.disabled = (opt.value === 'island' && m.mode !== 'tdm') ||
-      (opt.value !== 'island' && m.mode === 'tdm' && (m.teamCount ?? 2) > 2);
+    opt.disabled = (LARGE_TEAM_MAPS.includes(opt.value) && m.mode !== 'tdm') ||
+      (!LARGE_TEAM_MAPS.includes(opt.value) && m.mode === 'tdm' && (m.teamCount ?? 2) > 2);
   }
 
   const difficultyHint = {

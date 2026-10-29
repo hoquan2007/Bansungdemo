@@ -20,7 +20,7 @@ import {
 import {
   S2C, PHASE, FLAG, MODES, EMOTES, encode, encodeSnapshot, sanitiseChat,
 } from '../shared/protocol.js';
-import { getMap, nextMap, ROTATION } from '../shared/maps/index.js';
+import { getMap, nextMap, ROTATION, LARGE_TEAM_MAPS } from '../shared/maps/index.js';
 import {
   PRIMARY_IDS, getPrimary, getWeapon, damageAtDistance,
 } from '../shared/weapons.js';
@@ -392,7 +392,7 @@ export class Room {
       mapId: this.mapId,
       // The results screen names the map you're about to play.
       nextMapId: this.phase === PHASE.SCOREBOARD
-        ? (modes.isBattleRoyale(this.mode) || (modes.isTeamMode(this.mode) && this.mapId === 'island') ? 'island' : nextMap(this.mapId))
+        ? (modes.isBattleRoyale(this.mode) ? 'island' : (this.mode === 'tdm' && LARGE_TEAM_MAPS.includes(this.mapId) ? this.mapId : nextMap(this.mapId)))
         : null,
       teamScores: this.teamScores,
       roster: this.roster(),
@@ -534,8 +534,8 @@ export class Room {
     if (this.mode === 'tdm' && Number.isInteger(msg?.teamCount) &&
         msg.teamCount >= 2 && msg.teamCount <= 4 && msg.teamCount !== this.teamCount) {
       this.teamCount = msg.teamCount;
-      // The island is the only authored four-team map. Switch before reshuffling.
-      if (this.teamCount > 2 && this.mapId !== 'island') {
+      // Large battlefields have four authored team sectors. Switch before reshuffling.
+      if (this.teamCount > 2 && !LARGE_TEAM_MAPS.includes(this.mapId)) {
         this.mapId = 'island';
         this.map = getMap(this.mapId);
       }
@@ -549,8 +549,8 @@ export class Room {
       !modes.isBattleRoyale(this.mode) &&
       typeof msg?.mapId === 'string' &&
       msg.mapId !== this.mapId &&
-      (ROTATION.includes(msg.mapId) || (this.mode === 'tdm' && msg.mapId === 'island')) &&
-      (this.mode !== 'tdm' || this.teamCount <= 2 || msg.mapId === 'island') &&
+      (ROTATION.includes(msg.mapId) || (this.mode === 'tdm' && LARGE_TEAM_MAPS.includes(msg.mapId))) &&
+      (this.mode !== 'tdm' || this.teamCount <= 2 || LARGE_TEAM_MAPS.includes(msg.mapId)) &&
       this.humanCount() <= modes.capacityFor(this.mode, msg.mapId)
     ) {
       this.mapId = msg.mapId;
@@ -1238,10 +1238,11 @@ export class Room {
   }
 
   rotateMap() {
-    // Battle royale always plays the island; the rotation is for the arena modes.
+    // Battle royale stays on its dedicated island; large TDM maps persist across rounds.
     if (modes.isBattleRoyale(this.mode) ||
-        (this.mode === 'tdm' && (this.mapId === 'island' || this.teamCount > 2 || this.players.size > ARENA_MAX_PLAYERS))) {
-      this.mapId = 'island';
+        (this.mode === 'tdm' && (LARGE_TEAM_MAPS.includes(this.mapId) || this.teamCount > 2 || this.players.size > ARENA_MAX_PLAYERS))) {
+      this.mapId = modes.isBattleRoyale(this.mode) ? 'island' :
+        (LARGE_TEAM_MAPS.includes(this.mapId) ? this.mapId : 'island');
       this.map = getMap(this.mapId);
       this.resetBarrels();
       this.resetPickups();

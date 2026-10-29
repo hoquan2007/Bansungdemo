@@ -101,6 +101,43 @@ test('sixteen human players split into four independent squads of four', (t) => 
   assert.equal(room.phase, PHASE.COUNTDOWN);
 });
 
+test('host can choose Highlands for 16 humans in four teams and keep it across rounds', (t) => {
+  const { room, players } = makeRoom(t, 16);
+  room.handleLobbySet(players[0], { mapId: 'highlands', teamCount: 4 });
+  assert.equal(room.mapId, 'highlands');
+  assert.equal(room.capacity(), 16);
+  assert.equal(room.teamCount, 4);
+  assert.deepEqual(['A', 'B', 'C', 'D'].map((team) =>
+    players.filter((p) => p.team === team).length), [4, 4, 4, 4]);
+  for (const team of ['A', 'B', 'C', 'D']) {
+    assert.ok(room.map.spawns[team].length >= 4, `${team} must have four spawn slots`);
+  }
+  assert.equal(room.isFull(), true);
+  assert.equal(room.addPlayer({ id: 'overflow', name: 'Overflow', ws: fakeSocket() }), null);
+  room.handleLobbySet(players[0], { mapId: 'warehouse' });
+  assert.equal(room.mapId, 'highlands', 'small arenas cannot host 16 humans or four teams');
+  room.handleLobbySet(players[1], { mapId: 'island' });
+  assert.equal(room.mapId, 'highlands', 'only the host can change maps');
+  readyAll(room, players);
+  room.beginRound();
+  room.endRound({ reason: 'timeup', winnerTeam: 'A' });
+  assert.equal(room.phase, PHASE.SCOREBOARD);
+  assert.equal(room.phasePayload().nextMapId, 'highlands');
+  expirePhase(room);
+  assert.equal(room.mapId, 'highlands');
+});
+
+test('battle royale remains island-only after the host selects Highlands', (t) => {
+  const { room, players } = makeRoom(t, 3);
+  room.handleLobbySet(players[0], { mapId: 'highlands' });
+  assert.equal(room.mapId, 'highlands');
+  room.handleLobbySet(players[0], { mode: 'br', mapId: 'highlands' });
+  assert.equal(room.mode, 'br');
+  assert.equal(room.mapId, 'island');
+  room.handleLobbySet(players[0], { mapId: 'highlands' });
+  assert.equal(room.mapId, 'island');
+});
+
 test('sniper duel admits two humans, locks both to sniper and starts at two ready', (t) => {
   const { room, players } = makeRoom(t, 2, 'duel');
   assert.equal(room.capacity(), 2);

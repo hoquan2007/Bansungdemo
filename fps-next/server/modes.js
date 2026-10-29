@@ -4,6 +4,7 @@
 
 import { TEAMS, TEAM_IDS, SCORE_LIMIT, MAX_PLAYERS, ARENA_MAX_PLAYERS, BR_MAX_PLAYERS } from '../shared/constants.js';
 import { PRIMARY_IDS, GUNGAME_LADDER, loadoutForPrimary } from '../shared/weapons.js';
+import { LARGE_TEAM_MAPS } from '../shared/maps/index.js';
 
 export function isTeamMode(mode) {
   return mode === 'tdm' || mode === 'duel' || mode === 'squads';
@@ -30,7 +31,7 @@ export function capacityFor(mode, mapId = 'island') {
   if (mode === 'duel') return 2;
   if (mode === 'squads') return 4;
   if (isBattleRoyale(mode)) return BR_MAX_PLAYERS;
-  return isTeamMode(mode) && mapId === 'island' ? MAX_PLAYERS : ARENA_MAX_PLAYERS;
+  return isTeamMode(mode) && LARGE_TEAM_MAPS.includes(mapId) ? MAX_PLAYERS : ARENA_MAX_PLAYERS;
 }
 
 export function activeTeams(room) {
@@ -44,8 +45,8 @@ export function emptyScores(room) {
 /** Battle royale is played on one purpose-built map, never the rotation. */
 export function mapForMode(mode, current) {
   if (isBattleRoyale(mode)) return 'island';
-  if (mode === 'tdm') return 'island';
-  return current === 'island' ? 'warehouse' : current;
+  if (mode === 'tdm') return LARGE_TEAM_MAPS.includes(current) ? current : 'island';
+  return LARGE_TEAM_MAPS.includes(current) ? 'warehouse' : current;
 }
 
 /**
