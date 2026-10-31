@@ -4,10 +4,13 @@
 // each cleans up after itself, because map rotation means this runs repeatedly
 // across a long session.
 
+import './installApp.js';
 import * as THREE from 'three';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import {
   PHYSICS_DT, MIN_FOV, MAX_FOV, TEAMS, RESPAWN_DELAY_MS, MAX_PLAYERS, BARREL_RADIUS,
   BR_LOOT_RADIUS, EMOTE_COOLDOWN_MS, PITCH_LIMIT, PLAYER_HEIGHT, VEHICLE_USE_RADIUS,
+  RETAKE_DEFUSE_RADIUS,
 } from '@shared/constants.js';
 import { getMap, mapList, LARGE_TEAM_MAPS } from '@shared/maps/index.js';
 import {
@@ -24,7 +27,7 @@ import {
 import {
   initInput, input, requestLock, exitLock, onLockChange,
   consumePressed, consumeLook, clearPressed, clearAds,
-  sprintHeld, firingHeld, scoreboardHeld,
+  sprintHeld, firingHeld, scoreboardHeld, moveAxes, jumpHeld,
 } from './input.js';
 import {
   pollGamepads, pollGamepadPauseOnly, padEngaged, padConnected,
@@ -33,12 +36,13 @@ import {
 import {
   createRenderer, createCamera, createWorld, loadMap, unloadMap, scorchBarrel,
 } from './mapRenderer.js';
+import { createGpuQuality } from './gpuQuality.js';
 import {
   createLocalPlayer, setLoadout, spawnAt, updateLocalPlayer, applyToCamera,
   currentWeapon, tryFire, handleWeaponInput, eyePosition,
 } from './localPlayer.js';
 import {
-  createWeaponView, setViewWeapon, updateWeaponView, weaponViewFire,
+  createWeaponView, setViewWeapon, updateWeaponView, weaponViewFire, inspectViewWeapon,
   renderWeaponView, resizeWeaponView, isScoped,
   createTracers, spawnTracer, updateTracers,
   createImpacts, spawnImpact, updateImpacts, muzzleWorldPosition,
@@ -47,19 +51,26 @@ import {
 } from './weaponView.js';
 import * as hud from './hud.js';
 import {
-  createRange, updateRange, raycastTargets, registerHit, registerShot, resetRange, disposeRange,
+  createRange, updateRange, updateRangeChallenge, raycastTargets, registerHit, registerShot, resetRange,
+  startRangeChallenge, disposeRange, configureRange, normalizeRangeOptions, RANGE_DEFAULTS,
 } from './practice.js';
 import * as net from './net.js';
 import {
   createRemotePlayers, syncRemotePlayers, clearRemotePlayers, hitboxesFrom, playRemoteEmote,
 } from './remotePlayers.js';
+import { playRemoteShot, playRemoteReload } from './characterAnimation.js';
 import * as audio from './audio.js';
+import { advanceFootstep, createFootstepTracker, footstepSurface, resetFootstepTracker } from './footsteps.js';
+import { createSurfCourse, disposeSurfCourse } from './surfRenderer.js';
+import { createSurfRun, resetSurfPlayer, updateSurfPlayer, tickSurfRun } from './surf.js';
+import { mountArsenal } from './arsenal.js';
+import { startMenuPresence } from './menuPresence.js';
 import {
   createMinimap, drawMinimap, drawFullMap, noteGunfire, clearMinimap, toggleFullMap,
 } from './minimap.js';
 import {
   createPickups, loadPickups, setPickupTaken, syncPickups, updatePickups, clearPickups,
-  collectLocally,
+  collectLocally, setPickupsEnabled,
 } from './pickups.js';
 import {
   createChat, openChat, addChatLine, clearChat,
@@ -78,10 +89,18 @@ import {
 
 const canvas = document.getElementById('game');
 const renderer = createRenderer(canvas);
+const gpuQuality = createGpuQuality(renderer);
+// Benchmark multiple render passes as one frame in explicit QA builds only.
+// Three.js normally clears info.render before the second (viewmodel) pass.
+const renderDiagnostics = import.meta.env.VITE_VISUAL_DIAGNOSTICS === '1'
+  ? { calls: 0, triangles: 0, lines: 0, points: 0, geometries: 0, textures: 0, gpuRenderer: gpuQuality.gpuRenderer }
+  : null;
+if (renderDiagnostics) renderer.info.autoReset = false;
 const world = createWorld(renderer);
 const camera = createCamera(settings.fov);
 
 const player = createLocalPlayer();
+const footsteps = createFootstepTracker();
 const weaponView = createWeaponView(renderer);
 const tracers = createTracers(world.scene);
 const impacts = createImpacts(world.scene);
@@ -93,6 +112,69 @@ const pickups = createPickups(world.scene);
 const royale = createBattleRoyale(world.scene);
 const vehicles = createVehicles(world.scene);
 
+// Reusable objective model, independent from the map renderer's geometry.
+const bombMarker = new THREE.Group();
+const bombCase = new THREE.Mesh(
+  new THREE.BoxGeometry(0.68, 0.22, 0.42),
+  new THREE.MeshStandardMaterial({ color: 0x2e3338, metalness: 0.4, roughness: 0.5 }),
+);
+bombCase.position.y = 0.19;
+const bombRing = new THREE.Mesh(
+  new THREE.RingGeometry(0.62, 0.7, 40),
+  new THREE.MeshBasicMaterial({ color: 0xf0a84d, transparent: true, opacity: 0.68, side: THREE.DoubleSide, depthWrite: false }),
+);
+bombRing.rotation.x = -Math.PI / 2;
+bombRing.position.y = 0.055;
+const bombBeacon = new THREE.Mesh(
+  new THREE.BoxGeometry(0.16, 0.05, 0.12),
+  new THREE.MeshBasicMaterial({ color: 0xff6a2f }),
+);
+bombBeacon.position.set(0.13, 0.325, 0);
+bombMarker.add(bombCase, bombRing, bombBeacon);
+bombMarker.visible = false;
+world.scene.add(bombMarker);
+
+// The planted objective uses an independently licensed 3D prop. Keep the
+// primitive visible until the GLB has loaded, and if it ever fails to load.
+canvas.dataset.retakeObjective = 'loading';
+new GLTFLoader().load('/models/objectives/ObjectiveDevice_CC0.glb', (gltf) => {
+  const objective = gltf.scene;
+  const sourceBounds = new THREE.Box3().setFromObject(objective);
+  const sourceSize = sourceBounds.getSize(new THREE.Vector3());
+  if (![sourceSize.x, sourceSize.y, sourceSize.z].every((value) => Number.isFinite(value) && value > 0.001)) {
+    canvas.dataset.retakeObjective = 'fallback';
+    return;
+  }
+
+  // Original prop is roughly 44 x 31 x 37 cm; the game marker should read
+  // clearly from a few metres without affecting the server-side defuse radius.
+  const scale = Math.min(0.74 / sourceSize.x, 0.46 / sourceSize.y, 0.58 / sourceSize.z);
+  objective.scale.setScalar(scale);
+  objective.updateMatrixWorld(true);
+  const bounds = new THREE.Box3().setFromObject(objective);
+  const center = bounds.getCenter(new THREE.Vector3());
+  objective.position.set(-center.x, 0.075 - bounds.min.y, -center.z);
+
+  // The original GLB includes the lid's opening animation. Show the device
+  // open so players can distinguish the planted objective from a plain crate.
+  const openClip = gltf.animations.find((clip) => clip.name === 'open');
+  if (openClip) {
+    const mixer = new THREE.AnimationMixer(objective);
+    const openAction = mixer.clipAction(openClip);
+    openAction.setLoop(THREE.LoopOnce, 1);
+    openAction.clampWhenFinished = true;
+    openAction.play();
+    mixer.update(openClip.duration);
+  }
+
+  bombMarker.add(objective);
+  bombCase.visible = false;
+  bombBeacon.position.y = 0.075 + bounds.getSize(new THREE.Vector3()).y + 0.035;
+  canvas.dataset.retakeObjective = 'licensed';
+}, undefined, () => {
+  canvas.dataset.retakeObjective = 'fallback';
+});
+
 // Chat has to cooperate with pointer lock: typing needs the lock released, but a
 // released lock is also what opens the pause menu, so the lock handler checks
 // chatIsOpen() before doing that.
@@ -100,7 +182,7 @@ const chat = createChat({
   onSend: (text, team) => net.send(connection, C2S.CHAT, { t: text, team }),
   onOpenChange: (open) => {
     if (open) exitLock();
-    else if (app.screen === 'match' || app.screen === 'practice') requestLock();
+    else if (app.screen === 'match' || app.screen === 'practice' || app.screen === 'surf') requestLock();
   },
 });
 
@@ -111,6 +193,8 @@ const app = {
   screen: 'menu',
   map: null,
   range: null,
+  surf: null,
+  surfMesh: null,
   lastFrame: performance.now(),
   accumulator: 0,
   lookDelta: { dx: 0, dy: 0 },
@@ -124,6 +208,11 @@ const app = {
     phaseEndsAt: 0,
     teamCount: 2,
     teamScores: { A: 0, B: 0 },
+    elimination: null,
+    bomb: null,
+    bombReceivedAt: 0,
+    bombHoldSentAt: -Infinity,
+    bombHolding: false,
     roster: new Map(),
     resultText: null,
     result: null,
@@ -181,12 +270,18 @@ const app = {
   myGun: getPrimary(settings.primaryId),
 };
 
+const RANGE_OPTIONS_STORAGE = 'crown-strike-range-v1';
+let rangeOptions = { ...RANGE_DEFAULTS };
+try {
+  rangeOptions = normalizeRangeOptions(JSON.parse(localStorage.getItem(RANGE_OPTIONS_STORAGE) ?? '{}'));
+} catch { /* local storage is optional */ }
+
 // ----------------------------------------------------------------- dom handles
 
 const dom = {};
 for (const id of [
   'menu', 'lobby', 'nickname', 'menu-error', 'menu-footer',
-  'btn-practice', 'btn-quickplay', 'btn-join', 'btn-create', 'room-code', 'mode-select',
+  'btn-practice', 'btn-surf', 'btn-surf-utopia', 'btn-quickplay', 'btn-join', 'btn-create', 'room-code', 'mode-select',
   'sens', 'sens-val', 'fov', 'fov-val', 'vol', 'vol-val', 'invert-y',
   'lobby-code', 'lobby-mode', 'lobby-count', 'lobby-slots', 'lobby-status',
   'lobby-host', 'lobby-mode-select', 'lobby-map-select', 'lobby-teams-row', 'lobby-team-count-select',
@@ -194,7 +289,9 @@ for (const id of [
   'lobby-bots-count', 'btn-bots-down', 'btn-bots-up', 'lobby-bots-row',
   'btn-copy-link', 'btn-leave', 'btn-ready', 'btn-start',
   'pause', 'pause-note', 'pause-class', 'pause-class-picker', 'pause-guns',
-  'pause-gun-picker', 'pause-settings', 'btn-resume', 'btn-quit', 'btn-to-lobby',
+  'pause-gun-picker', 'pause-range-settings', 'range-bot-count', 'range-distance',
+  'range-movement', 'range-armor', 'range-infinite-ammo',
+  'pause-settings', 'btn-resume', 'btn-quit', 'btn-to-lobby',
   'p-sens', 'p-sens-val', 'p-fov', 'p-fov-val', 'p-vol', 'p-vol-val', 'p-invert-y',
   'respawn', 'respawn-class', 'respawn-class-picker',
   'spectator', 'spectator-name', 'spectator-prev', 'spectator-next',
@@ -203,6 +300,34 @@ for (const id of [
   'p-btn-scheme', 'p-scheme-name', 'p-pad-sens', 'p-pad-sens-val',
   'p-ads-toggle', 'p-aim-assist', 'shake', 'p-shake',
 ]) dom[id] = document.getElementById(id);
+
+function updateRangeConfigControls() {
+  for (const [id, key] of [
+    ['range-bot-count', 'botCount'], ['range-distance', 'distance'],
+    ['range-movement', 'movement'], ['range-armor', 'armor'],
+  ]) dom[id].value = String(rangeOptions[key]);
+  dom['range-infinite-ammo'].checked = rangeOptions.infiniteAmmo;
+}
+
+function applyRangeConfig() {
+  rangeOptions = normalizeRangeOptions({
+    botCount: dom['range-bot-count'].value,
+    distance: dom['range-distance'].value,
+    movement: dom['range-movement'].value,
+    armor: dom['range-armor'].value,
+    infiniteAmmo: dom['range-infinite-ammo'].checked,
+  });
+  try { localStorage.setItem(RANGE_OPTIONS_STORAGE, JSON.stringify(rangeOptions)); } catch { /* optional */ }
+  if (app.screen === 'practice' && app.range) {
+    configureRange(app.range, rangeOptions);
+    hud.updatePracticeDrill(rangeOptions);
+    hud.updatePracticeStats(app.range.stats, app.range.challenge);
+  }
+}
+for (const id of ['range-bot-count', 'range-distance', 'range-movement', 'range-armor', 'range-infinite-ammo']) {
+  dom[id].addEventListener('change', applyRangeConfig);
+}
+updateRangeConfigControls();
 
 dom['spectator-prev'].addEventListener('click', () => {
   app.spectatorStep = -1;
@@ -243,7 +368,7 @@ function schemeSummary(scheme) {
  * bindings are spelled out in-game.
  */
 function practiceHint() {
-  const common = '1–8 pick a gun · R reload · T reset';
+  const common = 'G 60s challenge · 1–8 gun · R reload · T reset · Alt slow · B/N lean';
   if (settings.scheme === 'trackpad') return `${common} · Space fire · Q aim · F jump · Esc pause`;
   if (settings.scheme === 'pad') return `${common} · RT fire · LT aim · A jump · START pause`;
   return `${common} · click fire · right-click aim · Esc pause`;
@@ -272,7 +397,8 @@ const CONTROLS_REFERENCE = [
   ['Fire', { mouse: 'Hold LMB', trackpad: 'Hold Space', pad: 'RT' }],
   ['Aim down sights', { mouse: 'Hold RMB', trackpad: 'Q (toggles)', pad: 'LT' }],
   ['Jump', { mouse: 'Space', trackpad: 'F', pad: 'A' }],
-  ['Sprint / crouch', { mouse: 'Shift / Ctrl or C', trackpad: 'Shift / Ctrl or C', pad: 'L3 / B' }],
+  ['Sprint / crouch / slide', { mouse: 'Shift / Ctrl or C / sprint + Ctrl', trackpad: 'Shift / Ctrl or C / sprint + Ctrl', pad: 'L3 / B / sprint + B' }],
+  ['Precision walk / camera lean', { mouse: 'Alt / B and N', trackpad: 'Alt / B and N', pad: 'Alt / B and N (keyboard)' }],
   ['Reload / use', { mouse: 'R / E', trackpad: 'R / E', pad: 'X / Y' }],
   ['Switch weapon', { mouse: 'Wheel or 1–8', trackpad: 'Wheel or 1–8', pad: 'LB / RB' }],
   ['Melee', { mouse: 'Knife slot', trackpad: 'Knife slot', pad: 'R3' }],
@@ -409,6 +535,30 @@ dom.nickname.addEventListener('input', () => {
   settings.nickname = dom.nickname.value.slice(0, 14);
   saveSettings();
 });
+// The compact identity panel and full room form share one guest callsign.
+const heroCallsign = document.getElementById('hero-callsign');
+const heroProfileStatus = document.getElementById('hero-profile-status');
+const guestProfileButton = document.getElementById('btn-guest-profile');
+if (heroCallsign && heroProfileStatus && guestProfileButton) {
+  const syncGuestCallsign = () => {
+    heroCallsign.value = dom.nickname.value;
+    heroProfileStatus.textContent = heroCallsign.value.trim()
+      ? 'LOCAL GUEST PROFILE · READY TO PLAY' : 'SAVE A NAME TO PLAY AS A GUEST';
+  };
+  const saveGuestCallsign = () => {
+    dom.nickname.value = heroCallsign.value.slice(0, 14);
+    dom.nickname.dispatchEvent(new Event('input', { bubbles: true }));
+    syncGuestCallsign();
+    if (heroCallsign.value.trim()) heroProfileStatus.textContent = 'CALLSIGN SAVED ON THIS DEVICE';
+  };
+  dom.nickname.addEventListener('input', syncGuestCallsign);
+  heroCallsign.addEventListener('change', saveGuestCallsign);
+  heroCallsign.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter') { saveGuestCallsign(); heroCallsign.blur(); }
+  });
+  guestProfileButton.addEventListener('click', saveGuestCallsign);
+  syncGuestCallsign();
+}
 
 // The same four controls appear in the menu and in the pause menu. They're bound
 // generically rather than twice over, so the two can't disagree — and every set
@@ -434,6 +584,15 @@ const SCHEME_NAMES = {
   pad: 'Controller',
 };
 
+const soundButton = document.getElementById('btn-sound');
+function syncSoundControl() {
+  const muted = settings.volume <= 0;
+  soundButton.dataset.sound = muted ? 'muted' : 'on';
+  soundButton.querySelector('span').textContent = muted ? 'SOUND OFF' : 'SOUND ON';
+  soundButton.setAttribute('aria-label', muted ? 'Unmute game sound' : 'Mute game sound');
+  soundButton.setAttribute('aria-pressed', String(muted));
+}
+
 function syncSettingInputs() {
   for (const p of SETTING_PANELS) {
     dom[p.sens].value = settings.sensitivity;
@@ -452,6 +611,7 @@ function syncSettingInputs() {
     dom[p.shake].checked = shakeEnabled();
     dom[p.schemeName].textContent = SCHEME_NAMES[settings.scheme] ?? 'Not set';
   }
+  syncSoundControl();
 }
 
 function commit(change) {
@@ -471,7 +631,9 @@ for (const p of SETTING_PANELS) {
     }));
   dom[p.vol].addEventListener('input', () =>
     commit(() => {
+      if (settings.volume > 0) settings.lastAudibleVolume = settings.volume;
       settings.volume = Number(dom[p.vol].value) / 100;
+      if (settings.volume > 0) settings.lastAudibleVolume = settings.volume;
       audio.setVolume(settings.volume);
     }));
   dom[p.invert].addEventListener('change', () =>
@@ -502,6 +664,40 @@ for (const p of SETTING_PANELS) {
 
 syncSettingInputs();
 
+soundButton.addEventListener('click', () => {
+  commit(() => {
+    if (settings.volume > 0) {
+      settings.lastAudibleVolume = settings.volume;
+      settings.volume = 0;
+    } else {
+      settings.volume = settings.lastAudibleVolume;
+    }
+    audio.setVolume(settings.volume);
+  });
+});
+
+const fullscreenButton = document.getElementById('btn-fullscreen');
+function syncFullscreenControl() {
+  const active = Boolean(document.fullscreenElement);
+  const label = active ? 'Exit full screen' : 'Enter full screen';
+  fullscreenButton.setAttribute('aria-label', label);
+  fullscreenButton.setAttribute('aria-pressed', String(active));
+  fullscreenButton.title = label;
+}
+fullscreenButton.addEventListener('click', async () => {
+  try {
+    if (document.fullscreenElement) await document.exitFullscreen();
+    else if (document.documentElement.requestFullscreen) await document.documentElement.requestFullscreen();
+  } catch {
+    // Fullscreen can be refused by an embedded browser or permission policy.
+    fullscreenButton.title = 'Full screen is unavailable here';
+  } finally {
+    syncFullscreenControl();
+  }
+});
+document.addEventListener('fullscreenchange', syncFullscreenControl);
+syncFullscreenControl();
+
 dom['room-code'].addEventListener('input', () => {
   dom['room-code'].value = dom['room-code'].value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 4);
 });
@@ -510,6 +706,8 @@ dom['room-code'].addEventListener('keydown', (e) => {
 });
 
 // -------------------------------------------------------------------- menu
+
+const menuPresence = startMenuPresence();
 
 function showError(msg) {
   dom['menu-error'].textContent = msg;
@@ -520,7 +718,7 @@ function clearError() {
 }
 
 function setMenuBusy(busy) {
-  for (const b of ['btn-quickplay', 'btn-join', 'btn-create', 'btn-practice']) dom[b].disabled = busy;
+  for (const b of ['btn-quickplay', 'btn-join', 'btn-create', 'btn-practice', 'btn-surf', 'btn-surf-utopia']) dom[b].disabled = busy;
   for (const button of document.querySelectorAll('[data-create-mode]')) button.disabled = busy;
 }
 
@@ -535,6 +733,17 @@ dom['btn-practice'].addEventListener('click', () => {
   audio.initAudio();
   audio.resumeAudio();
   startPractice();
+});
+
+dom['btn-surf'].addEventListener('click', () => {
+  audio.initAudio();
+  audio.resumeAudio();
+  startSurf('surf');
+});
+dom['btn-surf-utopia'].addEventListener('click', () => {
+  audio.initAudio();
+  audio.resumeAudio();
+  startSurf('surf-utopia');
 });
 
 dom['btn-quickplay'].addEventListener('click', () => enterMultiplayer(C2S.QUICKPLAY, { mode: 'br' }));
@@ -649,32 +858,66 @@ function applyMap(mapId) {
   // the packs it has just created — which is precisely what used to happen here.
   // Every map declared its health packs and not one of them ever appeared.
   loadPickups(pickups, app.map);
+  setPickupsEnabled(pickups, app.map.id === 'practice' ||
+    (app.match.mode !== 'duel' && app.match.mode !== 'squads' && app.match.mode !== 'retake'));
 }
 
-function startPractice() {
+function startPractice(weaponId = app.myGun) {
   clearError();
   ensureNickname();
   applyMap('practice');
 
-  app.range = createRange(world.scene, app.map);
+  app.range = createRange(world.scene, app.map, rangeOptions);
   setLoadout(player, ALL_WEAPON_IDS);
-  player.slotIndex = Math.max(0, ALL_WEAPON_IDS.indexOf('rifle'));
+  player.slotIndex = Math.max(0, ALL_WEAPON_IDS.indexOf(weaponId));
   spawnAt(player, app.map.spawns.ffa[0], app.map.solids, app.map.spawnYaw ?? 0);
+  resetFootstepTracker(footsteps);
   setViewWeapon(weaponView, player.inventory[player.slotIndex]);
 
   app.screen = 'practice';
   dom.menu.classList.add('hidden');
   dom.lobby.classList.add('hidden');
   hud.showHud(true);
+  hud.setSurfMode(false);
   hud.setPracticeMode(true);
   hud.setMinimapVisible(false);
   hud.setStateBanner('');
-  hud.updatePracticeStats(app.range.stats);
+  hud.updatePracticeStats(app.range.stats, app.range.challenge);
+  hud.updatePracticeDrill(rangeOptions);
   hud.highlightWeapon(player.inventory[player.slotIndex]);
   grabPointer();
 }
 
+function startSurf(mapId = 'surf') {
+  clearError();
+  ensureNickname();
+  applyMap(mapId);
+  app.surfMesh = createSurfCourse(world.scene, app.map.surf);
+  let best = null;
+  try {
+    const saved = Number(localStorage.getItem(`crown-strike-surf-pb-v1:${mapId}`) ?? (mapId === 'surf' ? localStorage.getItem('crown-strike-surf-pb-v1') : null));
+    if (Number.isFinite(saved) && saved > 0) best = saved;
+  } catch { /* Private browsing can deny storage; the run still works. */ }
+  app.surf = createSurfRun(app.map.surf, best);
+  setLoadout(player, ['knife']);
+  spawnAt(player, app.map.surf.start, app.map.solids, app.map.surf.startYaw);
+  setViewWeapon(weaponView, 'knife');
+  app.accumulator = 0;
+  app.screen = 'surf';
+  dom.menu.classList.add('hidden');
+  dom.lobby.classList.add('hidden');
+  hud.showHud(true);
+  hud.setPracticeMode(false);
+  hud.setSurfMode(true, app.map.name);
+  hud.setTeamScoresVisible(false);
+  hud.setMinimapVisible(false);
+  hud.setStateBanner('');
+  hud.updateSurfStats(app.surf, 0, app.map.surf.checkpoints.length);
+  grabPointer();
+}
+
 function enterLobby() {
+  stopBombHold();
   app.screen = 'lobby';
   exitLock();
   dom.menu.classList.add('hidden');
@@ -690,11 +933,13 @@ function enterLobby() {
 }
 
 function enterMatch() {
+  resetFootstepTracker(footsteps);
   app.screen = 'match';
   dom.menu.classList.add('hidden');
   dom.lobby.classList.add('hidden');
   hud.showHud(true);
   hud.setPracticeMode(false);
+  hud.setSurfMode(false);
   hud.setMinimapVisible(true);
   syncModeUi();
   clearPressed();
@@ -702,6 +947,8 @@ function enterMatch() {
 }
 
 function leaveToMenu() {
+  resetFootstepTracker(footsteps);
+  stopBombHold();
   exitLock();
   net.disconnect(connection);
   showServerConnection(false);
@@ -714,11 +961,20 @@ function leaveToMenu() {
     disposeRange(app.range);
     app.range = null;
   }
+  if (app.surfMesh) {
+    disposeSurfCourse(world.scene, app.surfMesh);
+    app.surfMesh = null;
+  }
+  app.surf = null;
   clearWorldContents();
   unloadMap(world);
   app.map = null;
   app.screen = 'menu';
+  app.accumulator = 0;
   app.match.code = null;
+  app.match.bomb = null;
+  bombMarker.visible = false;
+  hud.setRetakeVisible(false);
   app.match.roster.clear();
   app.match.lobby.hostId = null;
   app.match.lobby.startsAt = 0;
@@ -727,6 +983,7 @@ function leaveToMenu() {
 
   history.replaceState(null, '', location.pathname);
   hud.showHud(false);
+  hud.setSurfMode(false);
   hud.showScoreboard(false);
   hud.showRespawn(false);
   hud.showResults(false);
@@ -736,6 +993,8 @@ function leaveToMenu() {
   showPause(false);
   dom.lobby.classList.add('hidden');
   dom.menu.classList.remove('hidden');
+  arsenalUi?.refresh();
+  void menuPresence.refresh();
 }
 
 // ---------------------------------------------------------------- pickers
@@ -874,6 +1133,15 @@ function buildGunPicker() {
 
 buildGunPickers();
 buildGunPicker();
+const arsenalUi = mountArsenal({
+  getEquipped: () => app.myGun,
+  onEquip: chooseGun,
+  onPractice: (weaponId) => {
+    audio.initAudio();
+    audio.resumeAudio();
+    startPractice(weaponId);
+  },
+});
 
 // ------------------------------------------------------------------- pause
 
@@ -900,11 +1168,11 @@ function pauseVisible() {
  * cases the server ignores your choice, so offering the picker is a lie.
  */
 function gunChoiceMatters(mode) {
-  return !['gungame', 'br', 'duel', 'squads'].includes(mode);
+  return !['gungame', 'br', 'duel', 'squads', 'retake'].includes(mode);
 }
 
 function teamMatch(mode) {
-  return mode === 'tdm' || mode === 'duel' || mode === 'squads';
+  return mode === 'tdm' || mode === 'duel' || mode === 'squads' || mode === 'retake';
 }
 
 function showPause(visible) {
@@ -914,10 +1182,11 @@ function showPause(visible) {
   const inMatch = app.screen === 'match';
   dom['pause-note'].textContent = inMatch
     ? 'The match is still running — you are not invisible.'
-    : 'Practice range';
+    : app.screen === 'surf' ? 'Surf run · R returns to checkpoint · Shift+R restarts' : 'Practice range';
   // Choosing a gun is a multiplayer concept, and not every mode lets you.
   dom['pause-class'].classList.toggle('hidden', !inMatch || !gunChoiceMatters(app.match.mode));
   dom['pause-guns'].classList.toggle('hidden', app.screen !== 'practice');
+  dom['pause-range-settings'].classList.toggle('hidden', app.screen !== 'practice');
 
   // Regrouping only means anything between rounds, which is also the only time
   // the mouse is any use for it — hence the same action on `L` on the results
@@ -932,6 +1201,7 @@ function showPause(visible) {
 
   if (app.screen === 'practice') {
     highlightPicker(dom['pause-gun-picker'], player.inventory[player.slotIndex]);
+    updateRangeConfigControls();
   }
   refreshGunPickers();
 }
@@ -956,7 +1226,7 @@ function grabPointer() {
   requestLock();
   clearTimeout(app.lockCheckTimer);
   app.lockCheckTimer = setTimeout(() => {
-    const inGame = app.screen === 'practice' || app.screen === 'match';
+    const inGame = app.screen === 'practice' || app.screen === 'match' || app.screen === 'surf';
     if (inGame && !input.locked && !padEngaged()
         && (app.screen !== 'match' || player.alive)) showPause(true);
   }, 600);
@@ -1291,7 +1561,14 @@ net.on(connection, S2C.JOINED, (msg) => {
   m.myTeam = msg.you.team;
   m.phase = msg.phase;
   m.phaseEndsAt = performance.now() + (msg.phaseMsLeft ?? 0);
+  m.elimination = msg.elimination ?? null;
+  receiveBombState(msg.bomb ?? null);
   m.teamScores = msg.teamScores ?? { A: 0, B: 0 };
+  if ((m.mode === 'duel' || m.mode === 'squads' || m.mode === 'retake') && m.phase === PHASE.LIVE) {
+    // Mid-round joiners wait for the next spawn; a round break also marks
+    // every player dead on the server until the next round begins.
+    player.alive = false;
+  }
   updateRoster(msg.roster);
 
   applyMap(msg.mapId);
@@ -1351,6 +1628,8 @@ net.on(connection, S2C.PHASE, (msg) => {
   const wasScoreboard = previous === PHASE.SCOREBOARD;
   m.phase = msg.phase;
   m.phaseEndsAt = performance.now() + (msg.msLeft ?? 0);
+  m.elimination = msg.elimination ?? null;
+  receiveBombState(msg.bomb ?? null);
   m.teamScores = msg.teamScores ?? m.teamScores;
   m.resultText = msg.resultText ?? null;
   m.result = msg.result ?? null;
@@ -1387,7 +1666,17 @@ net.on(connection, S2C.PHASE, (msg) => {
     case PHASE.LIVE:
       hud.showScoreboard(false);
       hud.showResults(false);
-      hud.setStateBanner('');
+      if (m.elimination?.breakMs > 0) {
+        player.alive = false;
+        hud.showRespawn(false);
+        const who = m.elimination.roundWinner;
+        hud.setStateBanner(who ? `ROUND ${m.elimination.round} · TEAM ${who} WINS` : `ROUND ${m.elimination.round} · DRAW`);
+      } else if (m.elimination?.round > 0) {
+        hud.setStateBanner(`ROUND ${m.elimination.round} · FIRST TO ${m.elimination.firstTo}`);
+        hud.showRespawn(false);
+      } else {
+        hud.setStateBanner('');
+      }
       if (previous !== PHASE.LIVE) audio.playFanfare(true);
       break;
 
@@ -1411,9 +1700,14 @@ net.on(connection, S2C.PHASE, (msg) => {
   }
 });
 
+net.on(connection, S2C.BOMB_STATE, (msg) => {
+  receiveBombState(msg);
+});
+
 net.on(connection, S2C.RESPAWN, (msg) => {
   setLoadout(player, msg.inventory ?? player.inventory);
   spawnAt(player, msg.pos, app.map.solids, msg.yaw ?? 0);
+  resetFootstepTracker(footsteps);
   player.parachuting = !!msg.parachuting;
   player.health = msg.health;
   setViewWeapon(weaponView, player.inventory[player.slotIndex]);
@@ -1503,6 +1797,7 @@ net.on(connection, S2C.SHOTS, (msg) => {
   // Somebody else fired: tracer plus a positioned bang.
   const weapon = getWeapon(msg.w);
   if (!weapon || !finiteVec3(msg.o) || !finiteVec3(msg.d)) return;
+  if (msg.id !== connection.myId && msg.w !== 'knife') playRemoteShot(remotes, msg.id);
 
   const origin = msg.o;
   const dir = msg.d;
@@ -1511,7 +1806,7 @@ net.on(connection, S2C.SHOTS, (msg) => {
   const end = [origin[0] + dir[0] * dist, origin[1] + dir[1] * dist, origin[2] + dir[2] * dist];
 
   if (msg.w !== 'knife') spawnTracer(tracers, origin, end, weapon.tracerColor, performance.now());
-  if (hit) spawnImpact(impacts, end, performance.now());
+  if (hit) spawnImpact(impacts, end, performance.now(), null, false, footstepSurface(app.map, hit.box));
 
   const eye = eyePosition(player);
   const { pan, distance } = audio.spatialise(origin, eye, player.yaw);
@@ -1523,6 +1818,11 @@ net.on(connection, S2C.SHOTS, (msg) => {
   const shooter = app.match.roster.get(msg.id);
   const friendly = teamMatch(app.match.mode) && shooter?.team && shooter.team === app.match.myTeam;
   if (!friendly) noteGunfire(minimap, origin);
+});
+
+net.on(connection, S2C.RELOAD, (msg) => {
+  if (msg.id === connection.myId || !getWeapon(msg.w)) return;
+  playRemoteReload(remotes, msg.id, msg.w, msg.ms);
 });
 
 net.on(connection, S2C.EMOTE, (msg) => {
@@ -1665,6 +1965,57 @@ function syncModeUi() {
   hud.setTeamScoresVisible(teamMode);
   setTeamChatAvailable(chat, teamMode);
   hud.setBattleRoyaleVisible(app.match.mode === 'br');
+  hud.setRetakeVisible(app.match.mode === 'retake' && app.screen === 'match');
+  if (app.match.mode !== 'retake') stopBombHold();
+  if (app.map) setPickupsEnabled(pickups, app.map.id === 'practice' ||
+    (app.match.mode !== 'duel' && app.match.mode !== 'squads' && app.match.mode !== 'retake'));
+}
+
+function receiveBombState(bomb) {
+  app.match.bomb = bomb;
+  app.match.bombReceivedAt = performance.now();
+  if (!bomb?.active) stopBombHold();
+}
+
+function stopBombHold() {
+  if (app.match.bombHolding) net.send(connection, C2S.BOMB_INTERACT, { action: 'cancel' });
+  app.match.bombHolding = false;
+  app.match.bombHoldSentAt = -Infinity;
+}
+
+function nearRetakeBomb(bomb) {
+  if (!Array.isArray(bomb?.pos) || !Array.isArray(player.pos)) return false;
+  return Math.hypot(player.pos[0] - bomb.pos[0], player.pos[2] - bomb.pos[2]) <= RETAKE_DEFUSE_RADIUS &&
+    Math.abs(player.pos[1] - bomb.pos[1]) <= 2.1;
+}
+
+function tickRetakeInteraction(now) {
+  const m = app.match;
+  const bomb = m.bomb;
+  const active = app.screen === 'match' && m.mode === 'retake' && m.phase === PHASE.LIVE &&
+    (m.elimination?.breakMs ?? 0) === 0 && !!bomb?.active;
+  const canDefuse = active && m.myTeam === 'A' && player.alive && nearRetakeBomb(bomb) &&
+    (input.use || input.padUse) && (input.locked || padEngaged(now)) &&
+    !pauseVisible() && !chatIsOpen(chat) &&
+    (!bomb.defuserId || bomb.defuserId === connection.myId);
+  if (!canDefuse) {
+    stopBombHold();
+  } else if (now - m.bombHoldSentAt >= 200) {
+    net.send(connection, C2S.BOMB_INTERACT, { action: 'hold' });
+    m.bombHoldSentAt = now;
+    m.bombHolding = true;
+  }
+}
+
+function updateRetakeMarker(now) {
+  const bomb = app.match.bomb;
+  bombMarker.visible = app.screen === 'match' && app.match.mode === 'retake' &&
+    app.match.phase === PHASE.LIVE && !!bomb?.active &&
+    (app.match.elimination?.breakMs ?? 0) === 0 && Array.isArray(bomb.pos);
+  if (!bombMarker.visible) return;
+  bombMarker.position.set(bomb.pos[0], bomb.pos[1], bomb.pos[2]);
+  bombBeacon.material.color.setHex(Math.floor(now / 260) % 2 ? 0xff5c29 : 0xffe6ac);
+  bombRing.material.opacity = 0.35 + Math.sin(now / 220) * 0.22;
 }
 
 function finiteVec3(value) {
@@ -1753,7 +2104,7 @@ function toggleRegroup() {
 // Losing the pointer is the pause: Escape releases it, and the browser also
 // releases it on tab switches and alerts. Either way you land here.
 onLockChange((locked) => {
-  const inGame = app.screen === 'practice' || app.screen === 'match';
+  const inGame = app.screen === 'practice' || app.screen === 'match' || app.screen === 'surf';
   if (locked) {
     showPause(false);
     audio.resumeAudio();
@@ -1778,6 +2129,23 @@ document.addEventListener('visibilitychange', () => {
 window.addEventListener('keydown', (e) => {
   // Don't hijack keys while a select or a text field has focus.
   const typing = /^(INPUT|SELECT|TEXTAREA)$/.test(document.activeElement?.tagName ?? '');
+
+  if (!typing && !e.repeat && e.code === 'KeyR' && app.screen === 'surf' && !pauseVisible()) {
+    e.preventDefault();
+    resetSurfPlayer(player, app.map.surf, app.surf, e.shiftKey || app.surf.finished);
+    hud.updateSurfStats(app.surf, 0, app.map.surf.checkpoints.length);
+    audio.playClick();
+    return;
+  }
+
+  if (!typing && !e.repeat && e.code === 'KeyG'
+      && app.screen === 'practice' && !pauseVisible()) {
+    e.preventDefault();
+    startRangeChallenge(app.range, performance.now());
+    hud.updatePracticeStats(app.range.stats, app.range.challenge);
+    audio.playClick();
+    return;
+  }
 
   if (!typing && e.code === 'KeyM' && app.screen === 'match' && !pauseVisible()) {
     e.preventDefault();
@@ -1829,6 +2197,7 @@ function handleFiring(now, worldStates) {
   const firePressed = consumePressed('fire');
   const shot = tryFire(player, now, firePressed);
   if (!shot) return;
+  if (app.range) updateRangeChallenge(app.range, now);
 
   const weapon = shot.weapon;
   weaponViewFire(weaponView, now, weapon);
@@ -1895,7 +2264,7 @@ function handleFiring(now, worldStates) {
         spawnImpact(impacts, end, now, 0xffc46a, true);
         hitAnything = true;
       } else {
-        spawnImpact(impacts, end, now);
+        spawnImpact(impacts, end, now, null, false, footstepSurface(app.map, wallHit?.box));
         // A barrel is an ordinary solid, so the wall raycast already found it —
         // it just needs reporting so the server can count the hit.
         if (wallHit?.box?.tag?.startsWith('barrel:')) barrelsHit.push(wallHit.box.index);
@@ -1909,7 +2278,7 @@ function handleFiring(now, worldStates) {
 
   if (app.range) {
     registerShot(app.range, hitAnything);
-    hud.updatePracticeStats(app.range.stats);
+    hud.updatePracticeStats(app.range.stats, app.range.challenge);
   }
 
   if (app.screen === 'match') {
@@ -1930,7 +2299,7 @@ function currentFlags() {
   let f = 0;
   if (player.crouching) f |= FLAG.CROUCH;
   if (!player.onGround) f |= FLAG.AIRBORNE;
-  if (sprintHeld()) f |= FLAG.SPRINT;
+  if (player.sprinting) f |= FLAG.SPRINT;
   if (input.ads) f |= FLAG.ADS;
   if (firingHeld()) f |= FLAG.FIRING;
   if (!player.alive) f |= FLAG.DEAD;
@@ -2111,6 +2480,8 @@ function frame() {
   // huge dt. Clamp it or we teleport through walls catching up.
   dt = Math.min(dt, 0.1);
 
+  gpuQuality.update(dt, app.screen === 'match' || app.screen === 'practice' || app.screen === 'surf');
+
   step(dt, now);
 }
 
@@ -2170,6 +2541,7 @@ function aimAssistScale(worldStates) {
  *  dev console and tests can drive it with an explicit dt. */
 function step(dt, now) {
   if (app.screen === 'menu' || app.screen === 'lobby' || !app.map) {
+    bombMarker.visible = false;
     // The lobby's start clock is server-owned but ticked locally, same as the
     // round timer — one message tells us the deadline, the panel counts down.
     if (app.screen === 'lobby') updateLobbyStatus();
@@ -2249,6 +2621,11 @@ function step(dt, now) {
   }
 
   handleWeaponInput(player, now);
+  if (app.screen === 'practice' && app.range?.options?.infiniteAmmo) {
+    const id = player.inventory[player.slotIndex];
+    player.ammo[id] = getWeapon(id).mag;
+    player.reloadingUntil = 0;
+  }
 
   // Bookend the reload animation with mechanical clicks — magazine out, and the
   // fresh one seated.
@@ -2269,12 +2646,24 @@ function step(dt, now) {
   app.lastWorldStates = worldStates;
   const spectatorState = app.screen === 'match' ? updateSpectator(worldStates) : null;
 
-  const frozen = app.screen === 'match' && app.match.phase !== PHASE.LIVE;
+  const frozen = app.screen === 'match' &&
+    (app.match.phase !== PHASE.LIVE || (app.match.elimination?.breakMs ?? 0) > 0);
   const combatLocked = app.match.mode === 'br' && combatRemaining(royale, now) > 0;
   const canAct = input.locked || padEngaged();
-  if (canAct && !frozen && !player.parachuting && player.vehicleId === null && !combatLocked) {
+  if (canAct && consumePressed('inspect') && !frozen && player.alive &&
+      player.reloadingUntil <= now && !player.parachuting && player.vehicleId === null) {
+    inspectViewWeapon(weaponView, now);
+  }
+  if (app.screen !== 'surf' && canAct && !frozen && !player.parachuting && player.vehicleId === null && !combatLocked) {
     handleFiring(now, worldStates);
   }
+  // Both manual and empty-mag automatic reloads begin in localPlayer. Emit only
+  // on transition so a held reload key never floods the room with cosmetic cues.
+  const startedReloadUntil = player.reloadingUntil > now ? player.reloadingUntil : 0;
+  if (startedReloadUntil && startedReloadUntil !== app.lastReloadSentUntil && app.screen === 'match') {
+    net.send(connection, C2S.RELOAD, { w: player.inventory[player.slotIndex] });
+  }
+  app.lastReloadSentUntil = startedReloadUntil;
   handleEmoteInput(frozen, now);
 
   // E picks up the loot you're standing on. Battle royale only: it's the one mode
@@ -2291,25 +2680,64 @@ function step(dt, now) {
 
   if (app.screen === 'practice' && consumePressed('resetPractice')) {
     resetRange(app.range);
-    hud.updatePracticeStats(app.range.stats);
+    hud.updatePracticeStats(app.range.stats, app.range.challenge);
   }
 
   // Fixed-step physics.
   app.accumulator += dt;
   let steps = 0;
   while (app.accumulator >= PHYSICS_DT && steps < 5) {
-    const result = updateLocalPlayer(player, PHYSICS_DT, app.map.solids, {
-      frozen,
-      lethalFallY: app.map.lethalFallY ?? null,
-    });
-    if (result.fallDamage > 0) app.pendingReports.fallDamage += result.fallDamage;
-    if (result.died) app.pendingReports.void = true;
+    if (app.screen === 'surf') {
+      if (!pauseVisible() && canAct && !app.surf.finished) {
+        updateSurfPlayer(player, PHYSICS_DT, app.map.surf, moveAxes(), jumpHeld());
+        const event = tickSurfRun(app.surf, player, app.map.surf, PHYSICS_DT);
+        if (event === 'finish') {
+          try { localStorage.setItem(`crown-strike-surf-pb-v1:${app.map.id}`, String(app.surf.best)); } catch { /* optional */ }
+          audio.playFanfare(true);
+        } else if (event === 'checkpoint') audio.playClick(1.25);
+      }
+    } else {
+      const result = updateLocalPlayer(player, PHYSICS_DT, app.map.solids, {
+        frozen,
+        lethalFallY: app.map.lethalFallY ?? null,
+      });
+      if (result.fallDamage > 0) app.pendingReports.fallDamage += result.fallDamage;
+      if (result.died) app.pendingReports.void = true;
+    }
     app.accumulator -= PHYSICS_DT;
     steps++;
   }
   if (steps === 5) app.accumulator = 0; // fell too far behind; drop the backlog
+  // Footsteps follow actual grounded distance travelled. Ground material gets
+  // sampled on each footfall, avoiding expensive raycasts per frame.
+  const footfall = advanceFootstep(footsteps, {
+    x: player.pos[0], z: player.pos[2], grounded: player.onGround,
+    active: (app.screen === 'practice' || app.screen === 'match') && player.alive
+      && player.vehicleId === null && !player.parachuting && !frozen && !pauseVisible(),
+    sprinting: player.sprinting, crouched: player.crouching || player.slideRemaining > 0,
+  });
+  if (footfall) {
+    const ground = raycastBoxes(
+      [player.pos[0], player.pos[1] + 0.25, player.pos[2]],
+      [0, -1, 0], app.map.solids, 0.7,
+    );
+    audio.playFootstep({
+      surface: footstepSurface(app.map, ground?.box),
+      landed: footfall === 'land', sprinting: player.sprinting, crouched: player.crouching || player.slideRemaining > 0,
+    });
+  }
+  tickRetakeInteraction(now);
 
-  if (app.range) updateRange(app.range, now);
+  if (app.screen === 'surf') {
+    hud.updateSurfStats(app.surf, Math.hypot(player.vel[0], player.vel[2]), app.map.surf.checkpoints.length);
+  }
+
+  if (app.range) {
+    updateRange(app.range, now);
+    if (app.screen === 'practice' && app.range.challenge.startedAt !== null) {
+      hud.updatePracticeStats(app.range.stats, app.range.challenge);
+    }
+  }
 
   // ---- networking ----
   if (app.screen === 'match') {
@@ -2415,7 +2843,7 @@ function step(dt, now) {
 
   const weapon = currentWeapon(player);
   hud.updateVitals(player.health);
-  hud.updateWeapon(player, now);
+  hud.updateWeapon(player, now, app.screen === 'practice' && app.range?.options?.infiniteAmmo);
   hud.updateCrosshair(
     weapon.spread + (weapon.adsSpread - weapon.spread) * player.adsProgress,
     player.adsProgress,
@@ -2423,8 +2851,22 @@ function step(dt, now) {
   );
   hud.setScoped(isScoped(weapon.id, player.adsProgress));
 
+  updateRetakeMarker(now);
+  if (renderDiagnostics) renderer.info.reset();
   renderer.render(world.scene, camera);
   renderWeaponView(weaponView, renderer);
+  if (renderDiagnostics) {
+    const stats = renderer.info.render;
+    renderDiagnostics.calls = stats.calls;
+    renderDiagnostics.triangles = stats.triangles;
+    renderDiagnostics.lines = stats.lines;
+    renderDiagnostics.points = stats.points;
+    renderDiagnostics.geometries = renderer.info.memory.geometries;
+    renderDiagnostics.textures = renderer.info.memory.textures;
+    renderDiagnostics.pixelRatio = gpuQuality.pixelRatio;
+    renderDiagnostics.averageFrameMs = gpuQuality.averageFrameMs;
+    renderDiagnostics.quality = gpuQuality.preset;
+  }
   // One-shot actions belong to this frame. Leaving an inapplicable action in
   // the set made it fire minutes later when the phase or mode finally matched.
   clearPressed();
@@ -2447,6 +2889,9 @@ function deathScreenText(mode, elapsed) {
     // Revived at the top of the next wave, which is however long your team takes.
     return { title: 'DOWN', status: 'back up next wave' };
   }
+  if (mode === 'duel' || mode === 'squads') {
+    return { title: 'ELIMINATED', status: 'waiting for the next round' };
+  }
   const msLeft = Math.max(0, RESPAWN_DELAY_MS - elapsed);
   return {
     title: 'DOWN',
@@ -2457,6 +2902,24 @@ function deathScreenText(mode, elapsed) {
 function updateMatchHud(now) {
   const m = app.match;
   const msLeft = Math.max(0, m.phaseEndsAt - now);
+
+  if (m.mode === 'retake') {
+    const bomb = m.bomb;
+    const elapsed = Math.max(0, now - m.bombReceivedAt);
+    hud.updateRetakeObjective({
+      bomb: bomb ? {
+        ...bomb,
+        defuseElapsedMs: bomb.defuserId
+          ? Math.min(bomb.defuseMs, bomb.defuseElapsedMs + elapsed) : 0,
+      } : null,
+      team: m.myTeam,
+      msLeft: bomb ? Math.max(0, bomb.remainingMs - elapsed) : 0,
+      myId: connection.myId,
+      nearby: nearRetakeBomb(bomb),
+      alive: player.alive,
+      roundBreak: (m.elimination?.breakMs ?? 0) > 0 || m.phase !== PHASE.LIVE,
+    });
+  }
 
   if (m.phase === PHASE.LIVE) {
     hud.updateTimer(msLeft);
@@ -2473,7 +2936,7 @@ function updateMatchHud(now) {
   // Death screen with the respawn countdown. The server owns the actual respawn
   // and will send RESPAWN when it's due; this is just the local clock ticking
   // down so the wait doesn't feel indefinite.
-  if (!player.alive && m.phase === PHASE.LIVE) {
+  if (!player.alive && m.phase === PHASE.LIVE && !(m.elimination?.breakMs > 0)) {
     const elapsed = app.deathAt > 0 ? now - app.deathAt : 0;
     const death = deathScreenText(m.mode, elapsed);
     hud.showRespawn(true, app.killedBy, death.status, death.title);
@@ -2540,6 +3003,12 @@ if (import.meta.env.DEV) {
       return t;
     },
   };
+}
+
+// Included only in explicit QA builds (VITE_VISUAL_DIAGNOSTICS=1 npm run build).
+// Production builds cannot expose the map/weapon scene graph to page scripts.
+if (import.meta.env.VITE_VISUAL_DIAGNOSTICS === '1') {
+  window.__arenaVisualDebug = { world, camera, player, weaponView, renderer, remotes, renderDiagnostics };
 }
 
 frame();

@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 140" role="img" aria-label="Original surf utopia arena artwork">
+<defs>
+  <linearGradient id="sky" x2=".35" y2="1"><stop stop-color="#b7a5d4"/><stop offset="1" stop-color="#f5d2e0"/></linearGradient>
+  <linearGradient id="shade" x2="0" y2="1"><stop stop-color="#07111b" stop-opacity="0"/><stop offset="1" stop-color="#07111b" stop-opacity=".72"/></linearGradient>
+  <filter id="haze"><feGaussianBlur stdDeviation="2"/></filter>
+</defs>
+<rect width="320" height="140" fill="url(#sky)"/>
+<circle cx="251" cy="25" r="32" fill="#f5e7c8" opacity=".34" filter="url(#haze)"/>
+
+  <path d="M0 75L58 41 93 70 153 37 206 76 264 38 320 74V140H0Z" fill="#a69ec9"/>
+  <path d="M0 88L56 72 115 82 168 62 231 86 320 69V140H0Z" fill="#d8bfdf"/>
+  <path d="M0 140L107 68 215 68 320 140Z" fill="#f2c9e4"/>
+  <path d="M0 140L112 70 130 70 52 140Z" fill="#bd99d4"/>
+  <path d="M256 140L194 70 212 70 320 140Z" fill="#a388c6"/>
+  <path d="M52 140L130 70 194 70 256 140Z" fill="#e9b8d9"/>
+  <path d="M52 140L129 70 135 70 69 140Z" fill="#d7a1c9"/>
+  <path d="M238 140L189 70 195 70 255 140Z" fill="#d49ac8"/>
+  <path d="M113 140L149 70 154 70 132 140Z" fill="#e95367"/>
+  <path d="M145 140L157 70 160 70 161 140Z" fill="#f27687"/>
+  <path d="M181 140L167 70 171 70 199 140Z" fill="#e95367"/>
+  <path d="M209 140L177 70 181 70 229 140Z" fill="#f27687"/>
+  <path d="M52 140L130 70 194 70 256 140" fill="none" stroke="#fff0ff" stroke-width="2"/>
+  <path d="M98 140L145 70M217 140L182 70" stroke="#fff3f7" stroke-opacity=".55" stroke-width="1"/>
+  <path d="M4 139L108 69 214 69 316 139" fill="none" stroke="#8d81b4" stroke-opacity=".35" stroke-width="6"/>
+  <path d="M116 64H208V69H116Z" fill="#eee4f4"/>
+  <path d="M111 61H118V75H111ZM205 61H212V75H205Z" fill="#e6e5ef"/>
+  <path d="M151 63L161 55 170 63" fill="none" stroke="#fff6ff" stroke-width="2"/>
+<rect width="320" height="140" fill="url(#shade)"/>
+<path d="M0 2H320M1 0V140" fill="none" stroke="#fff" stroke-opacity=".13"/>
+</svg>

@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 140" role="img" aria-label="Original rifle squads arena artwork">
+<defs>
+  <linearGradient id="sky" x2=".35" y2="1"><stop stop-color="#9fb9ba"/><stop offset="1" stop-color="#e3c0a1"/></linearGradient>
+  <linearGradient id="shade" x2="0" y2="1"><stop stop-color="#07111b" stop-opacity="0"/><stop offset="1" stop-color="#07111b" stop-opacity=".72"/></linearGradient>
+  <filter id="haze"><feGaussianBlur stdDeviation="2"/></filter>
+</defs>
+<rect width="320" height="140" fill="url(#sky)"/>
+<circle cx="251" cy="25" r="32" fill="#f5e7c8" opacity=".34" filter="url(#haze)"/>
+
+  <path d="M0 30L106 13V110H0Z" fill="#b5a084"/><path d="M114 15L236 21V112H114Z" fill="#d0b79a"/>
+  <path d="M241 18L320 11V112H241Z" fill="#a3a18d"/>
+  <rect x="15" y="39" width="8" height="12" fill="#33424a" opacity="0.33"/><rect x="37" y="39" width="8" height="12" fill="#33424a" opacity="0.78"/><rect x="59" y="39" width="8" height="12" fill="#33424a" opacity="0.78"/><rect x="81" y="39" width="8" height="12" fill="#33424a" opacity="0.78"/><rect x="15" y="65" width="8" height="12" fill="#33424a" opacity="0.78"/><rect x="37" y="65" width="8" height="12" fill="#33424a" opacity="0.78"/><rect x="59" y="65" width="8" height="12" fill="#33424a" opacity="0.78"/><rect x="81" y="65" width="8" height="12" fill="#33424a" opacity="0.33"/><rect x="15" y="91" width="8" height="12" fill="#33424a" opacity="0.78"/><rect x="37" y="91" width="8" height="12" fill="#33424a" opacity="0.78"/><rect x="59" y="91" width="8" height="12" fill="#33424a" opacity="0.78"/><rect x="81" y="91" width="8" height="12" fill="#33424a" opacity="0.78"/><rect x="126" y="38" width="8" height="12" fill="#526365" opacity="0.33"/><rect x="145" y="38" width="8" height="12" fill="#526365" opacity="0.78"/><rect x="164" y="38" width="8" height="12" fill="#526365" opacity="0.78"/><rect x="183" y="38" width="8" height="12" fill="#526365" opacity="0.78"/><rect x="202" y="38" width="8" height="12" fill="#526365" opacity="0.78"/><rect x="126" y="63" width="8" height="12" fill="#526365" opacity="0.78"/><rect x="145" y="63" width="8" height="12" fill="#526365" opacity="0.78"/><rect x="164" y="63" width="8" height="12" fill="#526365" opacity="0.33"/><rect x="183" y="63" width="8" height="12" fill="#526365" opacity="0.78"/><rect x="202" y="63" width="8" height="12" fill="#526365" opacity="0.78"/><rect x="126" y="88" width="8" height="12" fill="#526365" opacity="0.78"/><rect x="145" y="88" width="8" height="12" fill="#526365" opacity="0.78"/><rect x="164" y="88" width="8" height="12" fill="#526365" opacity="0.78"/><rect x="183" y="88" width="8" height="12" fill="#526365" opacity="0.78"/><rect x="202" y="88" width="8" height="12" fill="#526365" opacity="0.33"/><rect x="253" y="31" width="8" height="12" fill="#435257" opacity="0.33"/><rect x="272" y="31" width="8" height="12" fill="#435257" opacity="0.78"/><rect x="291" y="31" width="8" height="12" fill="#435257" opacity="0.78"/><rect x="253" y="57" width="8" height="12" fill="#435257" opacity="0.78"/><rect x="272" y="57" width="8" height="12" fill="#435257" opacity="0.78"/><rect x="291" y="57" width="8" height="12" fill="#435257" opacity="0.78"/><rect x="253" y="83" width="8" height="12" fill="#435257" opacity="0.78"/><rect x="272" y="83" width="8" height="12" fill="#435257" opacity="0.33"/><rect x="291" y="83" width="8" height="12" fill="#435257" opacity="0.78"/>
+  <path d="M0 118L148 88 320 125V140H0Z" fill="#8e8374"/>
+  <path d="M0 90L149 87 163 140H59Z" fill="#595c54" opacity=".7"/>
+  <g transform="translate(102 112) scale(1.05)" fill="#435352">
+<path d="M-8-36L-6-46 7-46 10-36 4-30 -6-30Z"/><path d="M-12-30L12-30 16-4 8 4 -9 4 -16-4Z"/>
+<path d="M-12-21L-23-8-19-3-7-14 8-18 30-13 32-18 7-25Z"/>
+<path d="M-11 0H-2L-5 25-10 45-17 45-14 20ZM3 0H12L16 44H9L5 21Z"/>
+<path d="M-19-18L37-22 39-17-10-12Z" fill="#202729"/></g><g transform="translate(197 111) scale(0.92)" fill="#626662">
+<path d="M-8-36L-6-46 7-46 10-36 4-30 -6-30Z"/><path d="M-12-30L12-30 16-4 8 4 -9 4 -16-4Z"/>
+<path d="M-12-21L-23-8-19-3-7-14 8-18 30-13 32-18 7-25Z"/>
+<path d="M-11 0H-2L-5 25-10 45-17 45-14 20ZM3 0H12L16 44H9L5 21Z"/>
+<path d="M-19-18L37-22 39-17-10-12Z" fill="#202729"/></g><g transform="translate(253 107) scale(0.68)" fill="#64716c">
+<path d="M-8-36L-6-46 7-46 10-36 4-30 -6-30Z"/><path d="M-12-30L12-30 16-4 8 4 -9 4 -16-4Z"/>
+<path d="M-12-21L-23-8-19-3-7-14 8-18 30-13 32-18 7-25Z"/>
+<path d="M-11 0H-2L-5 25-10 45-17 45-14 20ZM3 0H12L16 44H9L5 21Z"/>
+<path d="M-19-18L37-22 39-17-10-12Z" fill="#202729"/></g>
+<rect width="320" height="140" fill="url(#shade)"/>
+<path d="M0 2H320M1 0V140" fill="none" stroke="#fff" stroke-opacity=".13"/>
+</svg>

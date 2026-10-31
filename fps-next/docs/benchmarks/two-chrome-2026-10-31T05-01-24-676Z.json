@@ -1,0 +1,2792 @@
+{
+  "ok": true,
+  "createdAt": "2026-10-31T05:11:40.419Z",
+  "mapId": "courtyard",
+  "roomCode": "25GQ",
+  "machineLabel": "rtx5060-laptop-local",
+  "hardwareGpuRequired": true,
+  "requestedDurationMs": 600000,
+  "quality": "high",
+  "deviceScaleFactor": 2,
+  "gpuTelemetry": {
+    "provider": "nvidia-smi",
+    "sampleIntervalMs": 5000,
+    "scope": "host-wide; includes unrelated GPU processes",
+    "samples": [
+      {
+        "elapsedMs": 85,
+        "devices": [
+          {
+            "index": 0,
+            "name": "NVIDIA GeForce RTX 5060 Laptop GPU",
+            "utilizationPercent": 52,
+            "memoryUsedMiB": 3980,
+            "memoryTotalMiB": 8151,
+            "temperatureC": 72,
+            "powerW": 54.49
+          }
+        ]
+      },
+      {
+        "elapsedMs": 5110,
+        "devices": [
+          {
+            "index": 0,
+            "name": "NVIDIA GeForce RTX 5060 Laptop GPU",
+            "utilizationPercent": 52,
+            "memoryUsedMiB": 3956,
+            "memoryTotalMiB": 8151,
+            "temperatureC": 73,
+            "powerW": 56.52
+          }
+        ]
+      },
+      {
+        "elapsedMs": 10094,
+        "devices": [
+          {
+            "index": 0,
+            "name": "NVIDIA GeForce RTX 5060 Laptop GPU",
+            "utilizationPercent": 54,
+            "memoryUsedMiB": 3971,
+            "memoryTotalMiB": 8151,
+            "temperatureC": 74,
+            "powerW": 58.79
+          }
+        ]
+      },
+      {
+        "elapsedMs": 15108,
+        "devices": [
+          {
+            "index": 0,
+            "name": "NVIDIA GeForce RTX 5060 Laptop GPU",
+            "utilizationPercent": 56,
+            "memoryUsedMiB": 3937,
+            "memoryTotalMiB": 8151,
+            "temperatureC": 75,
+            "powerW": 59.11
+          }
+        ]
+      },
+      {
+        "elapsedMs": 20108,
+        "devices": [
+          {
+            "index": 0,
+            "name": "NVIDIA GeForce RTX 5060 Laptop GPU",
+            "utilizationPercent": 54,
+            "memoryUsedMiB": 3934,
+            "memoryTotalMiB": 8151,
+            "temperatureC": 75,
+            "powerW": 61.43
+          }
+        ]
+      },
+      {
+        "elapsedMs": 25115,
+        "devices": [
+          {
+            "index": 0,
+            "name": "NVIDIA GeForce RTX 5060 Laptop GPU",
+            "utilizationPercent": 56,
+            "memoryUsedMiB": 3967,
+            "memoryTotalMiB": 8151,
+            "temperatureC": 76,
+            "powerW": 60.42
+          }
+        ]
+      },
+      {
+        "elapsedMs": 30116,
+        "devices": [
+          {
+            "index": 0,
+            "name": "NVIDIA GeForce RTX 5060 Laptop GPU",
+            "utilizationPercent": 54,
+            "memoryUsedMiB": 3944,
+            "memoryTotalMiB": 8151,
+            "temperatureC": 76,
+            "powerW": 59.81
+          }
+        ]
+      },
+      {
+        "elapsedMs": 35120,
+        "devices": [
+          {
+            "index": 0,
+            "name": "NVIDIA GeForce RTX 5060 Laptop GPU",
+            "utilizationPercent": 58,
+            "memoryUsedMiB": 3943,
+            "memoryTotalMiB": 8151,
+            "temperatureC": 76,
+            "powerW": 61.37
+          }
+        ]
+      },
+      {
+        "elapsedMs": 40136,
+        "devices": [
+          {
+            "index": 0,
+            "name": "NVIDIA GeForce RTX 5060 Laptop GPU",
+            "utilizationPercent": 56,
+            "memoryUsedMiB": 3939,
+            "memoryTotalMiB": 8151,
+            "temperatureC": 77,
+            "powerW": 60.41
+          }
+        ]
+      },
+      {
+        "elapsedMs": 45159,
+        "devices": [
+          {
+            "index": 0,
+            "name": "NVIDIA GeForce RTX 5060 Laptop GPU",
+            "utilizationPercent": 55,
+            "memoryUsedMiB": 3938,
+            "memoryTotalMiB": 8151,
+            "temperatureC": 77,
+            "powerW": 60.1
+          }
+        ]
+      },
+      {
+        "elapsedMs": 50145,
+        "devices": [
+          {
+            "index": 0,
+            "name": "NVIDIA GeForce RTX 5060 Laptop GPU",
+            "utilizationPercent": 57,
+            "memoryUsedMiB": 3837,
+            "memoryTotalMiB": 8151,
+            "temperatureC": 78,
+            "powerW": 55.47
+          }
+        ]
+      },
+      {
+        "elapsedMs": 55147,
+        "devices": [
+          {
+            "index": 0,
+            "name": "NVIDIA GeForce RTX 5060 Laptop GPU",
+            "utilizationPercent": 51,
+            "memoryUsedMiB": 3857,
+            "memoryTotalMiB": 8151,
+            "temperatureC": 78,
+            "powerW": 57.62
+          }
+        ]
+      },
+      {
+        "elapsedMs": 60161,
+        "devices": [
+          {
+            "index": 0,
+            "name": "NVIDIA GeForce RTX 5060 Laptop GPU",
+            "utilizationPercent": 55,
+            "memoryUsedMiB": 3864,
+            "memoryTotalMiB": 8151,
+            "temperatureC": 78,
+            "powerW": 58.72
+          }
+        ]
+      },
+      {
+        "elapsedMs": 65158,
+        "devices": [
+          {
+            "index": 0,
+            "name": "NVIDIA GeForce RTX 5060 Laptop GPU",
+            "utilizationPercent": 56,
+            "memoryUsedMiB": 3841,
+            "memoryTotalMiB": 8151,
+            "temperatureC": 79,
+            "powerW": 60.97
+          }
+        ]
+      },
+      {
+        "elapsedMs": 70165,
+        "devices": [
+          {
+            "index": 0,
+            "name": "NVIDIA GeForce RTX 5060 Laptop GPU",
+            "utilizationPercent": 51,
+            "memoryUsedMiB": 3840,
+            "memoryTotalMiB": 8151,
+            "temperatureC": 78,
+            "powerW": 57.49
+          }
+        ]
+      },
+      {
+        "elapsedMs": 75156,
+        "devices": [
+          {
+            "index": 0,
+            "name": "NVIDIA GeForce RTX 5060 Laptop GPU",
+            "utilizationPercent": 54,
+            "memoryUsedMiB": 3841,
+            "memoryTotalMiB": 8151,
+            "temperatureC": 79,
+            "powerW": 61.37
+          }
+        ]
+      },
+      {
+        "elapsedMs": 80154,
+        "devices": [
+          {
+            "index": 0,
+            "name": "NVIDIA GeForce RTX 5060 Laptop GPU",
+            "utilizationPercent": 55,
+            "memoryUsedMiB": 3838,
+            "memoryTotalMiB": 8151,
+            "temperatureC": 79,
+            "powerW": 61.35
+          }
+        ]
+      },
+      {
+        "elapsedMs": 85162,
+        "devices": [
+          {
+            "index": 0,
+            "name": "NVIDIA GeForce RTX 5060 Laptop GPU",
+            "utilizationPercent": 55,
+            "memoryUsedMiB": 3838,
+            "memoryTotalMiB": 8151,
+            "temperatureC": 80,
+            "powerW": 61.17
+          }
+        ]
+      },
+      {
+        "elapsedMs": 90178,
+        "devices": [
+          {
+            "index": 0,
+            "name": "NVIDIA GeForce RTX 5060 Laptop GPU",
+            "utilizationPercent": 55,
+            "memoryUsedMiB": 3840,
+            "memoryTotalMiB": 8151,
+            "temperatureC": 79,
+            "powerW": 61.64
+          }
+        ]
+      },
+      {
+        "elapsedMs": 95192,
+        "devices": [
+          {
+            "index": 0,
+            "name": "NVIDIA GeForce RTX 5060 Laptop GPU",
+            "utilizationPercent": 54,
+            "memoryUsedMiB": 3840,
+            "memoryTotalMiB": 8151,
+            "temperatureC": 80,
+            "powerW": 61.3
+          }
+        ]
+      },
+      {
+        "elapsedMs": 100196,
+        "devices": [
+          {
+            "index": 0,
+            "name": "NVIDIA GeForce RTX 5060 Laptop GPU",
+            "utilizationPercent": 43,
+            "memoryUsedMiB": 3841,
+            "memoryTotalMiB": 8151,
+            "temperatureC": 78,
+            "powerW": 57.47
+          }
+        ]
+      },
+      {
+        "elapsedMs": 105186,
+        "devices": [
+          {
+            "index": 0,
+            "name": "NVIDIA GeForce RTX 5060 Laptop GPU",
+            "utilizationPercent": 52,
+            "memoryUsedMiB": 3841,
+            "memoryTotalMiB": 8151,
+            "temperatureC": 80,
+            "powerW": 61.36
+          }
+        ]
+      },
+      {
+        "elapsedMs": 110200,
+        "devices": [
+          {
+            "index": 0,
+            "name": "NVIDIA GeForce RTX 5060 Laptop GPU",
+            "utilizationPercent": 51,
+            "memoryUsedMiB": 3837,
+            "memoryTotalMiB": 8151,
+            "temperatureC": 80,
+            "powerW": 60.41
+          }
+        ]
+      },
+      {
+        "elapsedMs": 115194,
+        "devices": [
+          {
+            "index": 0,
+            "name": "NVIDIA GeForce RTX 5060 Laptop GPU",
+            "utilizationPercent": 54,
+            "memoryUsedMiB": 3860,
+            "memoryTotalMiB": 8151,
+            "temperatureC": 81,
+            "powerW": 61.31
+          }
+        ]
+      },
+      {
+        "elapsedMs": 120218,
+        "devices": [
+          {
+            "index": 0,
+            "name": "NVIDIA GeForce RTX 5060 Laptop GPU",
+            "utilizationPercent": 56,
+            "memoryUsedMiB": 3858,
+            "memoryTotalMiB": 8151,
+            "temperatureC": 80,
+            "powerW": 61.77
+          }
+        ]
+      },
+      {
+        "elapsedMs": 125210,
+        "devices": [
+          {
+            "index": 0,
+            "name": "NVIDIA GeForce RTX 5060 Laptop GPU",
+            "utilizationPercent": 56,
+            "memoryUsedMiB": 3858,
+            "memoryTotalMiB": 8151,
+            "temperatureC": 79,
+            "powerW": 60.44
+          }
+        ]
+      },
+      {
+        "elapsedMs": 130228,
+        "devices": [
+          {
+            "index": 0,
+            "name": "NVIDIA GeForce RTX 5060 Laptop GPU",
+            "utilizationPercent": 55,
+            "memoryUsedMiB": 3849,
+            "memoryTotalMiB": 8151,
+            "temperatureC": 79,
+            "powerW": 60.81
+          }
+        ]
+      },
+      {
+        "elapsedMs": 135211,
+        "devices": [
+          {
+            "index": 0,
+            "name": "NVIDIA GeForce RTX 5060 Laptop GPU",
+            "utilizationPercent": 55,
+            "memoryUsedMiB": 3844,
+            "memoryTotalMiB": 8151,
+            "temperatureC": 79,
+            "powerW": 60.83
+          }
+        ]
+      },
+      {
+        "elapsedMs": 140221,
+        "devices": [
+          {
+            "index": 0,
+            "name": "NVIDIA GeForce RTX 5060 Laptop GPU",
+            "utilizationPercent": 54,
+            "memoryUsedMiB": 3841,
+            "memoryTotalMiB": 8151,
+            "temperatureC": 78,
+            "powerW": 60.61
+          }
+        ]
+      },
+      {
+        "elapsedMs": 145223,
+        "devices": [
+          {
+            "index": 0,
+            "name": "NVIDIA GeForce RTX 5060 Laptop GPU",
+            "utilizationPercent": 55,
+            "memoryUsedMiB": 3851,
+            "memoryTotalMiB": 8151,
+            "temperatureC": 78,
+            "powerW": 57.33
+          }
+        ]
+      },
+      {
+        "elapsedMs": 150231,
+        "devices": [
+          {
+            "index": 0,
+            "name": "NVIDIA GeForce RTX 5060 Laptop GPU",
+            "utilizationPercent": 50,
+            "memoryUsedMiB": 3840,
+            "memoryTotalMiB": 8151,
+            "temperatureC": 78,
+            "powerW": 60.35
+          }
+        ]
+      },
+      {
+        "elapsedMs": 155228,
+        "devices": [
+          {
+            "index": 0,
+            "name": "NVIDIA GeForce RTX 5060 Laptop GPU",
+            "utilizationPercent": 55,
+            "memoryUsedMiB": 3852,
+            "memoryTotalMiB": 8151,
+            "temperatureC": 78,
+            "powerW": 59.24
+          }
+        ]
+      },
+      {
+        "elapsedMs": 160232,
+        "devices": [
+          {
+            "index": 0,
+            "name": "NVIDIA GeForce RTX 5060 Laptop GPU",
+            "utilizationPercent": 55,
+            "memoryUsedMiB": 3842,
+            "memoryTotalMiB": 8151,
+            "temperatureC": 78,
+            "powerW": 60.33
+          }
+        ]
+      },
+      {
+        "elapsedMs": 165247,
+        "devices": [
+          {
+            "index": 0,
+            "name": "NVIDIA GeForce RTX 5060 Laptop GPU",
+            "utilizationPercent": 42,
+            "memoryUsedMiB": 3870,
+            "memoryTotalMiB": 8151,
+            "temperatureC": 77,
+            "powerW": 59.4
+          }
+        ]
+      },
+      {
+        "elapsedMs": 170257,
+        "devices": [
+          {
+            "index": 0,
+            "name": "NVIDIA GeForce RTX 5060 Laptop GPU",
+            "utilizationPercent": 54,
+            "memoryUsedMiB": 3874,
+            "memoryTotalMiB": 8151,
+            "temperatureC": 77,
+            "powerW": 60.36
+          }
+        ]
+      },
+      {
+        "elapsedMs": 175250,
+        "devices": [
+          {
+            "index": 0,
+            "name": "NVIDIA GeForce RTX 5060 Laptop GPU",
+            "utilizationPercent": 55,
+            "memoryUsedMiB": 3860,
+            "memoryTotalMiB": 8151,
+            "temperatureC": 78,
+            "powerW": 60.35
+          }
+        ]
+      },
+      {
+        "elapsedMs": 180258,
+        "devices": [
+          {
+            "index": 0,
+            "name": "NVIDIA GeForce RTX 5060 Laptop GPU",
+            "utilizationPercent": 51,
+            "memoryUsedMiB": 3885,
+            "memoryTotalMiB": 8151,
+            "temperatureC": 77,
+            "powerW": 57.91
+          }
+        ]
+      },
+      {
+        "elapsedMs": 185255,
+        "devices": [
+          {
+            "index": 0,
+            "name": "NVIDIA GeForce RTX 5060 Laptop GPU",
+            "utilizationPercent": 48,
+            "memoryUsedMiB": 3872,
+            "memoryTotalMiB": 8151,
+            "temperatureC": 77,
+            "powerW": 57.57
+          }
+        ]
+      },
+      {
+        "elapsedMs": 190277,
+        "devices": [
+          {
+            "index": 0,
+            "name": "NVIDIA GeForce RTX 5060 Laptop GPU",
+            "utilizationPercent": 56,
+            "memoryUsedMiB": 3881,
+            "memoryTotalMiB": 8151,
+            "temperatureC": 77,
+            "powerW": 59.56
+          }
+        ]
+      },
+      {
+        "elapsedMs": 195275,
+        "devices": [
+          {
+            "index": 0,
+            "name": "NVIDIA GeForce RTX 5060 Laptop GPU",
+            "utilizationPercent": 46,
+            "memoryUsedMiB": 3839,
+            "memoryTotalMiB": 8151,
+            "temperatureC": 75,
+            "powerW": 51.46
+          }
+        ]
+      },
+      {
+        "elapsedMs": 200290,
+        "devices": [
+          {
+            "index": 0,
+            "name": "NVIDIA GeForce RTX 5060 Laptop GPU",
+            "utilizationPercent": 48,
+            "memoryUsedMiB": 3849,
+            "memoryTotalMiB": 8151,
+            "temperatureC": 76,
+            "powerW": 52
+          }
+        ]
+      },
+      {
+        "elapsedMs": 205273,
+        "devices": [
+          {
+            "index": 0,
+            "name": "NVIDIA GeForce RTX 5060 Laptop GPU",
+            "utilizationPercent": 47,
+            "memoryUsedMiB": 3829,
+            "memoryTotalMiB": 8151,
+            "temperatureC": 75,
+            "powerW": 52.43
+          }
+        ]
+      },
+      {
+        "elapsedMs": 210283,
+        "devices": [
+          {
+            "index": 0,
+            "name": "NVIDIA GeForce RTX 5060 Laptop GPU",
+            "utilizationPercent": 46,
+            "memoryUsedMiB": 3831,
+            "memoryTotalMiB": 8151,
+            "temperatureC": 75,
+            "powerW": 51.72
+          }
+        ]
+      },
+      {
+        "elapsedMs": 215281,
+        "devices": [
+          {
+            "index": 0,
+            "name": "NVIDIA GeForce RTX 5060 Laptop GPU",
+            "utilizationPercent": 46,
+            "memoryUsedMiB": 3830,
+            "memoryTotalMiB": 8151,
+            "temperatureC": 75,
+            "powerW": 51.54
+          }
+        ]
+      },
+      {
+        "elapsedMs": 220303,
+        "devices": [
+          {
+            "index": 0,
+            "name": "NVIDIA GeForce RTX 5060 Laptop GPU",
+            "utilizationPercent": 46,
+            "memoryUsedMiB": 3830,
+            "memoryTotalMiB": 8151,
+            "temperatureC": 75,
+            "powerW": 51.4
+          }
+        ]
+      },
+      {
+        "elapsedMs": 225341,
+        "devices": [
+          {
+            "index": 0,
+            "name": "NVIDIA GeForce RTX 5060 Laptop GPU",
+            "utilizationPercent": 46,
+            "memoryUsedMiB": 3831,
+            "memoryTotalMiB": 8151,
+            "temperatureC": 75,
+            "powerW": 52.16
+          }
+        ]
+      },
+      {
+        "elapsedMs": 230321,
+        "devices": [
+          {
+            "index": 0,
+            "name": "NVIDIA GeForce RTX 5060 Laptop GPU",
+            "utilizationPercent": 45,
+            "memoryUsedMiB": 3810,
+            "memoryTotalMiB": 8151,
+            "temperatureC": 74,
+            "powerW": 52.77
+          }
+        ]
+      },
+      {
+        "elapsedMs": 235316,
+        "devices": [
+          {
+            "index": 0,
+            "name": "NVIDIA GeForce RTX 5060 Laptop GPU",
+            "utilizationPercent": 46,
+            "memoryUsedMiB": 3863,
+            "memoryTotalMiB": 8151,
+            "temperatureC": 74,
+            "powerW": 51.42
+          }
+        ]
+      },
+      {
+        "elapsedMs": 240334,
+        "devices": [
+          {
+            "index": 0,
+            "name": "NVIDIA GeForce RTX 5060 Laptop GPU",
+            "utilizationPercent": 46,
+            "memoryUsedMiB": 3860,
+            "memoryTotalMiB": 8151,
+            "temperatureC": 74,
+            "powerW": 51.22
+          }
+        ]
+      },
+      {
+        "elapsedMs": 245344,
+        "devices": [
+          {
+            "index": 0,
+            "name": "NVIDIA GeForce RTX 5060 Laptop GPU",
+            "utilizationPercent": 48,
+            "memoryUsedMiB": 3864,
+            "memoryTotalMiB": 8151,
+            "temperatureC": 74,
+            "powerW": 51.68
+          }
+        ]
+      },
+      {
+        "elapsedMs": 250385,
+        "devices": [
+          {
+            "index": 0,
+            "name": "NVIDIA GeForce RTX 5060 Laptop GPU",
+            "utilizationPercent": 36,
+            "memoryUsedMiB": 3833,
+            "memoryTotalMiB": 8151,
+            "temperatureC": 73,
+            "powerW": 50.11
+          }
+        ]
+      },
+      {
+        "elapsedMs": 255356,
+        "devices": [
+          {
+            "index": 0,
+            "name": "NVIDIA GeForce RTX 5060 Laptop GPU",
+            "utilizationPercent": 46,
+            "memoryUsedMiB": 3832,
+            "memoryTotalMiB": 8151,
+            "temperatureC": 74,
+            "powerW": 51.11
+          }
+        ]
+      },
+      {
+        "elapsedMs": 260384,
+        "devices": [
+          {
+            "index": 0,
+            "name": "NVIDIA GeForce RTX 5060 Laptop GPU",
+            "utilizationPercent": 45,
+            "memoryUsedMiB": 3831,
+            "memoryTotalMiB": 8151,
+            "temperatureC": 74,
+            "powerW": 51.33
+          }
+        ]
+      },
+      {
+        "elapsedMs": 265380,
+        "devices": [
+          {
+            "index": 0,
+            "name": "NVIDIA GeForce RTX 5060 Laptop GPU",
+            "utilizationPercent": 46,
+            "memoryUsedMiB": 3831,
+            "memoryTotalMiB": 8151,
+            "temperatureC": 74,
+            "powerW": 51.67
+          }
+        ]
+      },
+      {
+        "elapsedMs": 270382,
+        "devices": [
+          {
+            "index": 0,
+            "name": "NVIDIA GeForce RTX 5060 Laptop GPU",
+            "utilizationPercent": 45,
+            "memoryUsedMiB": 3832,
+            "memoryTotalMiB": 8151,
+            "temperatureC": 74,
+            "powerW": 51.28
+          }
+        ]
+      },
+      {
+        "elapsedMs": 275382,
+        "devices": [
+          {
+            "index": 0,
+            "name": "NVIDIA GeForce RTX 5060 Laptop GPU",
+            "utilizationPercent": 46,
+            "memoryUsedMiB": 3831,
+            "memoryTotalMiB": 8151,
+            "temperatureC": 74,
+            "powerW": 50.99
+          }
+        ]
+      },
+      {
+        "elapsedMs": 280394,
+        "devices": [
+          {
+            "index": 0,
+            "name": "NVIDIA GeForce RTX 5060 Laptop GPU",
+            "utilizationPercent": 46,
+            "memoryUsedMiB": 3831,
+            "memoryTotalMiB": 8151,
+            "temperatureC": 74,
+            "powerW": 51.47
+          }
+        ]
+      },
+      {
+        "elapsedMs": 285392,
+        "devices": [
+          {
+            "index": 0,
+            "name": "NVIDIA GeForce RTX 5060 Laptop GPU",
+            "utilizationPercent": 46,
+            "memoryUsedMiB": 3829,
+            "memoryTotalMiB": 8151,
+            "temperatureC": 74,
+            "powerW": 50.96
+          }
+        ]
+      },
+      {
+        "elapsedMs": 290391,
+        "devices": [
+          {
+            "index": 0,
+            "name": "NVIDIA GeForce RTX 5060 Laptop GPU",
+            "utilizationPercent": 47,
+            "memoryUsedMiB": 3874,
+            "memoryTotalMiB": 8151,
+            "temperatureC": 74,
+            "powerW": 52.01
+          }
+        ]
+      },
+      {
+        "elapsedMs": 295405,
+        "devices": [
+          {
+            "index": 0,
+            "name": "NVIDIA GeForce RTX 5060 Laptop GPU",
+            "utilizationPercent": 46,
+            "memoryUsedMiB": 3880,
+            "memoryTotalMiB": 8151,
+            "temperatureC": 74,
+            "powerW": 52.35
+          }
+        ]
+      },
+      {
+        "elapsedMs": 300412,
+        "devices": [
+          {
+            "index": 0,
+            "name": "NVIDIA GeForce RTX 5060 Laptop GPU",
+            "utilizationPercent": 46,
+            "memoryUsedMiB": 3875,
+            "memoryTotalMiB": 8151,
+            "temperatureC": 74,
+            "powerW": 51.4
+          }
+        ]
+      },
+      {
+        "elapsedMs": 305424,
+        "devices": [
+          {
+            "index": 0,
+            "name": "NVIDIA GeForce RTX 5060 Laptop GPU",
+            "utilizationPercent": 46,
+            "memoryUsedMiB": 3843,
+            "memoryTotalMiB": 8151,
+            "temperatureC": 74,
+            "powerW": 51.3
+          }
+        ]
+      },
+      {
+        "elapsedMs": 310415,
+        "devices": [
+          {
+            "index": 0,
+            "name": "NVIDIA GeForce RTX 5060 Laptop GPU",
+            "utilizationPercent": 48,
+            "memoryUsedMiB": 3843,
+            "memoryTotalMiB": 8151,
+            "temperatureC": 74,
+            "powerW": 52
+          }
+        ]
+      },
+      {
+        "elapsedMs": 315449,
+        "devices": [
+          {
+            "index": 0,
+            "name": "NVIDIA GeForce RTX 5060 Laptop GPU",
+            "utilizationPercent": 47,
+            "memoryUsedMiB": 3902,
+            "memoryTotalMiB": 8151,
+            "temperatureC": 74,
+            "powerW": 51.51
+          }
+        ]
+      },
+      {
+        "elapsedMs": 320645,
+        "devices": [
+          {
+            "index": 0,
+            "name": "NVIDIA GeForce RTX 5060 Laptop GPU",
+            "utilizationPercent": 36,
+            "memoryUsedMiB": 3892,
+            "memoryTotalMiB": 8151,
+            "temperatureC": 72,
+            "powerW": 44.83
+          }
+        ]
+      },
+      {
+        "elapsedMs": 325448,
+        "devices": [
+          {
+            "index": 0,
+            "name": "NVIDIA GeForce RTX 5060 Laptop GPU",
+            "utilizationPercent": 46,
+            "memoryUsedMiB": 3860,
+            "memoryTotalMiB": 8151,
+            "temperatureC": 74,
+            "powerW": 51.04
+          }
+        ]
+      },
+      {
+        "elapsedMs": 330454,
+        "devices": [
+          {
+            "index": 0,
+            "name": "NVIDIA GeForce RTX 5060 Laptop GPU",
+            "utilizationPercent": 48,
+            "memoryUsedMiB": 3938,
+            "memoryTotalMiB": 8151,
+            "temperatureC": 74,
+            "powerW": 52.31
+          }
+        ]
+      },
+      {
+        "elapsedMs": 335454,
+        "devices": [
+          {
+            "index": 0,
+            "name": "NVIDIA GeForce RTX 5060 Laptop GPU",
+            "utilizationPercent": 47,
+            "memoryUsedMiB": 3906,
+            "memoryTotalMiB": 8151,
+            "temperatureC": 74,
+            "powerW": 51.41
+          }
+        ]
+      },
+      {
+        "elapsedMs": 340470,
+        "devices": [
+          {
+            "index": 0,
+            "name": "NVIDIA GeForce RTX 5060 Laptop GPU",
+            "utilizationPercent": 45,
+            "memoryUsedMiB": 3875,
+            "memoryTotalMiB": 8151,
+            "temperatureC": 73,
+            "powerW": 51.1
+          }
+        ]
+      },
+      {
+        "elapsedMs": 345475,
+        "devices": [
+          {
+            "index": 0,
+            "name": "NVIDIA GeForce RTX 5060 Laptop GPU",
+            "utilizationPercent": 46,
+            "memoryUsedMiB": 3837,
+            "memoryTotalMiB": 8151,
+            "temperatureC": 73,
+            "powerW": 51.31
+          }
+        ]
+      },
+      {
+        "elapsedMs": 350466,
+        "devices": [
+          {
+            "index": 0,
+            "name": "NVIDIA GeForce RTX 5060 Laptop GPU",
+            "utilizationPercent": 45,
+            "memoryUsedMiB": 3837,
+            "memoryTotalMiB": 8151,
+            "temperatureC": 73,
+            "powerW": 51.74
+          }
+        ]
+      },
+      {
+        "elapsedMs": 355472,
+        "devices": [
+          {
+            "index": 0,
+            "name": "NVIDIA GeForce RTX 5060 Laptop GPU",
+            "utilizationPercent": 46,
+            "memoryUsedMiB": 3827,
+            "memoryTotalMiB": 8151,
+            "temperatureC": 73,
+            "powerW": 50.74
+          }
+        ]
+      },
+      {
+        "elapsedMs": 360500,
+        "devices": [
+          {
+            "index": 0,
+            "name": "NVIDIA GeForce RTX 5060 Laptop GPU",
+            "utilizationPercent": 46,
+            "memoryUsedMiB": 3827,
+            "memoryTotalMiB": 8151,
+            "temperatureC": 73,
+            "powerW": 51.14
+          }
+        ]
+      },
+      {
+        "elapsedMs": 365496,
+        "devices": [
+          {
+            "index": 0,
+            "name": "NVIDIA GeForce RTX 5060 Laptop GPU",
+            "utilizationPercent": 46,
+            "memoryUsedMiB": 3827,
+            "memoryTotalMiB": 8151,
+            "temperatureC": 73,
+            "powerW": 51.24
+          }
+        ]
+      },
+      {
+        "elapsedMs": 370568,
+        "devices": [
+          {
+            "index": 0,
+            "name": "NVIDIA GeForce RTX 5060 Laptop GPU",
+            "utilizationPercent": 38,
+            "memoryUsedMiB": 3872,
+            "memoryTotalMiB": 8151,
+            "temperatureC": 73,
+            "powerW": 48.59
+          }
+        ]
+      },
+      {
+        "elapsedMs": 375504,
+        "devices": [
+          {
+            "index": 0,
+            "name": "NVIDIA GeForce RTX 5060 Laptop GPU",
+            "utilizationPercent": 44,
+            "memoryUsedMiB": 3833,
+            "memoryTotalMiB": 8151,
+            "temperatureC": 73,
+            "powerW": 48.24
+          }
+        ]
+      },
+      {
+        "elapsedMs": 380519,
+        "devices": [
+          {
+            "index": 0,
+            "name": "NVIDIA GeForce RTX 5060 Laptop GPU",
+            "utilizationPercent": 47,
+            "memoryUsedMiB": 3852,
+            "memoryTotalMiB": 8151,
+            "temperatureC": 74,
+            "powerW": 54.3
+          }
+        ]
+      },
+      {
+        "elapsedMs": 385518,
+        "devices": [
+          {
+            "index": 0,
+            "name": "NVIDIA GeForce RTX 5060 Laptop GPU",
+            "utilizationPercent": 48,
+            "memoryUsedMiB": 3841,
+            "memoryTotalMiB": 8151,
+            "temperatureC": 74,
+            "powerW": 54.17
+          }
+        ]
+      },
+      {
+        "elapsedMs": 390534,
+        "devices": [
+          {
+            "index": 0,
+            "name": "NVIDIA GeForce RTX 5060 Laptop GPU",
+            "utilizationPercent": 45,
+            "memoryUsedMiB": 3905,
+            "memoryTotalMiB": 8151,
+            "temperatureC": 73,
+            "powerW": 54.18
+          }
+        ]
+      },
+      {
+        "elapsedMs": 395502,
+        "devices": [
+          {
+            "index": 0,
+            "name": "NVIDIA GeForce RTX 5060 Laptop GPU",
+            "utilizationPercent": 47,
+            "memoryUsedMiB": 3858,
+            "memoryTotalMiB": 8151,
+            "temperatureC": 74,
+            "powerW": 52.48
+          }
+        ]
+      },
+      {
+        "elapsedMs": 400513,
+        "devices": [
+          {
+            "index": 0,
+            "name": "NVIDIA GeForce RTX 5060 Laptop GPU",
+            "utilizationPercent": 46,
+            "memoryUsedMiB": 3839,
+            "memoryTotalMiB": 8151,
+            "temperatureC": 74,
+            "powerW": 52.1
+          }
+        ]
+      },
+      {
+        "elapsedMs": 405528,
+        "devices": [
+          {
+            "index": 0,
+            "name": "NVIDIA GeForce RTX 5060 Laptop GPU",
+            "utilizationPercent": 48,
+            "memoryUsedMiB": 3840,
+            "memoryTotalMiB": 8151,
+            "temperatureC": 74,
+            "powerW": 52.95
+          }
+        ]
+      },
+      {
+        "elapsedMs": 410530,
+        "devices": [
+          {
+            "index": 0,
+            "name": "NVIDIA GeForce RTX 5060 Laptop GPU",
+            "utilizationPercent": 46,
+            "memoryUsedMiB": 3846,
+            "memoryTotalMiB": 8151,
+            "temperatureC": 74,
+            "powerW": 52.41
+          }
+        ]
+      },
+      {
+        "elapsedMs": 415518,
+        "devices": [
+          {
+            "index": 0,
+            "name": "NVIDIA GeForce RTX 5060 Laptop GPU",
+            "utilizationPercent": 47,
+            "memoryUsedMiB": 3887,
+            "memoryTotalMiB": 8151,
+            "temperatureC": 74,
+            "powerW": 52.35
+          }
+        ]
+      },
+      {
+        "elapsedMs": 420539,
+        "devices": [
+          {
+            "index": 0,
+            "name": "NVIDIA GeForce RTX 5060 Laptop GPU",
+            "utilizationPercent": 46,
+            "memoryUsedMiB": 3901,
+            "memoryTotalMiB": 8151,
+            "temperatureC": 74,
+            "powerW": 53.33
+          }
+        ]
+      },
+      {
+        "elapsedMs": 425538,
+        "devices": [
+          {
+            "index": 0,
+            "name": "NVIDIA GeForce RTX 5060 Laptop GPU",
+            "utilizationPercent": 48,
+            "memoryUsedMiB": 3868,
+            "memoryTotalMiB": 8151,
+            "temperatureC": 74,
+            "powerW": 52.98
+          }
+        ]
+      },
+      {
+        "elapsedMs": 430599,
+        "devices": [
+          {
+            "index": 0,
+            "name": "NVIDIA GeForce RTX 5060 Laptop GPU",
+            "utilizationPercent": 47,
+            "memoryUsedMiB": 3880,
+            "memoryTotalMiB": 8151,
+            "temperatureC": 74,
+            "powerW": 52.42
+          }
+        ]
+      },
+      {
+        "elapsedMs": 435549,
+        "devices": [
+          {
+            "index": 0,
+            "name": "NVIDIA GeForce RTX 5060 Laptop GPU",
+            "utilizationPercent": 47,
+            "memoryUsedMiB": 3868,
+            "memoryTotalMiB": 8151,
+            "temperatureC": 74,
+            "powerW": 52.17
+          }
+        ]
+      },
+      {
+        "elapsedMs": 440563,
+        "devices": [
+          {
+            "index": 0,
+            "name": "NVIDIA GeForce RTX 5060 Laptop GPU",
+            "utilizationPercent": 45,
+            "memoryUsedMiB": 3868,
+            "memoryTotalMiB": 8151,
+            "temperatureC": 74,
+            "powerW": 52.51
+          }
+        ]
+      },
+      {
+        "elapsedMs": 445602,
+        "devices": [
+          {
+            "index": 0,
+            "name": "NVIDIA GeForce RTX 5060 Laptop GPU",
+            "utilizationPercent": 53,
+            "memoryUsedMiB": 3944,
+            "memoryTotalMiB": 8151,
+            "temperatureC": 75,
+            "powerW": 54.2
+          }
+        ]
+      },
+      {
+        "elapsedMs": 450621,
+        "devices": [
+          {
+            "index": 0,
+            "name": "NVIDIA GeForce RTX 5060 Laptop GPU",
+            "utilizationPercent": 46,
+            "memoryUsedMiB": 3943,
+            "memoryTotalMiB": 8151,
+            "temperatureC": 74,
+            "powerW": 51.6
+          }
+        ]
+      },
+      {
+        "elapsedMs": 455599,
+        "devices": [
+          {
+            "index": 0,
+            "name": "NVIDIA GeForce RTX 5060 Laptop GPU",
+            "utilizationPercent": 44,
+            "memoryUsedMiB": 3950,
+            "memoryTotalMiB": 8151,
+            "temperatureC": 74,
+            "powerW": 52.83
+          }
+        ]
+      },
+      {
+        "elapsedMs": 460617,
+        "devices": [
+          {
+            "index": 0,
+            "name": "NVIDIA GeForce RTX 5060 Laptop GPU",
+            "utilizationPercent": 49,
+            "memoryUsedMiB": 3932,
+            "memoryTotalMiB": 8151,
+            "temperatureC": 74,
+            "powerW": 53.28
+          }
+        ]
+      },
+      {
+        "elapsedMs": 465623,
+        "devices": [
+          {
+            "index": 0,
+            "name": "NVIDIA GeForce RTX 5060 Laptop GPU",
+            "utilizationPercent": 45,
+            "memoryUsedMiB": 3944,
+            "memoryTotalMiB": 8151,
+            "temperatureC": 74,
+            "powerW": 54.18
+          }
+        ]
+      },
+      {
+        "elapsedMs": 470629,
+        "devices": [
+          {
+            "index": 0,
+            "name": "NVIDIA GeForce RTX 5060 Laptop GPU",
+            "utilizationPercent": 45,
+            "memoryUsedMiB": 3942,
+            "memoryTotalMiB": 8151,
+            "temperatureC": 74,
+            "powerW": 53.26
+          }
+        ]
+      },
+      {
+        "elapsedMs": 475626,
+        "devices": [
+          {
+            "index": 0,
+            "name": "NVIDIA GeForce RTX 5060 Laptop GPU",
+            "utilizationPercent": 47,
+            "memoryUsedMiB": 3964,
+            "memoryTotalMiB": 8151,
+            "temperatureC": 74,
+            "powerW": 53.43
+          }
+        ]
+      },
+      {
+        "elapsedMs": 480627,
+        "devices": [
+          {
+            "index": 0,
+            "name": "NVIDIA GeForce RTX 5060 Laptop GPU",
+            "utilizationPercent": 50,
+            "memoryUsedMiB": 4001,
+            "memoryTotalMiB": 8151,
+            "temperatureC": 74,
+            "powerW": 52.86
+          }
+        ]
+      },
+      {
+        "elapsedMs": 485643,
+        "devices": [
+          {
+            "index": 0,
+            "name": "NVIDIA GeForce RTX 5060 Laptop GPU",
+            "utilizationPercent": 53,
+            "memoryUsedMiB": 3959,
+            "memoryTotalMiB": 8151,
+            "temperatureC": 74,
+            "powerW": 52.08
+          }
+        ]
+      },
+      {
+        "elapsedMs": 490640,
+        "devices": [
+          {
+            "index": 0,
+            "name": "NVIDIA GeForce RTX 5060 Laptop GPU",
+            "utilizationPercent": 53,
+            "memoryUsedMiB": 3955,
+            "memoryTotalMiB": 8151,
+            "temperatureC": 74,
+            "powerW": 51.77
+          }
+        ]
+      },
+      {
+        "elapsedMs": 495652,
+        "devices": [
+          {
+            "index": 0,
+            "name": "NVIDIA GeForce RTX 5060 Laptop GPU",
+            "utilizationPercent": 52,
+            "memoryUsedMiB": 4016,
+            "memoryTotalMiB": 8151,
+            "temperatureC": 74,
+            "powerW": 53.99
+          }
+        ]
+      },
+      {
+        "elapsedMs": 500645,
+        "devices": [
+          {
+            "index": 0,
+            "name": "NVIDIA GeForce RTX 5060 Laptop GPU",
+            "utilizationPercent": 51,
+            "memoryUsedMiB": 3985,
+            "memoryTotalMiB": 8151,
+            "temperatureC": 74,
+            "powerW": 52.64
+          }
+        ]
+      },
+      {
+        "elapsedMs": 505653,
+        "devices": [
+          {
+            "index": 0,
+            "name": "NVIDIA GeForce RTX 5060 Laptop GPU",
+            "utilizationPercent": 52,
+            "memoryUsedMiB": 3964,
+            "memoryTotalMiB": 8151,
+            "temperatureC": 75,
+            "powerW": 54.29
+          }
+        ]
+      },
+      {
+        "elapsedMs": 510665,
+        "devices": [
+          {
+            "index": 0,
+            "name": "NVIDIA GeForce RTX 5060 Laptop GPU",
+            "utilizationPercent": 51,
+            "memoryUsedMiB": 3944,
+            "memoryTotalMiB": 8151,
+            "temperatureC": 74,
+            "powerW": 52.8
+          }
+        ]
+      },
+      {
+        "elapsedMs": 515697,
+        "devices": [
+          {
+            "index": 0,
+            "name": "NVIDIA GeForce RTX 5060 Laptop GPU",
+            "utilizationPercent": 46,
+            "memoryUsedMiB": 3953,
+            "memoryTotalMiB": 8151,
+            "temperatureC": 74,
+            "powerW": 50.58
+          }
+        ]
+      },
+      {
+        "elapsedMs": 520685,
+        "devices": [
+          {
+            "index": 0,
+            "name": "NVIDIA GeForce RTX 5060 Laptop GPU",
+            "utilizationPercent": 51,
+            "memoryUsedMiB": 3986,
+            "memoryTotalMiB": 8151,
+            "temperatureC": 74,
+            "powerW": 51.55
+          }
+        ]
+      },
+      {
+        "elapsedMs": 525692,
+        "devices": [
+          {
+            "index": 0,
+            "name": "NVIDIA GeForce RTX 5060 Laptop GPU",
+            "utilizationPercent": 48,
+            "memoryUsedMiB": 3965,
+            "memoryTotalMiB": 8151,
+            "temperatureC": 74,
+            "powerW": 53.43
+          }
+        ]
+      },
+      {
+        "elapsedMs": 530685,
+        "devices": [
+          {
+            "index": 0,
+            "name": "NVIDIA GeForce RTX 5060 Laptop GPU",
+            "utilizationPercent": 46,
+            "memoryUsedMiB": 3955,
+            "memoryTotalMiB": 8151,
+            "temperatureC": 73,
+            "powerW": 53.06
+          }
+        ]
+      },
+      {
+        "elapsedMs": 535705,
+        "devices": [
+          {
+            "index": 0,
+            "name": "NVIDIA GeForce RTX 5060 Laptop GPU",
+            "utilizationPercent": 48,
+            "memoryUsedMiB": 3960,
+            "memoryTotalMiB": 8151,
+            "temperatureC": 74,
+            "powerW": 52.25
+          }
+        ]
+      },
+      {
+        "elapsedMs": 540672,
+        "devices": [
+          {
+            "index": 0,
+            "name": "NVIDIA GeForce RTX 5060 Laptop GPU",
+            "utilizationPercent": 46,
+            "memoryUsedMiB": 3895,
+            "memoryTotalMiB": 8151,
+            "temperatureC": 74,
+            "powerW": 52.18
+          }
+        ]
+      },
+      {
+        "elapsedMs": 545677,
+        "devices": [
+          {
+            "index": 0,
+            "name": "NVIDIA GeForce RTX 5060 Laptop GPU",
+            "utilizationPercent": 47,
+            "memoryUsedMiB": 3891,
+            "memoryTotalMiB": 8151,
+            "temperatureC": 74,
+            "powerW": 52.05
+          }
+        ]
+      },
+      {
+        "elapsedMs": 550683,
+        "devices": [
+          {
+            "index": 0,
+            "name": "NVIDIA GeForce RTX 5060 Laptop GPU",
+            "utilizationPercent": 48,
+            "memoryUsedMiB": 3892,
+            "memoryTotalMiB": 8151,
+            "temperatureC": 75,
+            "powerW": 52.62
+          }
+        ]
+      },
+      {
+        "elapsedMs": 555675,
+        "devices": [
+          {
+            "index": 0,
+            "name": "NVIDIA GeForce RTX 5060 Laptop GPU",
+            "utilizationPercent": 46,
+            "memoryUsedMiB": 3891,
+            "memoryTotalMiB": 8151,
+            "temperatureC": 74,
+            "powerW": 52.49
+          }
+        ]
+      },
+      {
+        "elapsedMs": 560693,
+        "devices": [
+          {
+            "index": 0,
+            "name": "NVIDIA GeForce RTX 5060 Laptop GPU",
+            "utilizationPercent": 47,
+            "memoryUsedMiB": 3891,
+            "memoryTotalMiB": 8151,
+            "temperatureC": 75,
+            "powerW": 52.17
+          }
+        ]
+      },
+      {
+        "elapsedMs": 565690,
+        "devices": [
+          {
+            "index": 0,
+            "name": "NVIDIA GeForce RTX 5060 Laptop GPU",
+            "utilizationPercent": 46,
+            "memoryUsedMiB": 3890,
+            "memoryTotalMiB": 8151,
+            "temperatureC": 75,
+            "powerW": 52.05
+          }
+        ]
+      },
+      {
+        "elapsedMs": 570694,
+        "devices": [
+          {
+            "index": 0,
+            "name": "NVIDIA GeForce RTX 5060 Laptop GPU",
+            "utilizationPercent": 47,
+            "memoryUsedMiB": 3891,
+            "memoryTotalMiB": 8151,
+            "temperatureC": 75,
+            "powerW": 52.66
+          }
+        ]
+      },
+      {
+        "elapsedMs": 575726,
+        "devices": [
+          {
+            "index": 0,
+            "name": "NVIDIA GeForce RTX 5060 Laptop GPU",
+            "utilizationPercent": 46,
+            "memoryUsedMiB": 3892,
+            "memoryTotalMiB": 8151,
+            "temperatureC": 74,
+            "powerW": 52.99
+          }
+        ]
+      },
+      {
+        "elapsedMs": 580714,
+        "devices": [
+          {
+            "index": 0,
+            "name": "NVIDIA GeForce RTX 5060 Laptop GPU",
+            "utilizationPercent": 49,
+            "memoryUsedMiB": 3978,
+            "memoryTotalMiB": 8151,
+            "temperatureC": 75,
+            "powerW": 53.97
+          }
+        ]
+      },
+      {
+        "elapsedMs": 585710,
+        "devices": [
+          {
+            "index": 0,
+            "name": "NVIDIA GeForce RTX 5060 Laptop GPU",
+            "utilizationPercent": 48,
+            "memoryUsedMiB": 3904,
+            "memoryTotalMiB": 8151,
+            "temperatureC": 75,
+            "powerW": 53.09
+          }
+        ]
+      },
+      {
+        "elapsedMs": 590722,
+        "devices": [
+          {
+            "index": 0,
+            "name": "NVIDIA GeForce RTX 5060 Laptop GPU",
+            "utilizationPercent": 50,
+            "memoryUsedMiB": 3912,
+            "memoryTotalMiB": 8151,
+            "temperatureC": 75,
+            "powerW": 53.44
+          }
+        ]
+      },
+      {
+        "elapsedMs": 595714,
+        "devices": [
+          {
+            "index": 0,
+            "name": "NVIDIA GeForce RTX 5060 Laptop GPU",
+            "utilizationPercent": 51,
+            "memoryUsedMiB": 3918,
+            "memoryTotalMiB": 8151,
+            "temperatureC": 76,
+            "powerW": 57.79
+          }
+        ]
+      }
+    ]
+  },
+  "independentChromeProcesses": true,
+  "clients": [
+    {
+      "name": "host",
+      "chromePid": 12372,
+      "cdpPort": 61254,
+      "id": "p1",
+      "serverSnapshots": 10940,
+      "serverShotEvents": 4,
+      "remotePlayers": 1,
+      "actions": {
+        "movedMeters": 5.67,
+        "crouchFlagSeenByOtherChrome": true,
+        "shotsSeenByOtherChrome": 4,
+        "reloadEventsSeenByOtherChrome": 1
+      },
+      "actualDurationMs": 600008,
+      "sampleCount": 104763,
+      "meanFps": 174.6,
+      "p50Ms": 5.6,
+      "p95Ms": 5.7,
+      "p99Ms": 11.1,
+      "segments": [
+        {
+          "startSeconds": 0,
+          "endSeconds": 30,
+          "frameCount": 5254,
+          "p95Ms": 5.7,
+          "p99Ms": 11.1,
+          "over16ms": 0,
+          "over33ms": 0
+        },
+        {
+          "startSeconds": 30,
+          "endSeconds": 60,
+          "frameCount": 5049,
+          "p95Ms": 11.1,
+          "p99Ms": 11.2,
+          "over16ms": 3,
+          "over33ms": 0
+        },
+        {
+          "startSeconds": 60,
+          "endSeconds": 90,
+          "frameCount": 5283,
+          "p95Ms": 5.7,
+          "p99Ms": 11.1,
+          "over16ms": 0,
+          "over33ms": 0
+        },
+        {
+          "startSeconds": 90,
+          "endSeconds": 120,
+          "frameCount": 5049,
+          "p95Ms": 11.1,
+          "p99Ms": 11.2,
+          "over16ms": 2,
+          "over33ms": 0
+        },
+        {
+          "startSeconds": 120,
+          "endSeconds": 150,
+          "frameCount": 5177,
+          "p95Ms": 5.7,
+          "p99Ms": 11.2,
+          "over16ms": 3,
+          "over33ms": 0
+        },
+        {
+          "startSeconds": 150,
+          "endSeconds": 180,
+          "frameCount": 5058,
+          "p95Ms": 11.1,
+          "p99Ms": 11.2,
+          "over16ms": 4,
+          "over33ms": 1
+        },
+        {
+          "startSeconds": 180,
+          "endSeconds": 210,
+          "frameCount": 5192,
+          "p95Ms": 5.7,
+          "p99Ms": 11.1,
+          "over16ms": 2,
+          "over33ms": 2
+        },
+        {
+          "startSeconds": 210,
+          "endSeconds": 240,
+          "frameCount": 5363,
+          "p95Ms": 5.7,
+          "p99Ms": 5.7,
+          "over16ms": 2,
+          "over33ms": 0
+        },
+        {
+          "startSeconds": 240,
+          "endSeconds": 270,
+          "frameCount": 5283,
+          "p95Ms": 5.7,
+          "p99Ms": 11.1,
+          "over16ms": 2,
+          "over33ms": 0
+        },
+        {
+          "startSeconds": 270,
+          "endSeconds": 300,
+          "frameCount": 5398,
+          "p95Ms": 5.7,
+          "p99Ms": 5.7,
+          "over16ms": 0,
+          "over33ms": 0
+        },
+        {
+          "startSeconds": 300,
+          "endSeconds": 330,
+          "frameCount": 5288,
+          "p95Ms": 5.7,
+          "p99Ms": 11.1,
+          "over16ms": 0,
+          "over33ms": 0
+        },
+        {
+          "startSeconds": 330,
+          "endSeconds": 360,
+          "frameCount": 5391,
+          "p95Ms": 5.7,
+          "p99Ms": 5.7,
+          "over16ms": 0,
+          "over33ms": 0
+        },
+        {
+          "startSeconds": 360,
+          "endSeconds": 390,
+          "frameCount": 5096,
+          "p95Ms": 11,
+          "p99Ms": 11.2,
+          "over16ms": 2,
+          "over33ms": 0
+        },
+        {
+          "startSeconds": 390,
+          "endSeconds": 420,
+          "frameCount": 5315,
+          "p95Ms": 5.7,
+          "p99Ms": 11,
+          "over16ms": 2,
+          "over33ms": 2
+        },
+        {
+          "startSeconds": 420,
+          "endSeconds": 450,
+          "frameCount": 5331,
+          "p95Ms": 5.7,
+          "p99Ms": 11,
+          "over16ms": 1,
+          "over33ms": 0
+        },
+        {
+          "startSeconds": 450,
+          "endSeconds": 480,
+          "frameCount": 5147,
+          "p95Ms": 5.8,
+          "p99Ms": 11.2,
+          "over16ms": 1,
+          "over33ms": 0
+        },
+        {
+          "startSeconds": 480,
+          "endSeconds": 510,
+          "frameCount": 5169,
+          "p95Ms": 5.7,
+          "p99Ms": 11.2,
+          "over16ms": 0,
+          "over33ms": 0
+        },
+        {
+          "startSeconds": 510,
+          "endSeconds": 540,
+          "frameCount": 5147,
+          "p95Ms": 5.8,
+          "p99Ms": 11.2,
+          "over16ms": 3,
+          "over33ms": 0
+        },
+        {
+          "startSeconds": 540,
+          "endSeconds": 570,
+          "frameCount": 5400,
+          "p95Ms": 5.7,
+          "p99Ms": 5.7,
+          "over16ms": 0,
+          "over33ms": 0
+        },
+        {
+          "startSeconds": 570,
+          "endSeconds": 600,
+          "frameCount": 5373,
+          "p95Ms": 5.7,
+          "p99Ms": 5.7,
+          "over16ms": 1,
+          "over33ms": 1
+        }
+      ],
+      "heapSamples": [
+        {
+          "elapsedMs": 0,
+          "usedJSHeapBytes": 75213290
+        },
+        {
+          "elapsedMs": 30002,
+          "usedJSHeapBytes": 58616344
+        },
+        {
+          "elapsedMs": 60002,
+          "usedJSHeapBytes": 63485921
+        },
+        {
+          "elapsedMs": 90001,
+          "usedJSHeapBytes": 58532347
+        },
+        {
+          "elapsedMs": 120001,
+          "usedJSHeapBytes": 44161365
+        },
+        {
+          "elapsedMs": 150001,
+          "usedJSHeapBytes": 60048985
+        },
+        {
+          "elapsedMs": 180000,
+          "usedJSHeapBytes": 48033078
+        },
+        {
+          "elapsedMs": 210005,
+          "usedJSHeapBytes": 50368109
+        },
+        {
+          "elapsedMs": 240005,
+          "usedJSHeapBytes": 46074611
+        },
+        {
+          "elapsedMs": 270004,
+          "usedJSHeapBytes": 64213007
+        },
+        {
+          "elapsedMs": 300004,
+          "usedJSHeapBytes": 57372043
+        },
+        {
+          "elapsedMs": 330004,
+          "usedJSHeapBytes": 50358193
+        },
+        {
+          "elapsedMs": 360003,
+          "usedJSHeapBytes": 61618657
+        },
+        {
+          "elapsedMs": 390003,
+          "usedJSHeapBytes": 65757383
+        },
+        {
+          "elapsedMs": 420002,
+          "usedJSHeapBytes": 68997522
+        },
+        {
+          "elapsedMs": 450002,
+          "usedJSHeapBytes": 50816721
+        },
+        {
+          "elapsedMs": 480001,
+          "usedJSHeapBytes": 60850603
+        },
+        {
+          "elapsedMs": 510001,
+          "usedJSHeapBytes": 44151909
+        },
+        {
+          "elapsedMs": 540001,
+          "usedJSHeapBytes": 48505381
+        },
+        {
+          "elapsedMs": 570000,
+          "usedJSHeapBytes": 62212604
+        },
+        {
+          "elapsedMs": 600005,
+          "usedJSHeapBytes": 48981457
+        },
+        {
+          "elapsedMs": 600008,
+          "usedJSHeapBytes": 48981457
+        }
+      ],
+      "framesOver16ms": 28,
+      "framesOver33ms": 6,
+      "maxFrameMs": 99.90000000002328,
+      "browserResolution": {
+        "width": 1920,
+        "height": 1080,
+        "pixelRatio": 2
+      },
+      "remoteEntities": 1,
+      "gpuRenderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5060 Laptop GPU (0x00002D19) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "render": {
+        "calls": 214,
+        "triangles": 110772,
+        "lines": 0,
+        "points": 0,
+        "geometries": 101,
+        "textures": 100,
+        "gpuRenderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5060 Laptop GPU (0x00002D19) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+        "pixelRatio": 2,
+        "averageFrameMs": 16.7,
+        "quality": "high"
+      },
+      "heapBytes": 48981457,
+      "visible": "visible",
+      "weaponModels": {
+        "rifle": {
+          "status": "ready",
+          "source": "models/fp/m4a1.glb",
+          "authored": true,
+          "sourceSeparatedParts": [],
+          "supplementalMechanism": null,
+          "proceduralHands": false,
+          "skinnedHands": true,
+          "skinnedBones": 68,
+          "handAnimation": "weapon-specific-keyframes"
+        },
+        "carbine": {
+          "status": "ready",
+          "source": "models/guns-obj/AssaultRifle2_1_Rigged.obj",
+          "authored": false,
+          "sourceSeparatedParts": [
+            "Magazine"
+          ],
+          "supplementalMechanism": null,
+          "proceduralHands": false,
+          "skinnedHands": true,
+          "skinnedBones": 68,
+          "handAnimation": "weapon-specific-keyframes"
+        },
+        "bullpup": {
+          "status": "ready",
+          "source": "models/guns-obj/Bullpup_1_Rigged.obj",
+          "authored": false,
+          "sourceSeparatedParts": [
+            "Magazine"
+          ],
+          "supplementalMechanism": null,
+          "proceduralHands": false,
+          "skinnedHands": true,
+          "skinnedBones": 68,
+          "handAnimation": "weapon-specific-keyframes"
+        },
+        "smg": {
+          "status": "ready",
+          "source": "models/guns/SMG_Rigged.gltf",
+          "authored": false,
+          "sourceSeparatedParts": [
+            "Magazine"
+          ],
+          "supplementalMechanism": null,
+          "proceduralHands": false,
+          "skinnedHands": true,
+          "skinnedBones": 68,
+          "handAnimation": "weapon-specific-keyframes"
+        },
+        "smg_compact": {
+          "status": "ready",
+          "source": "models/guns-obj/SubmachineGun_3_Rigged.obj",
+          "authored": false,
+          "sourceSeparatedParts": [
+            "Magazine"
+          ],
+          "supplementalMechanism": null,
+          "proceduralHands": false,
+          "skinnedHands": true,
+          "skinnedBones": 68,
+          "handAnimation": "weapon-specific-keyframes"
+        },
+        "smg_heavy": {
+          "status": "ready",
+          "source": "models/guns-obj/SubmachineGun_5_Rigged.obj",
+          "authored": false,
+          "sourceSeparatedParts": [
+            "Magazine"
+          ],
+          "supplementalMechanism": null,
+          "proceduralHands": false,
+          "skinnedHands": true,
+          "skinnedBones": 68,
+          "handAnimation": "weapon-specific-keyframes"
+        },
+        "shotgun": {
+          "status": "ready",
+          "source": "models/guns/Shotgun_Rigged.gltf",
+          "authored": false,
+          "sourceSeparatedParts": [
+            "Pump"
+          ],
+          "supplementalMechanism": null,
+          "proceduralHands": false,
+          "skinnedHands": true,
+          "skinnedBones": 68,
+          "handAnimation": "weapon-specific-keyframes"
+        },
+        "sawnoff": {
+          "status": "ready",
+          "source": "models/guns-obj/Shotgun_SawedOff_Rigged.obj",
+          "authored": false,
+          "sourceSeparatedParts": [
+            "Barrels"
+          ],
+          "supplementalMechanism": null,
+          "proceduralHands": false,
+          "skinnedHands": true,
+          "skinnedBones": 68,
+          "handAnimation": "weapon-specific-keyframes"
+        },
+        "autoshotgun": {
+          "status": "ready",
+          "source": "models/guns-obj/Shotgun_ShortStock_Rigged.obj",
+          "authored": false,
+          "sourceSeparatedParts": [
+            "Pump"
+          ],
+          "supplementalMechanism": null,
+          "proceduralHands": false,
+          "skinnedHands": true,
+          "skinnedBones": 68,
+          "handAnimation": "weapon-specific-keyframes"
+        },
+        "sniper": {
+          "status": "ready",
+          "source": "models/guns-real/ChassisSniper_CC0.glb",
+          "authored": true,
+          "sourceSeparatedParts": [],
+          "supplementalMechanism": null,
+          "proceduralHands": false,
+          "skinnedHands": true,
+          "skinnedBones": 68,
+          "handAnimation": "weapon-specific-keyframes"
+        },
+        "dmr": {
+          "status": "ready",
+          "source": "models/guns/Sniper_2_Rigged.gltf",
+          "authored": false,
+          "sourceSeparatedParts": [
+            "Magazine"
+          ],
+          "supplementalMechanism": null,
+          "proceduralHands": false,
+          "skinnedHands": true,
+          "skinnedBones": 68,
+          "handAnimation": "weapon-specific-keyframes"
+        },
+        "antimateriel": {
+          "status": "ready",
+          "source": "models/guns-obj/SniperRifle_6_Rigged.obj",
+          "authored": false,
+          "sourceSeparatedParts": [
+            "Bolt"
+          ],
+          "supplementalMechanism": null,
+          "proceduralHands": false,
+          "skinnedHands": true,
+          "skinnedBones": 68,
+          "handAnimation": "weapon-specific-keyframes"
+        },
+        "lmg": {
+          "status": "ready",
+          "source": "models/guns/ShortCannon_Rigged.gltf",
+          "authored": false,
+          "sourceSeparatedParts": [
+            "Barrel"
+          ],
+          "supplementalMechanism": null,
+          "proceduralHands": false,
+          "skinnedHands": true,
+          "skinnedBones": 68,
+          "handAnimation": "weapon-specific-keyframes"
+        },
+        "pistol": {
+          "status": "ready",
+          "source": "models/guns/Pistol_Rigged.gltf",
+          "authored": false,
+          "sourceSeparatedParts": [
+            "Slide"
+          ],
+          "supplementalMechanism": null,
+          "proceduralHands": false,
+          "skinnedHands": true,
+          "skinnedBones": 68,
+          "handAnimation": "weapon-specific-keyframes"
+        },
+        "revolver": {
+          "status": "ready",
+          "source": "models/guns-obj/Revolver_1_Rigged.obj",
+          "authored": false,
+          "sourceSeparatedParts": [
+            "Cylinder"
+          ],
+          "supplementalMechanism": null,
+          "proceduralHands": false,
+          "skinnedHands": true,
+          "skinnedBones": 68,
+          "handAnimation": "weapon-specific-keyframes"
+        },
+        "machinepistol": {
+          "status": "ready",
+          "source": "models/guns-obj/Pistol_4_Rigged.obj",
+          "authored": false,
+          "sourceSeparatedParts": [
+            "Slide"
+          ],
+          "supplementalMechanism": null,
+          "proceduralHands": false,
+          "skinnedHands": true,
+          "skinnedBones": 68,
+          "handAnimation": "weapon-specific-keyframes"
+        },
+        "knife": {
+          "status": "ready",
+          "source": "models/guns-real/CombatKnife_CC0.glb",
+          "authored": false,
+          "sourceSeparatedParts": [],
+          "supplementalMechanism": null,
+          "proceduralHands": false,
+          "skinnedHands": true,
+          "skinnedBones": 68,
+          "handAnimation": "weapon-specific-keyframes"
+        }
+      },
+      "errors": [],
+      "warnings": [
+        "THREE.sigmaRadians, 0.05, is too large and will clip, as it requested 25 samples when the maximum is set to 20",
+        "THREE.sigmaRadians, 0.05, is too large and will clip, as it requested 25 samples when the maximum is set to 20",
+        "THREE.WebGLProgram: Program Info Log: (210,86-138): warning X4122: sum of 0.996094 and -2.98545e-017 cannot be represented accurately in double precision\n(209,39-65): warning X4122: sum of 1 and -1.49272e-017 cannot be represented accurately in double precision\n(210,87-113): warning X4122: sum of 1 and -1.49272e-017 cannot be represented accurately in double precision\n(209,39-65): warning X4122: sum of 1 and -1.66644e-018 cannot be represented accurately in double precision\n(210,87-113): warning X4122: sum of 1 and -1.66644e-018 cannot be represented accurately in double precision",
+        "THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.",
+        "THREE.WebGLShadowMap: PCFSoftShadowMap has been deprecated. Using PCFShadowMap instead."
+      ]
+    },
+    {
+      "name": "guest",
+      "chromePid": 17668,
+      "cdpPort": 51420,
+      "id": "p2",
+      "serverSnapshots": 10922,
+      "serverShotEvents": 4,
+      "remotePlayers": 1,
+      "actions": {
+        "movedMeters": 5.68,
+        "crouchFlagSeenByOtherChrome": true,
+        "shotsSeenByOtherChrome": 4,
+        "reloadEventsSeenByOtherChrome": 1
+      },
+      "actualDurationMs": 600008,
+      "sampleCount": 105522,
+      "meanFps": 175.9,
+      "p50Ms": 5.6,
+      "p95Ms": 5.7,
+      "p99Ms": 11.1,
+      "segments": [
+        {
+          "startSeconds": 0,
+          "endSeconds": 30,
+          "frameCount": 5321,
+          "p95Ms": 5.7,
+          "p99Ms": 11.1,
+          "over16ms": 0,
+          "over33ms": 0
+        },
+        {
+          "startSeconds": 30,
+          "endSeconds": 60,
+          "frameCount": 5140,
+          "p95Ms": 5.8,
+          "p99Ms": 11.2,
+          "over16ms": 4,
+          "over33ms": 0
+        },
+        {
+          "startSeconds": 60,
+          "endSeconds": 90,
+          "frameCount": 5337,
+          "p95Ms": 5.7,
+          "p99Ms": 11.1,
+          "over16ms": 0,
+          "over33ms": 0
+        },
+        {
+          "startSeconds": 90,
+          "endSeconds": 120,
+          "frameCount": 5173,
+          "p95Ms": 5.7,
+          "p99Ms": 11.2,
+          "over16ms": 2,
+          "over33ms": 0
+        },
+        {
+          "startSeconds": 120,
+          "endSeconds": 150,
+          "frameCount": 5270,
+          "p95Ms": 5.7,
+          "p99Ms": 11.1,
+          "over16ms": 0,
+          "over33ms": 0
+        },
+        {
+          "startSeconds": 150,
+          "endSeconds": 180,
+          "frameCount": 5179,
+          "p95Ms": 5.7,
+          "p99Ms": 11.2,
+          "over16ms": 3,
+          "over33ms": 1
+        },
+        {
+          "startSeconds": 180,
+          "endSeconds": 210,
+          "frameCount": 5253,
+          "p95Ms": 5.7,
+          "p99Ms": 11.1,
+          "over16ms": 2,
+          "over33ms": 1
+        },
+        {
+          "startSeconds": 210,
+          "endSeconds": 240,
+          "frameCount": 5371,
+          "p95Ms": 5.7,
+          "p99Ms": 5.7,
+          "over16ms": 1,
+          "over33ms": 0
+        },
+        {
+          "startSeconds": 240,
+          "endSeconds": 270,
+          "frameCount": 5277,
+          "p95Ms": 5.7,
+          "p99Ms": 11.1,
+          "over16ms": 0,
+          "over33ms": 0
+        },
+        {
+          "startSeconds": 270,
+          "endSeconds": 300,
+          "frameCount": 5399,
+          "p95Ms": 5.7,
+          "p99Ms": 5.7,
+          "over16ms": 0,
+          "over33ms": 0
+        },
+        {
+          "startSeconds": 300,
+          "endSeconds": 330,
+          "frameCount": 5282,
+          "p95Ms": 5.7,
+          "p99Ms": 11.1,
+          "over16ms": 0,
+          "over33ms": 0
+        },
+        {
+          "startSeconds": 330,
+          "endSeconds": 360,
+          "frameCount": 5388,
+          "p95Ms": 5.7,
+          "p99Ms": 5.7,
+          "over16ms": 0,
+          "over33ms": 0
+        },
+        {
+          "startSeconds": 360,
+          "endSeconds": 390,
+          "frameCount": 5087,
+          "p95Ms": 11,
+          "p99Ms": 11.2,
+          "over16ms": 7,
+          "over33ms": 1
+        },
+        {
+          "startSeconds": 390,
+          "endSeconds": 420,
+          "frameCount": 5319,
+          "p95Ms": 5.7,
+          "p99Ms": 11,
+          "over16ms": 2,
+          "over33ms": 2
+        },
+        {
+          "startSeconds": 420,
+          "endSeconds": 450,
+          "frameCount": 5346,
+          "p95Ms": 5.7,
+          "p99Ms": 5.9,
+          "over16ms": 0,
+          "over33ms": 0
+        },
+        {
+          "startSeconds": 450,
+          "endSeconds": 480,
+          "frameCount": 5192,
+          "p95Ms": 5.7,
+          "p99Ms": 11.2,
+          "over16ms": 1,
+          "over33ms": 0
+        },
+        {
+          "startSeconds": 480,
+          "endSeconds": 510,
+          "frameCount": 5219,
+          "p95Ms": 5.7,
+          "p99Ms": 11.1,
+          "over16ms": 1,
+          "over33ms": 0
+        },
+        {
+          "startSeconds": 510,
+          "endSeconds": 540,
+          "frameCount": 5201,
+          "p95Ms": 5.7,
+          "p99Ms": 11.2,
+          "over16ms": 3,
+          "over33ms": 0
+        },
+        {
+          "startSeconds": 540,
+          "endSeconds": 570,
+          "frameCount": 5401,
+          "p95Ms": 5.7,
+          "p99Ms": 5.7,
+          "over16ms": 0,
+          "over33ms": 0
+        },
+        {
+          "startSeconds": 570,
+          "endSeconds": 600,
+          "frameCount": 5367,
+          "p95Ms": 5.7,
+          "p99Ms": 5.7,
+          "over16ms": 1,
+          "over33ms": 1
+        }
+      ],
+      "heapSamples": [
+        {
+          "elapsedMs": 0,
+          "usedJSHeapBytes": 67129119
+        },
+        {
+          "elapsedMs": 30002,
+          "usedJSHeapBytes": 58630838
+        },
+        {
+          "elapsedMs": 60002,
+          "usedJSHeapBytes": 47816592
+        },
+        {
+          "elapsedMs": 90001,
+          "usedJSHeapBytes": 68621932
+        },
+        {
+          "elapsedMs": 120001,
+          "usedJSHeapBytes": 63593088
+        },
+        {
+          "elapsedMs": 150000,
+          "usedJSHeapBytes": 52902572
+        },
+        {
+          "elapsedMs": 180000,
+          "usedJSHeapBytes": 59149813
+        },
+        {
+          "elapsedMs": 210005,
+          "usedJSHeapBytes": 46443455
+        },
+        {
+          "elapsedMs": 240005,
+          "usedJSHeapBytes": 51364283
+        },
+        {
+          "elapsedMs": 270004,
+          "usedJSHeapBytes": 47797065
+        },
+        {
+          "elapsedMs": 300004,
+          "usedJSHeapBytes": 48109079
+        },
+        {
+          "elapsedMs": 330003,
+          "usedJSHeapBytes": 64247171
+        },
+        {
+          "elapsedMs": 360003,
+          "usedJSHeapBytes": 66495927
+        },
+        {
+          "elapsedMs": 390003,
+          "usedJSHeapBytes": 45494273
+        },
+        {
+          "elapsedMs": 420002,
+          "usedJSHeapBytes": 41467810
+        },
+        {
+          "elapsedMs": 450002,
+          "usedJSHeapBytes": 44126861
+        },
+        {
+          "elapsedMs": 480001,
+          "usedJSHeapBytes": 47309084
+        },
+        {
+          "elapsedMs": 510001,
+          "usedJSHeapBytes": 64960276
+        },
+        {
+          "elapsedMs": 540000,
+          "usedJSHeapBytes": 58778433
+        },
+        {
+          "elapsedMs": 570006,
+          "usedJSHeapBytes": 56575514
+        },
+        {
+          "elapsedMs": 600005,
+          "usedJSHeapBytes": 42306615
+        },
+        {
+          "elapsedMs": 600008,
+          "usedJSHeapBytes": 42306615
+        }
+      ],
+      "framesOver16ms": 27,
+      "framesOver33ms": 6,
+      "maxFrameMs": 122.09999999997672,
+      "browserResolution": {
+        "width": 1920,
+        "height": 1080,
+        "pixelRatio": 2
+      },
+      "remoteEntities": 1,
+      "gpuRenderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5060 Laptop GPU (0x00002D19) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "render": {
+        "calls": 248,
+        "triangles": 111104,
+        "lines": 0,
+        "points": 0,
+        "geometries": 103,
+        "textures": 100,
+        "gpuRenderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5060 Laptop GPU (0x00002D19) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+        "pixelRatio": 2,
+        "averageFrameMs": 16.7,
+        "quality": "high"
+      },
+      "heapBytes": 42306615,
+      "visible": "visible",
+      "weaponModels": {
+        "rifle": {
+          "status": "ready",
+          "source": "models/fp/m4a1.glb",
+          "authored": true,
+          "sourceSeparatedParts": [],
+          "supplementalMechanism": null,
+          "proceduralHands": false,
+          "skinnedHands": true,
+          "skinnedBones": 68,
+          "handAnimation": "weapon-specific-keyframes"
+        },
+        "carbine": {
+          "status": "ready",
+          "source": "models/guns-obj/AssaultRifle2_1_Rigged.obj",
+          "authored": false,
+          "sourceSeparatedParts": [
+            "Magazine"
+          ],
+          "supplementalMechanism": null,
+          "proceduralHands": false,
+          "skinnedHands": true,
+          "skinnedBones": 68,
+          "handAnimation": "weapon-specific-keyframes"
+        },
+        "bullpup": {
+          "status": "ready",
+          "source": "models/guns-obj/Bullpup_1_Rigged.obj",
+          "authored": false,
+          "sourceSeparatedParts": [
+            "Magazine"
+          ],
+          "supplementalMechanism": null,
+          "proceduralHands": false,
+          "skinnedHands": true,
+          "skinnedBones": 68,
+          "handAnimation": "weapon-specific-keyframes"
+        },
+        "smg": {
+          "status": "ready",
+          "source": "models/guns/SMG_Rigged.gltf",
+          "authored": false,
+          "sourceSeparatedParts": [
+            "Magazine"
+          ],
+          "supplementalMechanism": null,
+          "proceduralHands": false,
+          "skinnedHands": true,
+          "skinnedBones": 68,
+          "handAnimation": "weapon-specific-keyframes"
+        },
+        "smg_compact": {
+          "status": "ready",
+          "source": "models/guns-obj/SubmachineGun_3_Rigged.obj",
+          "authored": false,
+          "sourceSeparatedParts": [
+            "Magazine"
+          ],
+          "supplementalMechanism": null,
+          "proceduralHands": false,
+          "skinnedHands": true,
+          "skinnedBones": 68,
+          "handAnimation": "weapon-specific-keyframes"
+        },
+        "smg_heavy": {
+          "status": "ready",
+          "source": "models/guns-obj/SubmachineGun_5_Rigged.obj",
+          "authored": false,
+          "sourceSeparatedParts": [
+            "Magazine"
+          ],
+          "supplementalMechanism": null,
+          "proceduralHands": false,
+          "skinnedHands": true,
+          "skinnedBones": 68,
+          "handAnimation": "weapon-specific-keyframes"
+        },
+        "shotgun": {
+          "status": "ready",
+          "source": "models/guns/Shotgun_Rigged.gltf",
+          "authored": false,
+          "sourceSeparatedParts": [
+            "Pump"
+          ],
+          "supplementalMechanism": null,
+          "proceduralHands": false,
+          "skinnedHands": true,
+          "skinnedBones": 68,
+          "handAnimation": "weapon-specific-keyframes"
+        },
+        "sawnoff": {
+          "status": "ready",
+          "source": "models/guns-obj/Shotgun_SawedOff_Rigged.obj",
+          "authored": false,
+          "sourceSeparatedParts": [
+            "Barrels"
+          ],
+          "supplementalMechanism": null,
+          "proceduralHands": false,
+          "skinnedHands": true,
+          "skinnedBones": 68,
+          "handAnimation": "weapon-specific-keyframes"
+        },
+        "autoshotgun": {
+          "status": "ready",
+          "source": "models/guns-obj/Shotgun_ShortStock_Rigged.obj",
+          "authored": false,
+          "sourceSeparatedParts": [
+            "Pump"
+          ],
+          "supplementalMechanism": null,
+          "proceduralHands": false,
+          "skinnedHands": true,
+          "skinnedBones": 68,
+          "handAnimation": "weapon-specific-keyframes"
+        },
+        "sniper": {
+          "status": "ready",
+          "source": "models/guns-real/ChassisSniper_CC0.glb",
+          "authored": true,
+          "sourceSeparatedParts": [],
+          "supplementalMechanism": null,
+          "proceduralHands": false,
+          "skinnedHands": true,
+          "skinnedBones": 68,
+          "handAnimation": "weapon-specific-keyframes"
+        },
+        "dmr": {
+          "status": "ready",
+          "source": "models/guns/Sniper_2_Rigged.gltf",
+          "authored": false,
+          "sourceSeparatedParts": [
+            "Magazine"
+          ],
+          "supplementalMechanism": null,
+          "proceduralHands": false,
+          "skinnedHands": true,
+          "skinnedBones": 68,
+          "handAnimation": "weapon-specific-keyframes"
+        },
+        "antimateriel": {
+          "status": "ready",
+          "source": "models/guns-obj/SniperRifle_6_Rigged.obj",
+          "authored": false,
+          "sourceSeparatedParts": [
+            "Bolt"
+          ],
+          "supplementalMechanism": null,
+          "proceduralHands": false,
+          "skinnedHands": true,
+          "skinnedBones": 68,
+          "handAnimation": "weapon-specific-keyframes"
+        },
+        "lmg": {
+          "status": "ready",
+          "source": "models/guns/ShortCannon_Rigged.gltf",
+          "authored": false,
+          "sourceSeparatedParts": [
+            "Barrel"
+          ],
+          "supplementalMechanism": null,
+          "proceduralHands": false,
+          "skinnedHands": true,
+          "skinnedBones": 68,
+          "handAnimation": "weapon-specific-keyframes"
+        },
+        "pistol": {
+          "status": "ready",
+          "source": "models/guns/Pistol_Rigged.gltf",
+          "authored": false,
+          "sourceSeparatedParts": [
+            "Slide"
+          ],
+          "supplementalMechanism": null,
+          "proceduralHands": false,
+          "skinnedHands": true,
+          "skinnedBones": 68,
+          "handAnimation": "weapon-specific-keyframes"
+        },
+        "revolver": {
+          "status": "ready",
+          "source": "models/guns-obj/Revolver_1_Rigged.obj",
+          "authored": false,
+          "sourceSeparatedParts": [
+            "Cylinder"
+          ],
+          "supplementalMechanism": null,
+          "proceduralHands": false,
+          "skinnedHands": true,
+          "skinnedBones": 68,
+          "handAnimation": "weapon-specific-keyframes"
+        },
+        "machinepistol": {
+          "status": "ready",
+          "source": "models/guns-obj/Pistol_4_Rigged.obj",
+          "authored": false,
+          "sourceSeparatedParts": [
+            "Slide"
+          ],
+          "supplementalMechanism": null,
+          "proceduralHands": false,
+          "skinnedHands": true,
+          "skinnedBones": 68,
+          "handAnimation": "weapon-specific-keyframes"
+        },
+        "knife": {
+          "status": "ready",
+          "source": "models/guns-real/CombatKnife_CC0.glb",
+          "authored": false,
+          "sourceSeparatedParts": [],
+          "supplementalMechanism": null,
+          "proceduralHands": false,
+          "skinnedHands": true,
+          "skinnedBones": 68,
+          "handAnimation": "weapon-specific-keyframes"
+        }
+      },
+      "errors": [],
+      "warnings": [
+        "THREE.sigmaRadians, 0.05, is too large and will clip, as it requested 25 samples when the maximum is set to 20",
+        "THREE.sigmaRadians, 0.05, is too large and will clip, as it requested 25 samples when the maximum is set to 20",
+        "THREE.WebGLProgram: Program Info Log: (210,86-138): warning X4122: sum of 0.996094 and -2.98545e-017 cannot be represented accurately in double precision\n(209,39-65): warning X4122: sum of 1 and -1.49272e-017 cannot be represented accurately in double precision\n(210,87-113): warning X4122: sum of 1 and -1.49272e-017 cannot be represented accurately in double precision\n(209,39-65): warning X4122: sum of 1 and -1.66644e-018 cannot be represented accurately in double precision\n(210,87-113): warning X4122: sum of 1 and -1.66644e-018 cannot be represented accurately in double precision",
+        "THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.",
+        "THREE.WebGLShadowMap: PCFSoftShadowMap has been deprecated. Using PCFShadowMap instead."
+      ]
+    }
+  ],
+  "constraints": [
+    "Automated headless Chrome playtest; native mouse pointer lock not validated",
+    "rAF timings measure frame scheduling, not GPU timestamps or VRAM bytes",
+    "JS heap snapshots fluctuate with garbage collection and cannot alone prove absence of leaks",
+    "Two independent Chrome instances share the same host GPU unless moved to different hardware",
+    "Multi-GPU comparisons require running this script on each actual hardware configuration"
+  ]
+}

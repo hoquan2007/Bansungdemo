@@ -148,8 +148,10 @@ test('sniper duel admits two humans, locks both to sniper and starts at two read
   }
   assert.equal(room.mapId === 'island', false);
   assert.equal(room.addPlayer({ id: 'third', name: 'Third', ws: fakeSocket() }), null);
-  room.teamScores.A = 9;
+  room.teamScores.A = 4;
   onKill(room, players[0], players[1], 'sniper');
+  assert.equal(room.teamScores.A, 4, 'kills do not award round wins');
+  room.teamScores.A = 5;
   assert.equal(checkWin(room)?.winnerTeam, 'A');
   readyAll(room, players);
   assert.equal(room.phase, PHASE.COUNTDOWN);
@@ -169,11 +171,118 @@ test('rifle 2v2 needs four humans, balances teams and reserves only four slots',
   for (const player of room.players.values()) {
     assert.deepEqual(player.inventory, loadoutForPrimary('rifle'));
   }
-  room.teamScores.B = 24;
+  room.teamScores.B = 8;
   onKill(room, players[1], players[0], 'rifle');
+  assert.equal(room.teamScores.B, 8, 'kills do not award round wins');
+  room.teamScores.B = 9;
   assert.equal(checkWin(room)?.winnerTeam, 'B');
   room.handleReady(fourth, { ready: true });
   assert.equal(room.phase, PHASE.COUNTDOWN);
+});
+
+test('duel plays first to five elimination rounds with no mid-round respawn', (t) => {
+  const { room, players } = makeRoom(t, 2, 'duel');
+  readyAll(room, players);
+  room.beginRound();
+  assert.equal(room.eliminationRound, 1);
+  assert.equal(room.phase, PHASE.LIVE);
+
+  for (let round = 1; round <= 5; round++) {
+    assert.equal(players[1].alive, true);
+    room.killPlayer(players[1], players[0], 'sniper', true);
+    assert.equal(room.teamScores.A, round);
+    assert.equal(players[1].respawnAt, 0);
+    assert.equal(room.phase, round === 5 ? PHASE.SCOREBOARD : PHASE.LIVE);
+    if (round === 5) break;
+    assert.ok(room.eliminationBreakAt > Date.now());
+    room.tickLive(Date.now() + 3000);
+    assert.equal(players[1].alive, false, 'dead players must not auto-respawn during round break');
+    room.eliminationBreakAt = Date.now() - 1;
+    room.tick();
+    assert.equal(room.eliminationRound, round + 1);
+    assert.equal(players[1].alive, true, 'next round respawns both players');
+  }
+  assert.equal(room.lastResult?.winnerTeam, 'A');
+  assert.equal(room.lastResult?.reason, 'roundlimit');
+});
+
+test('rifle 2v2 scores only after the last opposing player is eliminated', (t) => {
+  const { room, players } = makeRoom(t, 4, 'squads');
+  readyAll(room, players);
+  room.beginRound();
+  const attackers = players.filter((p) => p.team === 'A');
+  const victims = players.filter((p) => p.team === 'B');
+  room.killPlayer(victims[0], attackers[0], 'rifle');
+  assert.equal(room.teamScores.A, 0, 'one opponent alive means the round continues');
+  assert.equal(room.eliminationBreakAt, 0);
+  room.killPlayer(victims[1], attackers[0], 'rifle');
+  assert.equal(room.teamScores.A, 1);
+  assert.ok(room.eliminationBreakAt > 0);
+  assert.equal(room.phasePayload().elimination.roundWinner, 'A');
+});
+
+test('an elimination round time-out uses survivors and then remaining health', (t) => {
+  const { room, players } = makeRoom(t, 4, 'squads');
+  readyAll(room, players);
+  room.beginRound();
+  players.find((p) => p.team === 'A').health = 30;
+  room.phaseEndsAt = Date.now() - 1;
+  room.tick();
+  assert.equal(room.teamScores.B, 1, 'full-health team wins the tied survival count');
+  assert.ok(room.eliminationBreakAt > 0);
+});
+
+test('equal survivors and health result in a drawn round without awarding a point', (t) => {
+  const { room, players } = makeRoom(t, 2, 'duel');
+  readyAll(room, players);
+  room.beginRound();
+  room.phaseEndsAt = Date.now() - 1;
+  room.tick();
+  assert.deepEqual(room.teamScores, { A: 0, B: 0 });
+  assert.equal(room.phasePayload().elimination.roundWinner, null);
+  assert.ok(room.eliminationBreakAt > 0);
+  room.eliminationBreakAt = Date.now() - 1;
+  room.tick();
+  assert.equal(room.eliminationRound, 2);
+  assert.ok(players.every((p) => p.alive), 'both teams play the next round');
+});
+
+test('elimination disables regeneration, health packs and movement during round break', (t) => {
+  const { room, players } = makeRoom(t, 2, 'duel');
+  readyAll(room, players);
+  room.beginRound();
+  const pack = room.map.healthPacks[0];
+  assert.ok(pack, 'duel map provides a pickup to test suppression');
+  players[0].pos = [...pack.pos];
+  players[0].health = 30;
+  players[0].lastDamageAt = Date.now() - 100000;
+  room.tickLive(Date.now());
+  assert.equal(players[0].health, 30, 'competitive health stays damaged');
+  assert.deepEqual(room.takenPickups(), [], 'health pack remains unused');
+
+  room.killPlayer(players[1], players[0], 'sniper');
+  const oldPos = [...players[0].pos];
+  room.handleState(players[0], { p: [999, 999, 999], y: 0, t: 0, f: 0 });
+  assert.deepEqual(players[0].pos, oldPos, 'state packets cannot move the player during the break');
+  assert.ok(room.eliminationBreakAt > 0);
+});
+
+test('a joining spectator receives elimination round state and waits until next spawn', (t) => {
+  const { room, players } = makeRoom(t, 3, 'squads');
+  // Simulate the vacant seat in an already live match, without the lobby quorum.
+  room.phase = PHASE.LIVE;
+  room.eliminationRound = 3;
+  room.phaseEndsAt = Date.now() + 60000;
+  const ws = fakeSocket();
+  const spectator = room.addPlayer({ id: 'spectator', name: 'Spectator', ws });
+  assert.ok(spectator);
+  assert.equal(spectator.alive, false);
+  assert.deepEqual(ws.last(S2C.JOINED)?.elimination, {
+    round: 3, firstTo: 9, breakMs: 0, roundWinner: null,
+  });
+  // Existing clients are still in their current round.
+  assert.equal(room.phase, PHASE.LIVE);
+  assert.equal(players.length, 3);
 });
 
 test('host switching from four-team warfare to rifle 2v2 resets team membership and guns', (t) => {
@@ -450,6 +559,40 @@ test('live players can relay allow-listed emotes without spamming them', (t) => 
     before + 1,
     'dead players should not emote',
   );
+});
+
+test('server relays cosmetic reload once per duration to other peers only', (t) => {
+  const { room, players } = makeRoom(t, 2, 'ffa');
+  room.beginRound();
+  const [shooter, observer] = players;
+  const weaponId = shooter.weapon;
+  const reloadMs = WEAPONS[weaponId].reloadMs;
+  const before = observer.ws.received(S2C.RELOAD).length;
+
+  room.handleReload(shooter, { w: weaponId });
+  assert.deepEqual(observer.ws.last(S2C.RELOAD), {
+    m: S2C.RELOAD, id: shooter.id, w: weaponId, ms: reloadMs,
+  });
+  assert.equal(shooter.ws.received(S2C.RELOAD).length, 0);
+  room.handleReload(shooter, { w: weaponId });
+  assert.equal(observer.ws.received(S2C.RELOAD).length, before + 1);
+
+  shooter.nextCosmeticReloadAt = 0;
+  room.handleReload(shooter, { w: 'invalid-weapon' });
+  room.handleReload(shooter, { w: 'knife' });
+  room.handleReload(shooter, null);
+  assert.equal(observer.ws.received(S2C.RELOAD).length, before + 1);
+
+  shooter.alive = false;
+  room.handleReload(shooter, { w: weaponId });
+  shooter.alive = true;
+  shooter.parachuting = true;
+  room.handleReload(shooter, { w: weaponId });
+  shooter.parachuting = false;
+  shooter.vehicleId = 1;
+  room.handleReload(shooter, { w: weaponId });
+  shooter.vehicleId = null;
+  assert.equal(observer.ws.received(S2C.RELOAD).length, before + 1);
 });
 
 // -------------------------------------------------------------- host controls

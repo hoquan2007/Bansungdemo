@@ -8,6 +8,7 @@ import { fileURLToPath } from 'node:url';
 import WebSocket from 'ws';
 
 import { C2S, S2C, PHASE, decode, encode, decodeSnapshot } from '../shared/protocol.js';
+import { RETAKE_BOMB_MS, RETAKE_DEFUSE_MS, RETAKE_BOMB_POS } from '../shared/constants.js';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -194,6 +195,7 @@ test('two human players exchange validated movement snapshots and live weapon sh
 for (const [mode, capacity, firstWeapon] of [
   ['duel', 2, 'sniper'],
   ['squads', 4, 'rifle'],
+  ['retake', 6, 'rifle'],
 ]) {
   test(`${mode} creates an actual ${capacity}-player WebSocket lobby with fixed guns and starts`, async (t) => {
     const { child, ready } = bootServer();
@@ -212,6 +214,7 @@ for (const [mode, capacity, firstWeapon] of [
     assert.equal(created.mode, mode);
     assert.equal(created.teamCount, 2);
     assert.notEqual(created.mapId, 'island');
+    if (mode === 'retake') assert.equal(created.mapId, 'courtyard');
     assert.equal(created.inventory[0], firstWeapon);
 
     for (let i = 1; i < capacity; i++) {
@@ -231,5 +234,15 @@ for (const [mode, capacity, firstWeapon] of [
 
     host.send(C2S.START);
     await Promise.all(clients.map((c) => c.wait((m) => m.m === S2C.PHASE && m.phase === PHASE.COUNTDOWN)));
+    if (mode === 'retake') {
+      await Promise.all(clients.map((c) => c.wait((m) => m.m === S2C.PHASE && m.phase === PHASE.LIVE)));
+      const bombs = await Promise.all(clients.map((c) => c.wait((m) => m.m === S2C.BOMB_STATE && m.active)));
+      for (const bomb of bombs) {
+        assert.deepEqual(bomb.pos, RETAKE_BOMB_POS);
+        assert.equal(bomb.defuserId, null);
+        assert.equal(bomb.defuseMs, RETAKE_DEFUSE_MS);
+        assert.ok(bomb.remainingMs > 0 && bomb.remainingMs <= RETAKE_BOMB_MS);
+      }
+    }
   });
 }

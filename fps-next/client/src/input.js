@@ -42,6 +42,9 @@ export const input = {
   right: false,
   jump: false,
   sprint: false,
+  slowWalk: false,
+  leanLeft: false,
+  leanRight: false,
   crouch: false,
   reload: false,
   use: false,
@@ -85,6 +88,8 @@ export const input = {
   // normal movement. It can't be written straight into input.jump — the pad is
   // polled every frame and would stamp on the keyboard's copy.
   padJump: false,
+  // The Y button is both a one-shot "use" press and a continuous objective hold.
+  padUse: false,
   padCrouch: false,
   padSprint: false,
   padScoreboard: false,
@@ -138,6 +143,10 @@ export function initInput(canvasEl) {
   window.addEventListener('keydown', (e) => {
     // Let the browser have its shortcuts when we're not in a match.
     if (!input.locked && e.code !== 'Escape') return;
+
+    // Cosmetic first-person inspection. Only accepted with pointer lock and
+    // consumed once; it must never trigger a reload or affect input networking.
+    if (input.locked && e.code === 'KeyI' && !e.repeat) input.pressed.add('inspect');
 
     const action = keyMap()[e.code];
     if (action) {

@@ -4,6 +4,13 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>CROWN / STRIKE — Multiplayer FPS</title>
+    <meta name="theme-color" content="#202b30" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="CROWN STRIKE" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="icon" type="image/svg+xml" href="/app-icon.svg" />
+    <link rel="apple-touch-icon" href="/icons/icon-192.png" />
     <link rel="stylesheet" href="./src/style.css" />
     <link rel="stylesheet" href="./src/menu.css" />
   </head>
@@ -71,6 +78,12 @@
         <div id="round-timer">3:00</div>
       </div>
       <div id="hud-state"></div>
+      <div id="retake-objective" class="hidden" aria-live="off">
+        <div class="retake-head"><span id="retake-role">RETAKE / TEAM A</span><b id="retake-clock">0:40</b></div>
+        <div id="retake-status">Bomb planted · Secure the site</div>
+        <div class="retake-track"><div id="retake-progress-fill"></div></div>
+        <div id="retake-prompt">Locate the planted bomb</div>
+      </div>
       <div id="emote-toast" class="hidden"></div>
 
       <div id="killfeed"></div>
@@ -87,11 +100,28 @@
       </div>
 
       <div id="practice-stats" class="hidden">
+        <div class="pr-challenge-title">60S PRECISION CHALLENGE</div>
+        <div class="pr-row pr-drill-row"><span>Training setup</span><b id="pr-drill">8 BOTS · 25M · STAND</b></div>
+        <div class="pr-row"><span>Status</span><b id="pr-challenge-status">G TO START</b></div>
+        <div class="pr-row"><span>Time left</span><b id="pr-challenge-time">60s</b></div>
+        <div class="pr-row"><span>Score</span><b id="pr-challenge-score">0</b></div>
+        <div class="pr-row"><span>Best score</span><b id="pr-challenge-best">0</b></div>
         <div class="pr-row"><span>Hits</span><b id="pr-hits">0</b></div>
         <div class="pr-row"><span>Shots</span><b id="pr-shots">0</b></div>
         <div class="pr-row"><span>Accuracy</span><b id="pr-acc">—</b></div>
         <div class="pr-row"><span>Best streak</span><b id="pr-streak">0</b></div>
-        <div class="pr-hint">1–8 pick a gun (press again to cycle) · R reload · T reset · Esc pause</div>
+        <div class="pr-hint">G starts 60-second challenge · T resets · 1–8 change gun · Esc pauses</div>
+      </div>
+
+      <div id="surf-stats" class="hidden" aria-live="off">
+        <div id="surf-course-title" class="pr-challenge-title">MOMENTUM / SURF RUN</div>
+        <div class="surf-speed"><b id="surf-speed">0</b><span>UNITS / SEC</span></div>
+        <div class="pr-row"><span>Run time</span><b id="surf-time">00:00.00</b></div>
+        <div class="pr-row"><span>Personal best</span><b id="surf-best">—</b></div>
+        <div class="pr-row"><span>Checkpoints</span><b id="surf-checkpoints">0 / 3</b></div>
+        <div class="pr-row"><span>Falls</span><b id="surf-falls">0</b></div>
+        <div id="surf-event">FOLLOW THE GLOWING RAMPS</div>
+        <div class="pr-hint">WASD to steer · Mouse to aim · Space to jump<br />R: checkpoint · Shift+R: full restart · Esc: pause</div>
       </div>
 
       <!-- weapon rack: populated from the weapon table, so it can't fall out of
@@ -141,40 +171,79 @@
     <div id="menu">
       <div id="menu-inner">
         <header class="strike-header">
+          <button id="btn-fullscreen" class="strike-header-utility strike-header-fullscreen" type="button" aria-label="Enter full screen" aria-pressed="false" title="Enter full screen">
+            <svg viewBox="0 0 24 24" width="19" height="19" aria-hidden="true"><path d="M9 4H4v5m11-5h5v5M4 15v5h5m11-5v5h-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square"/></svg>
+          </button>
           <a href="#menu" class="strike-brand" aria-label="Crown Strike home">
             <span class="strike-brand-mark">C<span>✦</span></span>
             <span>CROWN<span class="brand-slash">/</span>STRIKE<small>BROWSER COMBAT SYSTEM</small></span>
           </a>
+          <button class="strike-header-utility strike-header-gear" type="button" data-nav-target="settings" aria-label="Open settings">⚙</button>
           <nav class="strike-nav" aria-label="Main navigation">
+            <button type="button" data-nav-target="arsenal">INVENTORY</button>
             <button type="button" data-nav-target="play-modes" class="active">PLAY</button>
-            <button type="button" data-nav-target="invite-panel">FRIENDS</button>
-            <button type="button" data-nav-target="settings">SETTINGS</button>
+            <button type="button" data-nav-target="lobby-news">NEWS</button>
+            <button type="button" class="strike-nav-mobile" data-nav-target="invite-panel">FRIENDS</button>
+            <button type="button" class="strike-nav-mobile" data-nav-target="settings">SETTINGS</button>
           </nav>
-          <div class="strike-online"><span class="live-dot"></span><span id="server-state" role="status">CONNECT TO PLAY</span><b>16 MAX</b></div>
+          <button class="strike-app-install strike-app-install-desktop" type="button" data-install-trigger aria-label="Install Crown Strike app">↓&nbsp; GET APP</button>
+          <div class="strike-online"><span class="live-dot"></span><span id="server-state" role="status">CONNECT TO PLAY</span><b id="online-count" aria-live="polite">— ONLINE</b></div>
+          <button class="strike-header-utility strike-header-profile" type="button" data-nav-target="invite-panel" aria-label="Open friends and invite a player">♟</button>
         </header>
 
-        <section class="strike-hero" aria-label="Crown Strike">
-          <div class="strike-hero-copy">
-            <div class="strike-eyebrow"><span class="live-dot"></span> REAL-TIME MULTIPLAYER <span class="eyebrow-rule"></span> FREE TO PLAY</div>
-            <h1>FIGHT<br /><em>TOGETHER.</em><br />WIN LOUDER.</h1>
-            <p class="tagline">No downloads. No waiting. Bring your squad, choose your battlefield, and jump straight into the fight.</p>
-            <div class="strike-hero-buttons">
-              <button id="btn-quickplay" class="primary strike-action" type="button">DROP INTO BATTLE ROYALE <span>↗</span></button>
-              <button id="btn-practice" class="ghost strike-secondary" type="button">SOLO TRAINING <span>↗</span></button>
-            </div>
-            <div class="strike-facts"><span><b>16</b> PLAYERS</span><span><b>04</b> TEAMS</span><span><b>05+</b> MAPS</span><span><b>0</b> INSTALLS</span></div>
-          </div>
+        <section class="strike-hero" aria-label="Crown Strike game lobby">
+          <button class="strike-app-install strike-app-install-mobile" type="button" data-install-trigger aria-label="Install Crown Strike app">↓&nbsp; GET APP</button>
+          <button id="btn-sound" class="strike-sound-control" type="button" aria-label="Mute game sound" aria-pressed="false" data-sound="on" title="Toggle game sound">
+            <svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><path d="M3 9v6h4l5 4V5L7 9H3Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path class="sound-wave" d="M15 9a5 5 0 0 1 0 6m3-9a9 9 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path class="sound-muted-line" d="m16 9 5 6m0-6-5 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+            <span>SOUND ON</span>
+          </button>
           <div class="strike-hero-art" aria-hidden="true">
-            <div class="strike-art-ring ring-outer"></div>
-            <div class="strike-art-ring ring-inner"></div>
-            <div class="strike-art-crosshair">+</div>
-            <div class="strike-art-grid"></div>
-            <div class="strike-art-label label-top">SECTOR 07 <span>◉ TARGET ACQUIRED</span></div>
-            <div class="strike-art-monogram">CS<span>.</span></div>
-            <div class="strike-art-label label-bottom">CROWN ISLAND<span>01 / 04</span></div>
-            <div class="strike-art-coordinate">51° 24′ 04″ N<br />LIVE OPERATIONS</div>
+            <canvas id="strike-showcase" aria-hidden="true"></canvas>
+            <div class="strike-scene-grain"></div>
+            <div class="strike-art-label label-top">CROWN ISLAND / OPERATOR 01 <span>● FIELD READY</span></div>
+            <div class="strike-art-label label-bottom">LIVE TACTICAL FEED <span>3D / REAL-TIME</span></div>
           </div>
-          <div class="strike-hero-index" aria-hidden="true">01 — YOUR NEXT MATCH STARTS HERE</div>
+          <div class="strike-hero-copy">
+            <div class="strike-eyebrow"><span class="live-dot"></span> MULTIPLAYER ARENA <span class="eyebrow-rule"></span> NO DOWNLOAD</div>
+            <h1>YOUR NEXT<br /><em>ROUND</em><br />STARTS HERE.</h1>
+            <p class="tagline">Pick a mode. Lock in your loadout. Meet your squad on the battlefield.</p>
+            <div class="strike-play-label"><span>01 / SELECT OPERATION</span><span>CHOOSE TO DEPLOY ↓</span></div>
+            <div class="strike-play-list">
+              <button type="button" data-create-mode="duel" class="strike-play-row strike-row-duel">
+                <span class="strike-play-icon">⌖</span><span><strong>AWP DUEL</strong><small>1 VS 1 · SNIPER MATCH</small></span><span class="strike-mode-count" data-online-mode="duel">— ONLINE</span><b>↗</b>
+              </button>
+              <button type="button" data-create-mode="squads" class="strike-play-row strike-row-squads">
+                <span class="strike-play-icon">✣</span><span><strong>RIFLE 2V2</strong><small>2 VS 2 · TACTICAL TEAMPLAY</small></span><span class="strike-mode-count" data-online-mode="squads">— ONLINE</span><b>↗</b>
+              </button>
+              <div class="strike-rail-label" aria-hidden="true"><span>PLAY</span><b>VERSUS</b><small>1V1 AND 2V2 · LIVE ROOMS</small></div>
+              <button id="btn-surf" type="button" class="strike-play-row strike-row-boreas">
+                <span class="strike-play-icon">〰</span><span><strong>BOREAS</strong><small>SOLO · THREE GATES · TIME TRIAL</small></span><b>↗</b>
+              </button>
+              <button id="btn-surf-utopia" type="button" class="strike-play-row strike-row-utopia">
+                <span class="strike-play-icon">◇</span><span><strong>UTOPIA</strong><small>SOLO · FOUR GATES · LONG COURSE</small></span><b>↗</b>
+              </button>
+              <div class="strike-rail-label strike-rail-surf" aria-hidden="true"><span>PLAY</span><b>SURF</b><small>2 COURSES · AGAINST THE CLOCK</small></div>
+              <button id="btn-practice" type="button" class="strike-play-row strike-row-practice">
+                <span class="strike-play-icon">◎</span><span><strong>AIM TRAINING</strong><small>SOLO · TARGET RANGE</small></span><b>↗</b>
+              </button>
+            </div>
+            <div class="strike-facts"><span><b>16</b> MAX PLAYERS</span><span><b>04</b> TEAMS</span><span><b>05+</b> MAPS</span><span><b>0</b> INSTALLS</span></div>
+          </div>
+          <div class="strike-guest-profile" aria-label="Local guest identity">
+            <span class="strike-profile-kicker">GUEST SESSION <b>● LOCAL</b></span>
+            <div class="strike-profile-card">
+              <label for="hero-callsign">CALLSIGN
+                <input id="hero-callsign" maxlength="14" autocomplete="off" spellcheck="false" aria-label="Guest callsign" placeholder="YOUR NAME" />
+              </label>
+              <button id="btn-guest-profile" type="button" aria-label="Save guest callsign">↗</button>
+            </div>
+            <span class="strike-profile-message" id="hero-profile-status" role="status">SAVE A NAME TO PLAY AS A GUEST</span>
+          </div>
+          <aside class="strike-lobby-news" id="lobby-news" aria-label="Crown Strike game updates">
+            <div class="strike-news-tile"><span>FIELD UPDATE / 30 OCT</span><strong>WHAT'S NEW</strong><p>Two original Surf time trials, 15 weapons in the Arsenal and a fresh tactical lobby.</p><button type="button" data-nav-target="play-modes">EXPLORE MODES ↗</button></div>
+            <div class="strike-news-tile strike-news-community"><span>COMMUNITY / MULTIPLAYER</span><strong>BRING YOUR SQUAD</strong><p>Create a private match, share the room code and play together in real time.</p><button type="button" data-nav-target="invite-panel">INVITE A FRIEND ↗</button></div>
+          </aside>
+          <div class="strike-hero-index" aria-hidden="true">CROWN / STRIKE &nbsp; • &nbsp; INDEPENDENT BROWSER FPS</div>
         </section>
 
         <main class="strike-main">
@@ -204,19 +273,48 @@
             </div>
           </section>
 
+          <section id="arsenal" class="strike-arsenal" aria-labelledby="arsenal-heading">
+            <div class="strike-section-heading arsenal-heading">
+              <div><span class="strike-section-label">02 / ARMORY</span><h2 id="arsenal-heading">YOUR LOADOUT<span>.</span></h2></div>
+              <p>Inspect your weapon.<br />Equip before deploying.</p>
+            </div>
+            <div class="arsenal-workbench">
+              <aside class="arsenal-sidebar" aria-label="Weapon inventory">
+                <div class="arsenal-sidebar-title"><span>AVAILABLE WEAPONS</span><b id="arsenal-count">—</b></div>
+                <div id="arsenal-filters" class="arsenal-filters" aria-label="Filter weapon types"></div>
+                <div id="arsenal-gun-list" class="arsenal-gun-list" aria-label="Choose a weapon"></div>
+              </aside>
+              <div class="arsenal-inspect">
+                <div class="arsenal-stage" id="arsenal-stage">
+                  <div class="arsenal-stage-label"><span>WEAPON INSPECTION / LIVE 3D</span><b id="arsenal-model-state">STANDBY</b></div>
+                  <canvas id="arsenal-preview" aria-label="Interactive rotating 3D model of selected weapon"></canvas>
+                  <div class="arsenal-stage-reticle" aria-hidden="true">+</div>
+                  <div class="arsenal-stage-bottom"><span id="arsenal-model-source">LICENSED MODEL LIBRARY</span><span>DRAG TO ROTATE ↔</span></div>
+                </div>
+                <div class="arsenal-detail">
+                  <div class="arsenal-detail-top"><div><span id="arsenal-class" class="strike-section-label">PRIMARY WEAPON</span><h3 id="arsenal-name">ASSAULT RIFLE</h3></div><span class="arsenal-equipped-badge" id="arsenal-equipped-status">EQUIPPED</span></div>
+                  <p id="arsenal-description" class="arsenal-description">Choose a weapon to inspect its handling and combat statistics.</p>
+                  <div id="arsenal-stats" class="arsenal-stats" aria-label="Weapon specifications"></div>
+                  <div class="arsenal-actions"><button type="button" id="arsenal-equip" class="arsenal-equip">EQUIPPED ✓</button><button type="button" id="arsenal-practice" class="arsenal-practice">TEST IN RANGE ↗</button></div>
+                </div>
+              </div>
+            </div>
+            <p class="arsenal-disclaimer">ALL MODELS ARE INDEPENDENTLY LICENSED · <a href="/ASSET_CREDITS.txt" target="_blank" rel="noopener noreferrer">VIEW ASSET CREDITS ↗</a></p>
+          </section>
+
           <section class="strike-join-area" id="invite-panel" aria-labelledby="friend-heading">
-            <div class="strike-join-copy"><span class="strike-section-label">02 / BRING YOUR CREW</span><h2 id="friend-heading">PLAY WITH<br /><em>YOUR PEOPLE.</em></h2><p>Create a private room, copy its invitation link, and share it. Your friends join with the same four-character room code.</p><div class="join-decor">//// FRIENDLY FIRE: OFF</div></div>
+            <div class="strike-join-copy"><span class="strike-section-label">03 / BRING YOUR CREW</span><h2 id="friend-heading">PLAY WITH<br /><em>YOUR PEOPLE.</em></h2><p>Create a private room, copy its invitation link, and share it. Your friends join with the same four-character room code.</p><div class="join-decor">//// FRIENDLY FIRE: OFF</div></div>
             <div class="strike-join-form">
               <label class="field"><span>YOUR CALLSIGN</span><input id="nickname" maxlength="14" autocomplete="off" spellcheck="false" placeholder="Enter your name" /></label>
               <div class="strike-form-caption">GOT AN INVITE? JOIN YOUR FRIENDS.</div>
               <div class="room-row"><input id="room-code" aria-label="Four character room code" maxlength="4" autocomplete="off" spellcheck="false" placeholder="ROOM CODE" /><button id="btn-join" type="button">JOIN ROOM <span>→</span></button></div>
               <div class="strike-form-caption">OR BUILD A MATCH OF YOUR OWN.</div>
-              <div class="create-row"><select id="mode-select" aria-label="Game mode"><option value="duel">Sniper Duel (1v1)</option><option value="squads">Rifle 2v2</option><option value="tdm">Team Warfare (up to 16)</option><option value="br">Battle Royale (16)</option><option value="ffa">Free-for-all</option><option value="gungame">Gun Game</option><option value="waves">Survival (solo/co-op)</option></select><button id="btn-create" class="primary" type="button">CREATE <span>↗</span></button></div>
+              <div class="create-row"><select id="mode-select" aria-label="Game mode"><option value="duel">Sniper Duel (1v1)</option><option value="squads">Rifle 2v2</option><option value="retake">Retake 3v3 · Bomb Defuse</option><option value="tdm">Team Warfare (up to 16)</option><option value="br">Battle Royale (16)</option><option value="ffa">Free-for-all</option><option value="gungame">Gun Game</option><option value="waves">Survival (solo/co-op)</option></select><button id="btn-create" class="primary" type="button">CREATE <span>↗</span></button></div>
               <div id="menu-error" class="hidden" role="alert"></div>
             </div>
           </section>
 
-          <section class="strike-bottom-strip" aria-label="More game modes"><button type="button" data-create-mode="gungame"><b>GUN GAME</b><span>CLIMB THE WEAPON LADDER ↗</span></button><button type="button" data-create-mode="waves"><b>SURVIVAL</b><span>CO-OP AGAINST WAVES ↗</span></button><span>MORE MAPS. MORE WAYS TO FIGHT.</span></section>
+          <section class="strike-bottom-strip" aria-label="More game modes"><button type="button" data-create-mode="gungame"><b>GUN GAME</b><span>CLIMB THE WEAPON LADDER ↗</span></button><button type="button" data-create-mode="waves"><b>SURVIVAL</b><span>CO-OP AGAINST WAVES ↗</span></button><button id="btn-quickplay" type="button"><b>BATTLE ROYALE</b><span>QUICK PLAY · LAST SQUAD STANDING ↗</span><span data-online-mode="br">— ONLINE</span></button></section>
 
           <details id="settings" class="strike-settings"><summary>CONTROL SETTINGS <span>+</span></summary><div class="strike-settings-grid">
             <label class="slider"><span>Mouse sensitivity <b id="sens-val">1.00</b></span><input id="sens" type="range" min="0.2" max="4" step="0.05" /></label>
@@ -230,7 +328,7 @@
             <label class="check"><input id="shake" type="checkbox" /><span>Camera shake on explosions</span></label>
           </div></details>
         </main>
-        <div class="strike-page-foot"><span>© CROWN / STRIKE — BUILT FOR BROWSER COMBAT</span><span>NO ACCOUNT REQUIRED · PRIVATE ROOMS</span></div>
+        <div class="strike-page-foot"><span>© CROWN / STRIKE — BUILT FOR BROWSER COMBAT</span><a href="/ASSET_CREDITS.txt" target="_blank" rel="noopener noreferrer">3D &amp; AUDIO CREDITS ↗</a><span>NO ACCOUNT REQUIRED · PRIVATE ROOMS</span></div>
       </div>
       <footer id="menu-footer"></footer>
     </div>
@@ -307,6 +405,7 @@
             <select id="lobby-mode-select">
               <option value="duel">Sniper Duel (1v1)</option>
               <option value="squads">Rifle 2v2</option>
+              <option value="retake">Retake 3v3 · Bomb Defuse</option>
               <option value="br">Battle Royale (30)</option>
               <option value="tdm">Team Deathmatch</option>
               <option value="ffa">Free-for-all</option>
@@ -387,6 +486,34 @@
           <div class="gun-picker" id="pause-gun-picker"></div>
         </div>
 
+        <div id="pause-range-settings" class="pause-section hidden">
+          <div class="label">Aim training / bot setup</div>
+          <div class="range-config-grid">
+            <label>Bot count
+              <select id="range-bot-count">
+                <option value="1">1 bot</option><option value="3">3 bots</option><option value="5">5 bots</option><option value="8">8 bots</option><option value="12">12 bots</option>
+              </select>
+            </label>
+            <label>Distance
+              <select id="range-distance">
+                <option value="10">10 m</option><option value="25">25 m</option><option value="50">50 m</option><option value="75">75 m</option><option value="100">100 m</option>
+              </select>
+            </label>
+            <label>Movement
+              <select id="range-movement">
+                <option value="stand">Stand still</option><option value="strafe">Strafe</option><option value="run">Run</option><option value="crouch">Crouch</option>
+              </select>
+            </label>
+            <label>Armor
+              <select id="range-armor">
+                <option value="none">No armor</option><option value="light">Light vest</option><option value="heavy">Heavy vest</option>
+              </select>
+            </label>
+          </div>
+          <label class="range-infinite"><input id="range-infinite-ammo" type="checkbox" /> Infinite ammo</label>
+          <p class="range-config-note">Changes apply immediately and restart the current drill. Press G to start a fresh 60-second challenge.</p>
+        </div>
+
         <details id="pause-settings" class="pause-section">
           <summary>Settings</summary>
           <label class="slider">
@@ -433,6 +560,16 @@
       </div>
     </div>
 
+    <dialog id="install-app-dialog" class="strike-install-dialog" aria-labelledby="install-dialog-title">
+      <div class="strike-install-heading"><span>FIELD KIT / DEVICE SETUP</span><button id="install-dialog-close" type="button" aria-label="Close install instructions">✕</button></div>
+      <div class="strike-install-symbol" aria-hidden="true">C<span>✦</span></div>
+      <h2 id="install-dialog-title">TAKE THE GAME WITH YOU.</h2>
+      <p id="install-dialog-help">Install CROWN / STRIKE from your browser menu to launch it like an app.</p>
+      <p class="strike-install-note">Online access is required to join multiplayer rooms. Installing does not download an offline game.</p>
+      <button id="install-dialog-done" class="strike-install-done" type="button">GOT IT ↗</button>
+    </dialog>
+
     <script type="module" src="./src/main.js"></script>
+    <script type="module" src="./src/menuShowcase.js"></script>
   </body>
 </html>

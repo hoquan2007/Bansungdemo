@@ -119,7 +119,7 @@ export const WEAPONS = {
     id: 'rifle',
     name: 'Assault Rifle',
     type: 'rifle',
-    model: 'fbx:M4A1',
+    model: 'glb:Operator_Rifle',
     slot: 5,
     auto: true,
     damage: 25,
@@ -146,7 +146,9 @@ export const WEAPONS = {
     id: 'sniper',
     name: 'Bolt Sniper',
     type: 'sniper',
-    model: 'gltf:Sniper',
+    // CC0 3DAssets.dev chassis rifle (94k triangles, original detailed model).
+    // The Quaternius OBJ remains installed as a low-detail fallback.
+    model: 'cc0gun:ChassisSniper_CC0',
     slot: 6,
     auto: false,
     damage: 100,
@@ -484,7 +486,7 @@ export const WEAPONS = {
     id: 'knife',
     name: 'Knife',
     type: 'melee',
-    model: 'gltf:Knife_1',
+    model: 'cc0gun:CombatKnife_CC0',
     slot: 1,
     auto: false,
     damage: 150,

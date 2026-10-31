@@ -20,7 +20,8 @@ export function box(x, y, z, w, h, d, color, tag) {
  * It's an ordinary box in every way that matters: the server collides with it,
  * the navigation tests route around it, and if the model never downloads you get
  * a plainly-coloured box of exactly the same size. `file` names a glTF in
- * client/public/models/props.
+ * client/public/models/props; the extension defaults to .gltf when omitted,
+ * and self-contained .glb files can be named explicitly.
  */
 export function prop(x, y, z, w, h, d, color, file) {
   return box(x, y, z, w, h, d, color, `prop:${file}`);

@@ -7,12 +7,44 @@
 
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
 
 import { getMap, MAP_IDS, ROTATION, LARGE_TEAM_MAPS, nextMap, mapList } from '../shared/maps/index.js';
 import { playerOverlapsAny, raycastBoxes, pushOutOfSolids } from '../shared/collision.js';
 import {
   PLAYER_HEIGHT as H, PLAYER_RADIUS as R, MAX_PLAYERS, ARENA_MAX_PLAYERS, BR_MAX_PLAYERS,
 } from '../shared/constants.js';
+
+test('courtyard tactical-town props have shipped GLB assets and solid gameplay cover', () => {
+  const map = getMap('courtyard');
+  const expected = new Map([
+    ['SandbagWall_CC0.glb', 2],
+    ['TimberCrateStack_CC0.glb', 2],
+    ['MarketAwningStall_CC0.glb', 2],
+    ['TownFountain_CC0.glb', 1],
+  ]);
+  for (const [filename, count] of expected) {
+    const tag = `prop:hilltown/${filename}`;
+    assert.equal(map.solids.filter((solid) => solid.tag === tag).length, count, `${filename} requires real cover`);
+    const path = fileURLToPath(new URL(`../client/public/models/props/hilltown/${filename}`, import.meta.url));
+    const bytes = readFileSync(path);
+    assert.ok(bytes.length > 30000, `${filename} is unexpectedly small`);
+    assert.equal(bytes.toString('ascii', 0, 4), 'glTF', `${filename} is not binary glTF`);
+  }
+  assert.equal(playerOverlapsAny(map.healthPacks[0].pos, H, R, map.solids), false,
+    'central health pickup must remain reachable beside the fountain');
+});
+
+test('courtyard facade GLBs are present and use the expected binary glTF container', () => {
+  for (const filename of ['PlasterWallBay_CC0.glb', 'OchreWallBay_CC0.glb', 'ShutteredWindowBay_CC0.glb']) {
+    const path = fileURLToPath(new URL(`../client/public/models/props/hilltown/${filename}`, import.meta.url));
+    const bytes = readFileSync(path);
+    assert.ok(bytes.length > 30000, `${filename} is unexpectedly small`);
+    assert.equal(bytes.toString('ascii', 0, 4), 'glTF', `${filename} is not a binary glTF`);
+    assert.equal(bytes.readUInt32LE(8), bytes.length, `${filename} declares an incorrect GLB length`);
+  }
+});
 
 test('rotation contains all six competitive maps and cycles', () => {
   assert.deepEqual(ROTATION, ['warehouse', 'rooftops', 'alley', 'courtyard', 'foundry', 'switchyard']);

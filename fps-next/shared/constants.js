@@ -76,8 +76,9 @@ export const ROUND_MS = 180_000; // 3 minutes, as requested
 // doesn't feel like the mode was played at all.
 export const MODE_ROUND_MS = {
   tdm: ROUND_MS,
-  duel: ROUND_MS,
-  squads: ROUND_MS,
+  duel: 115_000,
+  squads: 115_000,
+  retake: 40_000,
   ffa: ROUND_MS,
   gungame: 330_000, // 5m30
   // The island is deliberately huge and the circle closes in several readable
@@ -153,7 +154,15 @@ export const EMPTY_ROOM_TTL_MS = 60_000;
 // be that person.
 export const LOBBY_GRACE_MS = 45_000;
 
-export const SCORE_LIMIT = { tdm: 75, duel: 10, squads: 25, ffa: 30, gungame: null }; // null = no cap
+// Duel and squads count round wins; the other competitive modes count kills.
+export const SCORE_LIMIT = { tdm: 75, duel: 5, squads: 9, retake: 7, ffa: 30, gungame: null }; // null = no cap
+
+// Retake: Team A defuses a pre-planted bomb, Team B protects it.
+export const RETAKE_BOMB_POS = Object.freeze([0, 1.2, 0]);
+export const RETAKE_BOMB_MS = 40_000;
+export const RETAKE_DEFUSE_MS = 5_000;
+export const RETAKE_DEFUSE_RADIUS = 2.5;
+export const RETAKE_HOLD_TIMEOUT_MS = 750;
 
 // ------------------------------------------------------------------- rooms
 // No 0/O/1/I/L — these get misread when someone reads a code out loud.

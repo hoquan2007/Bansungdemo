@@ -10,6 +10,7 @@ import { VIEW_DISTANCE } from '@shared/constants.js';
 import { loadModel, instantiate } from './models.js';
 import { createIslandScenery, disposeIslandScenery } from './islandScenery.js';
 import { createHighlandsScenery, disposeHighlandsScenery } from './highlandsScenery.js';
+import { createCourtyardDetails, disposeCourtyardDetails } from './courtyardDetails.js';
 
 const UNIT_CUBE = new THREE.BoxGeometry(1, 1, 1);
 const SURFACE_PLANE = new THREE.PlaneGeometry(1, 1);
@@ -114,6 +115,7 @@ const TEXTURES = {
   redbrick: { file: 'sbs/brick', metres: 5, tint: 0.2 },
   concrete: { file: 'sbs/plaster', metres: 6, tint: 0.88 },
   asphalt: { file: 'sbs/asphalt', metres: 7, tint: 0.42 },
+  road012a: { file: 'ambientcg/road012a/color', metres: 9, tint: 0.12 },
   sbsbrick: { file: 'sbs/brick', metres: 4.5, tint: 0.28 },
   dirt: { file: 'sbs/dirt', metres: 5, tint: 0.36 },
   grass: { file: 'sbs/grass', metres: 6, tint: 0.28 },
@@ -128,6 +130,9 @@ const TEXTURES = {
 
 /** Metres of world per texture tile, so tiling is consistent at any box size. */
 const textureCache = new Map();
+// Courtyard's physical road finish uses independent, non-color texture channels.
+// Keep sources cached across map rotations; each visible surface owns its UV clone.
+const pbrTextureCache = new Map();
 let maxTextureAnisotropy = 1;
 
 function getTexture(name) {
@@ -157,6 +162,24 @@ function getTexture(name) {
   return entry;
 }
 
+function getRoadPbrTexture(channel) {
+  if (pbrTextureCache.has(channel)) return pbrTextureCache.get(channel);
+  const ready = new THREE.TextureLoader()
+    .loadAsync(`textures/ambientcg/road012a/${channel}.jpg`)
+    .then((tex) => {
+      tex.wrapS = THREE.RepeatWrapping;
+      tex.wrapT = THREE.RepeatWrapping;
+      // Normal and roughness maps contain data, not sRGB color.
+      tex.colorSpace = THREE.NoColorSpace;
+      tex.minFilter = THREE.LinearMipmapLinearFilter;
+      tex.anisotropy = maxTextureAnisotropy;
+      return tex;
+    })
+    .catch(() => null);
+  pbrTextureCache.set(channel, ready);
+  return ready;
+}
+
 /**
  * Which texture a solid should wear, from its shape.
  *
@@ -166,6 +189,9 @@ function getTexture(name) {
  * does want to be specific.
  */
 function surfaceFor(solid, map) {
+  // Surf pads are deliberately smooth, colored course geometry. The usual
+  // concrete auto-texture makes their pastel paint look like rough asphalt.
+  if (map.surf && solid.tag === 'surf-pad') return null;
   if (solid.tag?.startsWith('surface:')) return solid.tag.split(':')[1];
 
   const w = solid.max[0] - solid.min[0];
@@ -264,14 +290,18 @@ export function loadMap(world, map) {
   // sections, stair risers and cover a surface without replacing hundreds of
   // instances with hundreds of draw calls. Instance colours still tint the map,
   // so its authored palette is preserved.
-  const detail = getTexture(map.detailTexture ?? map.wallTexture ?? 'plaster');
-  detail.ready.then((source) => {
-    if (!source || !mesh.parent) return;
-    const map2 = source.clone();
-    map2.repeat.set(1, 1);
-    mesh.material.map = map2;
-    mesh.material.needsUpdate = true;
-  });
+  // Painted surf platforms use a flat finish; the all-instance wall texture
+  // would otherwise tint even tagged pads after the async asset loads.
+  if (!map.surf) {
+    const detail = getTexture(map.detailTexture ?? map.wallTexture ?? 'plaster');
+    detail.ready.then((source) => {
+      if (!source || !mesh.parent) return;
+      const map2 = source.clone();
+      map2.repeat.set(1, 1);
+      mesh.material.map = map2;
+      mesh.material.needsUpdate = true;
+    });
+  }
 
   // ---- atmosphere ----
   // A flat colour behind the gradient sphere, so there is never a frame of void
@@ -324,13 +354,17 @@ export function loadMap(world, map) {
     : map.id === 'highlands' ? createHighlandsScenery(map) : null;
   if (scenery) world.scene.add(scenery);
 
+  const details = map.id === 'courtyard' ? createCourtyardDetails() : null;
+  if (details) world.scene.add(details);
+
   world.current = {
-    map, mesh, props, surfaces, scenery,
+    map, mesh, props, surfaces, scenery, details,
     generation: ++loadGeneration,
     propByIndex: new Map(),
   };
 
   dressMap(world, map, mesh, props, world.current.generation);
+  if (map.id === 'courtyard') dressCourtyardFacades(world, props, world.current.generation);
   scatterProps(world, map, props, world.current.generation);
 
   return mesh;
@@ -383,7 +417,7 @@ function buildSurfaces(map, mesh) {
     const tint = new THREE.Color(0xffffff).lerp(new THREE.Color(solid.color), tex.tint);
 
     const layer = surfaceLayer(solid);
-    const material = new THREE.MeshLambertMaterial({
+    const materialOptions = {
       color: tint,
       // Roads, runways and fields are collision-flush with the island floor.
       // A tiny bounded offset resolves the last sub-pixel tie. The old offset
@@ -392,7 +426,11 @@ function buildSurfaces(map, mesh) {
       polygonOffset: layer > 0,
       polygonOffsetFactor: layer > 0 ? -1 : 0,
       polygonOffsetUnits: layer > 0 ? -layer * 3 : 0,
-    });
+    };
+    const useRoadPbr = map.id === 'courtyard' && name === 'road012a';
+    const material = useRoadPbr
+      ? new THREE.MeshStandardMaterial({ ...materialOptions, metalness: 0, roughness: 1 })
+      : new THREE.MeshLambertMaterial(materialOptions);
 
     // Authored terrain paint only needs a top face. Drawing it as another full
     // box put a second underside and four enormous side faces into the depth
@@ -432,6 +470,24 @@ function buildSurfaces(map, mesh) {
       material.needsUpdate = true;
     });
 
+    if (useRoadPbr) {
+      // Match the color map's real-world tiling. An orphaned map may already
+      // have disposed its surface while requests are still in flight.
+      for (const [channel, property] of [
+        ['normal-gl', 'normalMap'],
+        ['roughness', 'roughnessMap'],
+      ]) {
+        getRoadPbrTexture(channel).then((source) => {
+          if (!source || !group.parent || !surface.parent) return;
+          const clone = source.clone();
+          clone.repeat.set(repeatU, repeatV);
+          material[property] = clone;
+          if (property === 'normalMap') material.normalScale.set(0.65, 0.65);
+          material.needsUpdate = true;
+        });
+      }
+    }
+
     mesh.setMatrixAt(index, hidden);
     replaced++;
   });
@@ -445,11 +501,63 @@ function buildSurfaces(map, mesh) {
 // the old one's crates.
 let loadGeneration = 0;
 
-const PROP_URL = (file) => `models/props/${file}.gltf`;
+// Authored props may be the original Quaternius .gltf files or newer CC0
+// self-contained .glb files. Keep the filename in the shared map tag so both
+// the client and any map diagnostics can identify the exact source asset.
+const PROP_URL = (file) => `models/props/${file}${/\.(?:gltf|glb)$/i.test(file) ? '' : '.gltf'}`;
 
 // Cargo that stands in for a tagged crate box. Alternating gives a stack some
 // variety without needing the maps to say which is which.
 const CRATE_MODELS = ['Crate', 'CardboardBoxes_3', 'Crate', 'WoodPlanks'];
+
+/**
+ * A wall-backed town facade. Existing collision runs along the Courtyard
+ * perimeter; these shuttered plaster modules sit on its inner surface. A
+ * closed window cannot suggest a shortcut through an otherwise solid wall.
+ * Every source module is 4m wide and 3.5m high, so two tiers match the 7m
+ * perimeter without stretching textures across a 60m-long cube.
+ */
+async function dressCourtyardFacades(world, props, generation) {
+  const files = [
+    'hilltown/PlasterWallBay_CC0.glb',
+    'hilltown/OchreWallBay_CC0.glb',
+    'hilltown/ShutteredWindowBay_CC0.glb',
+  ];
+  const models = await Promise.all(files.map((file) => loadModel(PROP_URL(file))));
+  if (world.current?.generation !== generation) return;
+  if (models.every((model) => !model)) return; // Existing solid walls remain.
+
+  const facades = new THREE.Group();
+  facades.name = 'courtyard-town-facades';
+  // The enclose() solids occupy x/z = 30..31.2m; their inward face is 30m.
+  // Keep the model's main plaster plane 18cm inside the arena so the collision
+  // wall does not occlude it (previously at 30.19m, buried in solid stone).
+  const innerWallPlane = 29.82;
+  const sides = [
+    { axis: 'z', edge: -innerWallPlane, yaw: 0 },
+    { axis: 'z', edge: innerWallPlane, yaw: Math.PI },
+    { axis: 'x', edge: -innerWallPlane, yaw: Math.PI / 2 },
+    { axis: 'x', edge: innerWallPlane, yaw: -Math.PI / 2 },
+  ];
+  for (let sideIndex = 0; sideIndex < sides.length; sideIndex++) {
+    const side = sides[sideIndex];
+    for (let bay = 0; bay < 15; bay++) {
+      const along = -28 + bay * 4;
+      for (let floor = 0; floor < 2; floor++) {
+        const seed = bay + sideIndex * 5 + floor * 3;
+        const choice = (seed % 4 === 0) ? 2 : (seed % 3 === 0) ? 1 : 0;
+        const model = models[choice] ?? models[0] ?? models.find(Boolean);
+        if (!model) continue;
+        const wall = instantiate(model);
+        wall.rotation.y = side.yaw;
+        if (side.axis === 'z') wall.position.set(along, floor * 3.5, side.edge);
+        else wall.position.set(side.edge, floor * 3.5, along);
+        facades.add(wall);
+      }
+    }
+  }
+  props.add(facades); // Disposed with the other map props on map rotation.
+}
 
 /**
  * Draw models in place of the boxes tagged for them.
@@ -491,16 +599,26 @@ async function dressMap(world, map, mesh, props, generation) {
     if (!model) continue;
 
     const instance = instantiate(model);
+    // Orient the asset before measuring its bounding box. Measuring first and
+    // rotating last shifts non-square props away from their server collision.
+    const quarterTurn = index % 4;
+    instance.rotation.y = quarterTurn * (Math.PI / 2);
     box.setFromObject(instance);
     box.getSize(size);
     if (size.x <= 0 || size.y <= 0 || size.z <= 0) continue;
 
     // Fill the box on every axis independently. Crates are boxy, so stretching
     // one to a slightly non-cubic solid reads as a different crate, not a bug.
+    // Three.js applies local scale before rotation. For quarter turns the
+    // instance's local X contributes to world Z, and local Z to world X.
+    const targetWidth = solid.max[0] - solid.min[0];
+    const targetHeight = solid.max[1] - solid.min[1];
+    const targetDepth = solid.max[2] - solid.min[2];
+    const swapsAxes = quarterTurn % 2 === 1;
     instance.scale.set(
-      (solid.max[0] - solid.min[0]) / size.x,
-      (solid.max[1] - solid.min[1]) / size.y,
-      (solid.max[2] - solid.min[2]) / size.z,
+      swapsAxes ? targetDepth / size.z : targetWidth / size.x,
+      targetHeight / size.y,
+      swapsAxes ? targetWidth / size.x : targetDepth / size.z,
     );
 
     // Re-measure after scaling to find where the model's own origin sits, which
@@ -512,9 +630,6 @@ async function dressMap(world, map, mesh, props, generation) {
       (solid.min[1] + solid.max[1]) / 2 - centre.y,
       (solid.min[2] + solid.max[2]) / 2 - centre.z,
     );
-    // A quarter turn here and there so a row of crates isn't a row of clones.
-    instance.rotation.y = (index % 4) * (Math.PI / 2);
-
     props.add(instance);
     world.current?.propByIndex?.set(index, instance);
     mesh.setMatrixAt(index, hidden);
@@ -702,7 +817,7 @@ export function unloadMap(world) {
     world.sky = null;
   }
   if (!world.current) return;
-  const { map, mesh, props, surfaces, scenery } = world.current;
+  const { map, mesh, props, surfaces, scenery, details } = world.current;
   world.scene.remove(mesh);
   mesh.material.map?.dispose();
   mesh.material.dispose();
@@ -718,6 +833,8 @@ export function unloadMap(world) {
     // clones came from stay cached for the next one.
     for (const child of surfaces.children) {
       child.material.map?.dispose();
+      child.material.normalMap?.dispose();
+      child.material.roughnessMap?.dispose();
       child.material.dispose();
     }
   }
@@ -725,6 +842,10 @@ export function unloadMap(world) {
     world.scene.remove(scenery);
     if (map.id === 'highlands') disposeHighlandsScenery(scenery);
     else disposeIslandScenery(scenery);
+  }
+  if (details) {
+    world.scene.remove(details);
+    disposeCourtyardDetails(details);
   }
   world.current = null;
 }
@@ -773,7 +894,8 @@ export function createRenderer(canvas) {
     antialias: true,
     powerPreference: 'high-performance',
   });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  // The active quality preset owns render pixel density (see gpuQuality.js).
+  renderer.setPixelRatio(1);
   renderer.setSize(window.innerWidth, window.innerHeight);
   return renderer;
 }

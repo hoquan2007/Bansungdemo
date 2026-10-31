@@ -45,6 +45,7 @@ import {
   input, moveAxes, consumeLook, consumePressed,
   sprintHeld, crouchHeld, firingHeld, jumpHeld,
 } from './input.js';
+import { updateTacticalSlide } from './tacticalMovement.js';
 
 export function createLocalPlayer() {
   return {
@@ -55,6 +56,11 @@ export function createLocalPlayer() {
     onGround: false,
     crouching: false,
     crouchAmount: 0,
+    sprinting: false,
+    slideRemaining: 0,
+    slideCooldown: 0,
+    slideInputDown: false,
+    lean: 0,
     height: PLAYER_HEIGHT,
     radius: PLAYER_RADIUS,
 
@@ -108,6 +114,11 @@ export function spawnAt(p, point, solids, yaw = 0) {
   p.onGround = false;
   p.crouching = false;
   p.crouchAmount = 0;
+  p.sprinting = false;
+  p.slideRemaining = 0;
+  p.slideCooldown = 0;
+  p.slideInputDown = false;
+  p.lean = 0;
   p.height = PLAYER_HEIGHT;
   p.health = MAX_HEALTH;
   p.alive = true;
@@ -154,10 +165,31 @@ function clampPitch(v) {
 export function updateLocalPlayer(p, dt, solids, opts = {}) {
   const { frozen = false, lethalFallY = null } = opts;
   const weapon = currentWeapon(p);
+  // Sample once per physics substep so keyboard and controller crouch share the
+  // same rising-edge trigger. A held key cannot repeatedly start a slide.
+  const crouchDown = crouchHeld();
+  const axes = moveAxes();
+  const sliding = updateTacticalSlide(p, dt, {
+    crouchDown,
+    forward: axes.z,
+    sprinting: sprintHeld(),
+    aiming: input.ads,
+    slowWalking: input.slowWalk,
+    active: !frozen && p.alive && !p.parachuting && p.vehicleId === null,
+    speedCap: SPRINT_SPEED * weapon.moveMult,
+  });
+  p.sprinting = !frozen && p.alive && !p.parachuting && p.vehicleId === null &&
+    !sliding && p.onGround && sprintHeld() && axes.z > 0.5 &&
+    !input.ads && !input.slowWalk && p.crouchAmount < 0.2;
 
   applyLook(p);
   updateAds(p, dt, weapon);
   recoverRecoil(p, dt, weapon);
+  // Cosmetic camera roll only: the eye origin and authoritative shot direction
+  // stay fixed, so leaning cannot see or fire through a wall.
+  const leanTarget = !frozen && p.alive && !p.parachuting && p.vehicleId === null
+    ? Number(input.leanRight) - Number(input.leanLeft) : 0;
+  p.lean += (leanTarget - p.lean) * Math.min(1, dt * 12);
 
   if (frozen) {
     // Countdown players are already at their real spawn (or hanging beneath
@@ -201,10 +233,9 @@ export function updateLocalPlayer(p, dt, solids, opts = {}) {
     return updateVehicleMovement(p, dt, solids, lethalFallY);
   }
 
-  updateCrouch(p, dt, solids);
+  updateCrouch(p, dt, solids, crouchDown || sliding);
 
   // ---- horizontal acceleration ----
-  const axes = moveAxes();
   const sin = Math.sin(p.yaw);
   const cos = Math.cos(p.yaw);
   // Local -Z is forward, +X is right.
@@ -217,15 +248,18 @@ export function updateLocalPlayer(p, dt, solids, opts = {}) {
   const dirZ = wishLen > 0 ? wishZ / wishLen : 0;
   if (wishLen === 0) wishSpeed = 0;
 
-  applyFriction(p, dt);
-  accelerate(p, dirX, dirZ, wishSpeed, dt);
+  // A slide keeps existing sprint momentum and gently bleeds it off. Steering
+  // and jumping cannot add speed until the slide ends, and the existing wall
+  // collision code still handles every movement step.
+  applyFriction(p, dt, sliding ? 0.085 : 1);
+  if (!sliding) accelerate(p, dirX, dirZ, wishSpeed, dt);
   // Air acceleration is projection-based for responsive steering. Clamp the
   // resulting magnitude so a wall cannot strip the inward velocity while each
   // jump adds more sideways speed.
   clampHorizontalSpeed(p, SPRINT_SPEED * weapon.moveMult);
 
   // ---- vertical ----
-  if (p.onGround && jumpHeld() && !p.crouching) {
+  if (p.onGround && jumpHeld() && !p.crouching && !sliding) {
     p.vel[1] = JUMP_VELOCITY;
     p.onGround = false;
   }
@@ -302,10 +336,11 @@ function updateVehicleMovement(p, dt, solids, lethalFallY) {
 function targetSpeed(p, axes, weapon) {
   let speed = WALK_SPEED;
   // Sprint only forwards — backpedalling at 9m/s looks and feels wrong.
-  if (sprintHeld() && axes.z > 0.5 && !input.ads && p.crouchAmount < 0.2) speed = SPRINT_SPEED;
+  if (sprintHeld() && !input.slowWalk && axes.z > 0.5 && !input.ads && p.crouchAmount < 0.2) speed = SPRINT_SPEED;
   // Blend toward crouch speed as you go down, so the slowdown matches what the
   // camera is doing rather than snapping at the halfway point.
   speed = speed + (CROUCH_SPEED - speed) * p.crouchAmount;
+  if (input.slowWalk) speed = Math.min(speed, WALK_SPEED * 0.48);
 
   speed *= weapon.moveMult;
   if (input.ads) speed *= 0.55;
@@ -313,14 +348,14 @@ function targetSpeed(p, axes, weapon) {
   return speed;
 }
 
-function applyFriction(p, dt) {
+function applyFriction(p, dt, frictionScale = 1) {
   const speed = Math.hypot(p.vel[0], p.vel[2]);
   if (speed < 0.001) {
     p.vel[0] = 0;
     p.vel[2] = 0;
     return;
   }
-  const f = p.onGround ? GROUND_FRICTION : AIR_FRICTION;
+  const f = p.onGround ? GROUND_FRICTION * frictionScale : AIR_FRICTION;
   const drop = speed * f * dt;
   const scale = Math.max(0, speed - drop) / speed;
   p.vel[0] *= scale;
@@ -348,8 +383,8 @@ function accelerate(p, dirX, dirZ, wishSpeed, dt) {
  * headroom at each increment, so ducking into the practice range's low tunnel
  * and releasing crouch leaves you crouched instead of clipping through the roof.
  */
-function updateCrouch(p, dt, solids) {
-  const target = crouchHeld() ? PLAYER_CROUCH_HEIGHT : PLAYER_HEIGHT;
+function updateCrouch(p, dt, solids, crouchDown = crouchHeld()) {
+  const target = crouchDown ? PLAYER_CROUCH_HEIGHT : PLAYER_HEIGHT;
   const step = CROUCH_TRANSITION_SPEED * dt;
 
   if (target < p.height) {
@@ -375,7 +410,7 @@ function applyLook(p) {
 }
 
 function updateAds(p, dt, weapon) {
-  const target = input.ads && weapon.adsZoom > 1.01 ? 1 : 0;
+  const target = input.ads && p.slideRemaining <= 0 && weapon.adsZoom > 1.01 ? 1 : 0;
   const rate = 7.5;
   p.adsProgress += (target - p.adsProgress) * Math.min(1, rate * dt);
 }
@@ -388,6 +423,10 @@ function recoverRecoil(p, dt, weapon) {
 }
 
 function updateViewBob(p, dt) {
+  if (p.slideRemaining > 0) {
+    p.bobAmount += (0 - p.bobAmount) * Math.min(1, 12 * dt);
+    return;
+  }
   const speed = Math.hypot(p.vel[0], p.vel[2]);
   if (p.onGround && speed > 0.7) {
     p.bobPhase += dt * (4.2 + speed * 0.75);
@@ -530,6 +569,7 @@ export function applyToCamera(p, camera, baseFov) {
   camera.rotation.set(0, 0, 0);
   camera.rotateY(p.yaw + p.recoilYaw);
   camera.rotateX(pitch);
+  camera.rotateZ((p.lean ?? 0) * 0.12);
 
   const weapon = currentWeapon(p);
   const targetFov = baseFov / lerp(1, weapon.adsZoom, p.adsProgress);

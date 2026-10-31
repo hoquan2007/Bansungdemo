@@ -8,12 +8,14 @@ import courtyard from './courtyard.js';
 import foundry from './foundry.js';
 import switchyard from './switchyard.js';
 import highlands from './highlands.js';
+import surf from './surf.js';
+import surfUtopia from './surfUtopia.js';
 
 // Competitive maps, in rotation order.
 export const ROTATION = ['warehouse', 'rooftops', 'alley', 'courtyard', 'foundry', 'switchyard'];
 export const LARGE_TEAM_MAPS = ['island', 'highlands'];
 
-const RAW = { warehouse, rooftops, alley, courtyard, foundry, switchyard, practice, island, highlands };
+const RAW = { warehouse, rooftops, alley, courtyard, foundry, switchyard, practice, island, highlands, surf, 'surf-utopia': surfUtopia };
 
 // Boxes are compiled to min/max form once, on first request, and cached. Both
 // the client and the server go through here so neither can end up with a

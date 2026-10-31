@@ -7,7 +7,39 @@ import { PRIMARY_IDS, GUNGAME_LADDER, loadoutForPrimary } from '../shared/weapon
 import { LARGE_TEAM_MAPS } from '../shared/maps/index.js';
 
 export function isTeamMode(mode) {
-  return mode === 'tdm' || mode === 'duel' || mode === 'squads';
+  return mode === 'tdm' || mode === 'duel' || mode === 'squads' || mode === 'retake';
+}
+
+export function isEliminationMode(mode) {
+  return mode === 'duel' || mode === 'squads' || mode === 'retake';
+}
+
+/** A round is decided once at least one complete side has been eliminated. */
+export function eliminationOutcome(room) {
+  if (!isEliminationMode(room.mode)) return null;
+  const teams = activeTeams(room);
+  const present = teams.map((team) => [...room.players.values()].filter((p) => p.team === team));
+  if (present.some((players) => players.length === 0)) return null;
+  const alive = present.map((players) => players.filter((p) => p.alive).length);
+  // Killing the bomb defenders alone cannot secure the round. A must defuse.
+  if (room.mode === 'retake') return alive[0] === 0 ? { reason: 'elimination', winnerTeam: teams[1] } : null;
+  if (alive.every((count) => count > 0)) return null;
+  if (alive.every((count) => count === 0)) return { reason: 'draw' };
+  return { reason: 'elimination', winnerTeam: teams[alive.findIndex((count) => count > 0)] };
+}
+
+/** Round clock expiration: prefer surviving players, then combined surviving health. */
+export function eliminationAtTimeUp(room) {
+  if (room.mode === 'retake') return { reason: 'bomb', winnerTeam: TEAMS.B };
+  const instant = eliminationOutcome(room);
+  if (instant) return instant;
+  const sides = activeTeams(room).map((team) => {
+    const survivors = [...room.players.values()].filter((p) => p.team === team && p.alive);
+    return { team, count: survivors.length, health: survivors.reduce((n, p) => n + p.health, 0) };
+  });
+  sides.sort((a, b) => b.count - a.count || b.health - a.health);
+  if (sides[0].count === sides[1].count && sides[0].health === sides[1].health) return { reason: 'draw' };
+  return { reason: 'timeup', winnerTeam: sides[0].team };
 }
 
 /**
@@ -30,6 +62,7 @@ export function isBattleRoyale(mode) {
 export function capacityFor(mode, mapId = 'island') {
   if (mode === 'duel') return 2;
   if (mode === 'squads') return 4;
+  if (mode === 'retake') return 6;
   if (isBattleRoyale(mode)) return BR_MAX_PLAYERS;
   return isTeamMode(mode) && LARGE_TEAM_MAPS.includes(mapId) ? MAX_PLAYERS : ARENA_MAX_PLAYERS;
 }
@@ -44,6 +77,7 @@ export function emptyScores(room) {
 
 /** Battle royale is played on one purpose-built map, never the rotation. */
 export function mapForMode(mode, current) {
+  if (mode === 'retake') return 'courtyard';
   if (isBattleRoyale(mode)) return 'island';
   if (mode === 'tdm') return LARGE_TEAM_MAPS.includes(current) ? current : 'island';
   return LARGE_TEAM_MAPS.includes(current) ? 'warehouse' : current;
@@ -101,7 +135,7 @@ export function rebalance(room) {
 export function loadoutFor(room, player) {
   // Skill-based versus queues have an identical loadout on both sides.
   if (room.mode === 'duel') return loadoutForPrimary('sniper');
-  if (room.mode === 'squads') return loadoutForPrimary('rifle');
+  if (room.mode === 'squads' || room.mode === 'retake') return loadoutForPrimary('rifle');
   // Battle royale: everyone lands with a pistol and a knife, whatever they picked
   // in the lobby. Finding a better gun is the mode; handing you your favourite at
   // the start would remove the reason to loot.
@@ -117,7 +151,7 @@ export function loadoutFor(room, player) {
 
 /** Does the player's own class choice decide their loadout in this mode? */
 export function usesClasses(mode) {
-  return mode !== 'gungame' && mode !== 'duel' && mode !== 'squads';
+  return mode !== 'gungame' && mode !== 'duel' && mode !== 'squads' && mode !== 'retake';
 }
 
 export function spawnPointsFor(room, map, player) {
@@ -168,7 +202,7 @@ export function onKill(room, killer, victim, weaponId) {
   }
 
   killer.score += 1;
-  if (isTeamMode(room.mode)) {
+  if (isTeamMode(room.mode) && !isEliminationMode(room.mode)) {
     room.teamScores[killer.team] = (room.teamScores[killer.team] ?? 0) + 1;
   }
 
@@ -180,6 +214,13 @@ export function onKill(room, killer, victim, weaponId) {
  * until the clock runs out.
  */
 export function checkWin(room) {
+  if (isEliminationMode(room.mode)) {
+    const limit = SCORE_LIMIT[room.mode];
+    for (const team of activeTeams(room)) {
+      if ((room.teamScores[team] ?? 0) >= limit) return { reason: 'roundlimit', winnerTeam: team };
+    }
+    return null;
+  }
   if (isSurvival(room.mode)) return null;
   // Battle royale ends when one player is left. Handled by the room, which knows
   // who is still alive.
