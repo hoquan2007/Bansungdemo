@@ -17,11 +17,14 @@ export function initHud() {
     'hud', 'crosshair', 'hitmarker', 'damage-vignette', 'hud-top', 'hud-state',
     'team-scores', 'score-a', 'score-b', 'score-c', 'score-d', 'round-timer', 'killfeed', 'health-fill', 'health-num',
     'weapon-name', 'ammo', 'ammo-mag', 'reload-hint', 'practice-stats',
+    'surf-stats', 'surf-course-title', 'surf-speed', 'surf-time', 'surf-best', 'surf-checkpoints', 'surf-falls', 'surf-event',
     'pr-hits', 'pr-shots', 'pr-acc', 'pr-streak', 'respawn', 'respawn-title',
+    'pr-challenge-status', 'pr-challenge-time', 'pr-challenge-score', 'pr-challenge-best', 'pr-drill',
     'respawn-by', 'respawn-timer', 'scoreboard', 'scope', 'weapon-rack',
     'damage-numbers', 'kill-banner', 'minimap',
     'emote-toast',
     'br-alive', 'br-alive-n', 'br-zone', 'br-prompt',
+    'retake-objective', 'retake-role', 'retake-clock', 'retake-status', 'retake-progress-fill', 'retake-prompt',
     'results', 'rs-headline', 'rs-score', 'rs-table', 'rs-next', 'rs-regroup',
   ];
   for (const id of ids) el[id] = document.getElementById(id);
@@ -40,6 +43,29 @@ export function setPracticeMode(on) {
   el['hud-top'].classList.toggle('hidden', on);
   el['weapon-rack'].classList.toggle('hidden', !on);
   if (on) buildWeaponRack();
+}
+
+export function setSurfMode(on, courseName = 'Momentum') {
+  el['surf-stats'].classList.toggle('hidden', !on);
+  if (on) el['surf-course-title'].textContent = `${courseName.toUpperCase()} / TIME TRIAL`;
+  el['hud-top'].classList.toggle('hidden', on);
+  el['weapon-rack'].classList.add('hidden');
+}
+
+function surfTime(seconds) {
+  if (seconds === null || !Number.isFinite(seconds)) return '—';
+  const minutes = Math.floor(seconds / 60);
+  const rem = (seconds % 60).toFixed(2).padStart(5, '0');
+  return `${String(minutes).padStart(2, '0')}:${rem}`;
+}
+
+export function updateSurfStats(run, speed, checkpointCount) {
+  el['surf-speed'].textContent = String(Math.round(speed));
+  el['surf-time'].textContent = surfTime(run.elapsed);
+  el['surf-best'].textContent = surfTime(run.best);
+  el['surf-checkpoints'].textContent = `${run.checkpointIndex} / ${checkpointCount}`;
+  el['surf-falls'].textContent = String(run.deaths);
+  el['surf-event'].textContent = run.lastEvent;
 }
 
 /**
@@ -83,6 +109,33 @@ export function setBattleRoyaleVisible(visible) {
   // battle royale is where the killfeed is busiest — a full lobby means it's
   // never empty. Drop it below the counter for the duration.
   el.killfeed.classList.toggle('below-alive', !!visible);
+}
+
+export function setRetakeVisible(visible) {
+  el['retake-objective'].classList.toggle('hidden', !visible);
+}
+
+export function updateRetakeObjective({ bomb, team, msLeft, myId, nearby, alive, roundBreak }) {
+  const attacking = team === 'A';
+  const active = !!bomb?.active && !roundBreak;
+  el['retake-objective'].classList.toggle('inactive', !active);
+  el['retake-role'].textContent = attacking ? 'TEAM A / RETAKE' : 'TEAM B / DEFEND';
+  const seconds = Math.max(0, Math.ceil(msLeft / 1000));
+  el['retake-clock'].textContent = `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, '0')}`;
+  const defusing = active && !!bomb?.defuserId;
+  const mine = defusing && bomb.defuserId === myId;
+  el['retake-status'].textContent = !active ? 'Next round loading' : defusing
+    ? (mine ? 'DEFUSING BOMB' : 'BOMB DEFUSE IN PROGRESS')
+    : 'BOMB PLANTED · SITE A';
+  const progress = defusing && bomb.defuseMs > 0
+    ? Math.max(0, Math.min(100, (bomb.defuseElapsedMs / bomb.defuseMs) * 100)) : 0;
+  el['retake-progress-fill'].style.width = `${progress}%`;
+  el['retake-progress-fill'].classList.toggle('enemy', !attacking);
+  el['retake-prompt'].textContent = !active ? 'Prepare for the next round'
+    : !alive ? 'Spectating — wait for the next round'
+    : attacking ? (nearby ? (mine ? 'KEEP HOLDING E / Y TO DEFUSE' :
+      defusing ? 'A teammate is defusing' : 'HOLD E / Y TO DEFUSE · 5 SECONDS') : 'Reach the bomb before detonation')
+      : (defusing ? 'STOP THE DEFUSE' : 'Protect the planted bomb until detonation');
 }
 
 export function updateAlive(alive, total) {
@@ -164,13 +217,13 @@ export function updateVitals(health) {
   el['health-num'].textContent = Math.max(0, Math.ceil(health));
 }
 
-export function updateWeapon(player, now) {
+export function updateWeapon(player, now, unlimitedAmmo = false) {
   const id = player.inventory[player.slotIndex];
   const weapon = getWeapon(id);
   el['weapon-name'].textContent = weapon.name;
 
   const mag = player.ammo[id];
-  const infinite = weapon.mag === Infinity;
+  const infinite = unlimitedAmmo || weapon.mag === Infinity;
   el['ammo-mag'].textContent = infinite ? '∞' : mag;
   el.ammo.classList.toggle('empty', !infinite && mag === 0);
 
@@ -348,11 +401,22 @@ export function showRespawn(visible, killerName = '', status = '', title = 'DOWN
 
 // ------------------------------------------------------------------ practice
 
-export function updatePracticeStats({ hits, shots, streak, best }) {
+export function updatePracticeStats({ hits, shots, streak, best }, challenge = null) {
   el['pr-hits'].textContent = hits;
   el['pr-shots'].textContent = shots;
-  el['pr-acc'].textContent = shots > 0 ? `${Math.round((hits / shots) * 100)}%` : '—';
+  el['pr-acc'].textContent = shots > 0 ? `${Math.min(100, Math.round((hits / shots) * 100))}%` : '—';
   el['pr-streak'].textContent = `${streak} (best ${best})`;
+  if (challenge) {
+    el['pr-challenge-status'].textContent = challenge.finished ? 'TIME UP · G RETRY'
+      : challenge.startedAt !== null ? 'LIVE' : 'G TO START';
+    el['pr-challenge-time'].textContent = `${Math.ceil(challenge.remainingMs / 1000)}s`;
+    el['pr-challenge-score'].textContent = challenge.score.toLocaleString();
+    el['pr-challenge-best'].textContent = challenge.bestScore.toLocaleString();
+  }
+}
+
+export function updatePracticeDrill(options) {
+  el['pr-drill'].textContent = `${options.botCount} BOTS · ${options.distance}M · ${options.movement.toUpperCase()}${options.armor !== 'none' ? ` · ${options.armor.toUpperCase()} ARMOR` : ''}`;
 }
 
 // ---------------------------------------------------------------- scoreboard
@@ -362,7 +426,7 @@ export function showScoreboard(visible, data = null) {
   if (!visible || !data) return;
 
   const { title, mode, players, myId } = data;
-  const teamMode = ['tdm', 'duel', 'squads'].includes(mode);
+  const teamMode = ['tdm', 'duel', 'squads', 'retake'].includes(mode);
 
   const rows = [...players].sort((a, b) => b.score - a.score || a.deaths - b.deaths);
 
@@ -397,7 +461,7 @@ export function showResults(visible, data = null) {
   if (!visible || !data) return;
 
   const { result, resultText, mode, players, myId, teamScores } = data;
-  const teamMode = ['tdm', 'duel', 'squads'].includes(mode);
+  const teamMode = ['tdm', 'duel', 'squads', 'retake'].includes(mode);
 
   // ---- headline, in the winning team's colour ----
   const headline = el['rs-headline'];

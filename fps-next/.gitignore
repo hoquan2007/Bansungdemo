@@ -13,3 +13,10 @@ Assets/
 
 # Local third-party research checkouts and tooling; never bundle upstream repos.
 .research/
+
+# Local visual QA captures and benchmark recordings; preserve compact JSON evidence selectively.
+.taste-skill/
+scripts/__pycache__/
+docs/benchmarks/
+docs/tactical-*.jpg
+docs/tactical-*.png

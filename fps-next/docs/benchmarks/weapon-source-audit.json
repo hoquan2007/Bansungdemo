@@ -1,0 +1,2120 @@
+{
+  "schema": 1,
+  "assetCount": 17,
+  "note": "A source geometry census, not a declaration of detached, correctly rigged parts.",
+  "weapons": [
+    {
+      "id": "pistol",
+      "type": "pistol",
+      "path": "models/guns/Pistol.gltf",
+      "exists": true,
+      "geometry": {
+        "nodes": 1,
+        "namedNodes": [
+          "Pistol"
+        ],
+        "meshes": 1,
+        "primitives": 3,
+        "materialNames": [
+          "Grey",
+          "DarkGrey",
+          "Wood"
+        ],
+        "skins": 0,
+        "animationNames": [],
+        "classification": "primitives represent material groups, not necessarily moving parts"
+      }
+    },
+    {
+      "id": "smg",
+      "type": "smg",
+      "path": "models/guns/SMG.gltf",
+      "exists": true,
+      "geometry": {
+        "nodes": 1,
+        "namedNodes": [
+          "SMG"
+        ],
+        "meshes": 1,
+        "primitives": 4,
+        "materialNames": [
+          "Grey",
+          "DarkGrey",
+          "Grey2",
+          "Black"
+        ],
+        "skins": 0,
+        "animationNames": [],
+        "classification": "primitives represent material groups, not necessarily moving parts"
+      }
+    },
+    {
+      "id": "shotgun",
+      "type": "shotgun",
+      "path": "models/guns/Shotgun.gltf",
+      "exists": true,
+      "geometry": {
+        "nodes": 1,
+        "namedNodes": [
+          "Shotgun"
+        ],
+        "meshes": 1,
+        "primitives": 4,
+        "materialNames": [
+          "Grey2",
+          "Grey",
+          "DarkGrey",
+          "Wood"
+        ],
+        "skins": 0,
+        "animationNames": [],
+        "classification": "primitives represent material groups, not necessarily moving parts"
+      }
+    },
+    {
+      "id": "rifle",
+      "type": "rifle",
+      "path": "models/characters/Operator_Rifle.glb",
+      "exists": true,
+      "geometry": {
+        "nodes": 41,
+        "namedNodes": [
+          "ChargingHandleGeometry",
+          "ChargingHandleSocket",
+          "ChargingHandle",
+          "ForegripContact",
+          "ForegripGeometry",
+          "Foregrip",
+          "FrontIronSightGeometry",
+          "FrontIronSight",
+          "M4A1Body_00_Barrel",
+          "M4A1Body_01_Base",
+          "M4A1Body_02_Ejector_2",
+          "M4A1Body_03_Ejector_Lid",
+          "M4A1Body_04_Firemode_Selector",
+          "M4A1Body_05_Switch1",
+          "M4A1Body_06_Switch2",
+          "M4A1Body_07_Trigger",
+          "MagazineGeometry",
+          "MagazineGripSocket",
+          "Magazine",
+          "MuzzleContact",
+          "MuzzleDeviceGeometry",
+          "MuzzleDeviceTip",
+          "MuzzleDevice",
+          "OpticFrontApertureAnchor",
+          "OpticMountGeometry",
+          "OpticRearApertureAnchor",
+          "OpticReticleAnchor",
+          "OpticMount",
+          "PrimaryGrip",
+          "RearIronSightGeometry_Sight",
+          "RearIronSightGeometry_Sight_2",
+          "RearIronSight",
+          "SpareMagazineGeometry",
+          "SpareMagazine",
+          "StockContact",
+          "StockGeometry",
+          "Stock",
+          "SuppressorGeometry",
+          "SuppressorTip",
+          "Suppressor",
+          "SteelTideM4A1"
+        ],
+        "meshes": 19,
+        "primitives": 21,
+        "materialNames": [
+          "NisuM4A1PBR",
+          "QuaterniusGripPolymer",
+          "QuaterniusGripInset",
+          "QuaterniusCompactOpticHousing",
+          "QuaterniusCompactOpticHardware",
+          "QuaterniusSuppressorMetal"
+        ],
+        "skins": 0,
+        "animationNames": [],
+        "classification": "primitives represent material groups, not necessarily moving parts"
+      }
+    },
+    {
+      "id": "sniper",
+      "type": "sniper",
+      "path": "models/guns-real/ChassisSniper_CC0.glb",
+      "exists": true,
+      "geometry": {
+        "nodes": 22,
+        "namedNodes": [
+          "bolt-sniper-chassis-scoped",
+          "bolt-sniper-chassis-scoped_0",
+          "bolt-sniper-chassis-scoped_1",
+          "bolt-sniper-chassis-scoped_2",
+          "bolt-sniper-chassis-scoped_3",
+          "bolt-sniper-chassis-scoped_4",
+          "magazine/polymerBlack",
+          "magazine",
+          "magazine/brass",
+          "magazine/copper",
+          "bolt",
+          "leg-l/gunmetal",
+          "leg-l",
+          "leg-l/steelBright",
+          "leg-l/rubber",
+          "leg-r/gunmetal",
+          "leg-r",
+          "leg-r/steelBright",
+          "leg-r/rubber",
+          "bolt-sniper-chassis-scoped_15",
+          "bolt-sniper-chassis-scoped_16"
+        ],
+        "meshes": 17,
+        "primitives": 17,
+        "materialNames": [
+          "alloyDark",
+          "steelBright",
+          "polymerBlack",
+          "gunmetal",
+          "rubber",
+          "brass",
+          "copper",
+          "glass",
+          "emberRed"
+        ],
+        "skins": 0,
+        "animationNames": [
+          "magazine-open",
+          "magazine-close",
+          "bolt-open",
+          "bolt-close",
+          "bipod-open",
+          "bipod-close"
+        ],
+        "classification": "primitives represent material groups, not necessarily moving parts"
+      }
+    },
+    {
+      "id": "lmg",
+      "type": "lmg",
+      "path": "models/guns/ShortCannon.gltf",
+      "exists": true,
+      "geometry": {
+        "nodes": 1,
+        "namedNodes": [
+          "ShortCannon"
+        ],
+        "meshes": 1,
+        "primitives": 3,
+        "materialNames": [
+          "Grey",
+          "DarkGrey",
+          "Wood"
+        ],
+        "skins": 0,
+        "animationNames": [],
+        "classification": "primitives represent material groups, not necessarily moving parts"
+      }
+    },
+    {
+      "id": "dmr",
+      "type": "sniper",
+      "path": "models/guns/Sniper_2.gltf",
+      "exists": true,
+      "geometry": {
+        "nodes": 1,
+        "namedNodes": [
+          "Sniper_2"
+        ],
+        "meshes": 1,
+        "primitives": 3,
+        "materialNames": [
+          "Grey",
+          "DarkGrey",
+          "Wood"
+        ],
+        "skins": 0,
+        "animationNames": [],
+        "classification": "primitives represent material groups, not necessarily moving parts"
+      }
+    },
+    {
+      "id": "revolver",
+      "type": "pistol",
+      "path": "models/guns-obj/Revolver_1.obj",
+      "exists": true,
+      "geometry": {
+        "objectGroups": [
+          "Revolver_1_Cube.051"
+        ],
+        "sourceVertices": 526,
+        "sourceFaces": 508,
+        "disconnectedSurfaceCount": 11,
+        "largestSurfaces": [
+          {
+            "faces": 194,
+            "vertices": 174,
+            "materials": [
+              "Metal"
+            ],
+            "min": [
+              0.3572,
+              0.1545,
+              -0.1472
+            ],
+            "max": [
+              0.6987,
+              0.4604,
+              0.1472
+            ]
+          },
+          {
+            "faces": 69,
+            "vertices": 70,
+            "materials": [
+              "LightMetal"
+            ],
+            "min": [
+              0.1182,
+              0.038,
+              -0.0793
+            ],
+            "max": [
+              0.817,
+              0.5281,
+              0.0793
+            ]
+          },
+          {
+            "faces": 50,
+            "vertices": 52,
+            "materials": [
+              "Metal"
+            ],
+            "min": [
+              0.2359,
+              -0.1269,
+              -0.0652
+            ],
+            "max": [
+              0.6351,
+              0.0969,
+              0.0652
+            ]
+          },
+          {
+            "faces": 42,
+            "vertices": 48,
+            "materials": [
+              "LightMetal"
+            ],
+            "min": [
+              0.7789,
+              0.3685,
+              -0.0691
+            ],
+            "max": [
+              1.7399,
+              0.5067,
+              0.0691
+            ]
+          },
+          {
+            "faces": 41,
+            "vertices": 44,
+            "materials": [
+              "Wood"
+            ],
+            "min": [
+              -0.242,
+              -0.3162,
+              -0.0784
+            ],
+            "max": [
+              0.2635,
+              0.2957,
+              0.0784
+            ]
+          },
+          {
+            "faces": 26,
+            "vertices": 32,
+            "materials": [
+              "Metal"
+            ],
+            "min": [
+              0.2633,
+              0.1711,
+              -0.1363
+            ],
+            "max": [
+              0.3599,
+              0.4438,
+              0.1363
+            ]
+          },
+          {
+            "faces": 26,
+            "vertices": 28,
+            "materials": [
+              "LightMetal"
+            ],
+            "min": [
+              0.0724,
+              0.3219,
+              -0.0314
+            ],
+            "max": [
+              0.2583,
+              0.4659,
+              0.0314
+            ]
+          },
+          {
+            "faces": 22,
+            "vertices": 24,
+            "materials": [
+              "Metal"
+            ],
+            "min": [
+              0.3893,
+              -0.086,
+              -0.0258
+            ],
+            "max": [
+              0.4691,
+              0.0993,
+              0.0258
+            ]
+          },
+          {
+            "faces": 15,
+            "vertices": 18,
+            "materials": [
+              "LightMetal"
+            ],
+            "min": [
+              1.4764,
+              0.5004,
+              -0.0173
+            ],
+            "max": [
+              1.7073,
+              0.5736,
+              0.0173
+            ]
+          },
+          {
+            "faces": 14,
+            "vertices": 20,
+            "materials": [
+              "LightMetal"
+            ],
+            "min": [
+              0.7953,
+              0.4613,
+              -0.0629
+            ],
+            "max": [
+              1.7237,
+              0.5255,
+              0.0629
+            ]
+          },
+          {
+            "faces": 9,
+            "vertices": 16,
+            "materials": [
+              "LightMetal"
+            ],
+            "min": [
+              0.781,
+              0.2895,
+              -0.0516
+            ],
+            "max": [
+              1.4708,
+              0.397,
+              0.0516
+            ]
+          }
+        ],
+        "classification": "unclassified geometry islands"
+      }
+    },
+    {
+      "id": "machinepistol",
+      "type": "pistol",
+      "path": "models/guns-obj/Pistol_4.obj",
+      "exists": true,
+      "geometry": {
+        "objectGroups": [
+          "Pistol_4_Cube.030"
+        ],
+        "sourceVertices": 687,
+        "sourceFaces": 618,
+        "disconnectedSurfaceCount": 10,
+        "largestSurfaces": [
+          {
+            "faces": 344,
+            "vertices": 374,
+            "materials": [
+              "Black",
+              "LightMetal",
+              "Metal"
+            ],
+            "min": [
+              -0.2691,
+              0.6982,
+              -0.1505
+            ],
+            "max": [
+              1.5618,
+              1.0568,
+              0.1505
+            ]
+          },
+          {
+            "faces": 126,
+            "vertices": 135,
+            "materials": [
+              "Black",
+              "Metal"
+            ],
+            "min": [
+              -0.3657,
+              -0.5155,
+              -0.1407
+            ],
+            "max": [
+              1.5544,
+              0.724,
+              0.1407
+            ]
+          },
+          {
+            "faces": 36,
+            "vertices": 40,
+            "materials": [
+              "Metal"
+            ],
+            "min": [
+              0.7966,
+              0.5182,
+              -0.0597
+            ],
+            "max": [
+              1.5048,
+              0.6425,
+              0.0597
+            ]
+          },
+          {
+            "faces": 32,
+            "vertices": 40,
+            "materials": [
+              "Black"
+            ],
+            "min": [
+              1.2401,
+              0.8774,
+              -0.0867
+            ],
+            "max": [
+              1.6098,
+              1.0423,
+              0.0867
+            ]
+          },
+          {
+            "faces": 30,
+            "vertices": 32,
+            "materials": [
+              "Metal"
+            ],
+            "min": [
+              0.3216,
+              0.3717,
+              -0.0675
+            ],
+            "max": [
+              0.8215,
+              0.6682,
+              0.0675
+            ]
+          },
+          {
+            "faces": 25,
+            "vertices": 30,
+            "materials": [
+              "Black"
+            ],
+            "min": [
+              0.3912,
+              0.4345,
+              -0.0383
+            ],
+            "max": [
+              0.5657,
+              0.6502,
+              0.0383
+            ]
+          },
+          {
+            "faces": 7,
+            "vertices": 12,
+            "materials": [
+              "Metal"
+            ],
+            "min": [
+              -0.235,
+              0.9046,
+              -0.048
+            ],
+            "max": [
+              -0.0802,
+              1.0516,
+              0.048
+            ]
+          },
+          {
+            "faces": 6,
+            "vertices": 8,
+            "materials": [
+              "Metal"
+            ],
+            "min": [
+              1.3259,
+              1.056,
+              -0.0199
+            ],
+            "max": [
+              1.477,
+              1.1127,
+              0.0199
+            ]
+          },
+          {
+            "faces": 6,
+            "vertices": 8,
+            "materials": [
+              "LightMetal"
+            ],
+            "min": [
+              -0.0359,
+              1.0502,
+              0.0199
+            ],
+            "max": [
+              0.0114,
+              1.0957,
+              0.0714
+            ]
+          },
+          {
+            "faces": 6,
+            "vertices": 8,
+            "materials": [
+              "LightMetal"
+            ],
+            "min": [
+              -0.0359,
+              1.0502,
+              -0.0714
+            ],
+            "max": [
+              0.0114,
+              1.0957,
+              -0.0199
+            ]
+          }
+        ],
+        "classification": "unclassified geometry islands"
+      }
+    },
+    {
+      "id": "smg_compact",
+      "type": "smg",
+      "path": "models/guns-obj/SubmachineGun_3.obj",
+      "exists": true,
+      "geometry": {
+        "objectGroups": [
+          "SubmachineGun_3_Cube.109"
+        ],
+        "sourceVertices": 893,
+        "sourceFaces": 699,
+        "disconnectedSurfaceCount": 25,
+        "largestSurfaces": [
+          {
+            "faces": 99,
+            "vertices": 156,
+            "materials": [
+              "DarkMetal"
+            ],
+            "min": [
+              -0.3553,
+              0.3615,
+              -0.1593
+            ],
+            "max": [
+              1.8893,
+              0.7132,
+              0.1593
+            ]
+          },
+          {
+            "faces": 85,
+            "vertices": 90,
+            "materials": [
+              "DarkMetal"
+            ],
+            "min": [
+              1.3714,
+              -0.3608,
+              -0.1456
+            ],
+            "max": [
+              1.6524,
+              0.3892,
+              0.1009
+            ]
+          },
+          {
+            "faces": 81,
+            "vertices": 96,
+            "materials": [
+              "DarkMetal",
+              "Metal"
+            ],
+            "min": [
+              -0.3377,
+              -0.4686,
+              -0.106
+            ],
+            "max": [
+              1.0165,
+              0.3762,
+              0.106
+            ]
+          },
+          {
+            "faces": 78,
+            "vertices": 81,
+            "materials": [
+              "DarkMetal"
+            ],
+            "min": [
+              -1.8754,
+              0.0546,
+              -0.0595
+            ],
+            "max": [
+              -0.3238,
+              0.6028,
+              0.0595
+            ]
+          },
+          {
+            "faces": 71,
+            "vertices": 80,
+            "materials": [
+              "DarkMetal"
+            ],
+            "min": [
+              1.8584,
+              0.3942,
+              -0.0833
+            ],
+            "max": [
+              2.1222,
+              0.5527,
+              0.0833
+            ]
+          },
+          {
+            "faces": 30,
+            "vertices": 32,
+            "materials": [
+              "Black",
+              "DarkMetal"
+            ],
+            "min": [
+              0.6181,
+              -0.751,
+              -0.0739
+            ],
+            "max": [
+              0.9225,
+              0.2716,
+              0.0739
+            ]
+          },
+          {
+            "faces": 25,
+            "vertices": 30,
+            "materials": [
+              "Black"
+            ],
+            "min": [
+              0.2626,
+              0.0325,
+              -0.025
+            ],
+            "max": [
+              0.3533,
+              0.2113,
+              0.0269
+            ]
+          },
+          {
+            "faces": 22,
+            "vertices": 24,
+            "materials": [
+              "Black"
+            ],
+            "min": [
+              1.0567,
+              0.3284,
+              -0.1451
+            ],
+            "max": [
+              1.8967,
+              0.5625,
+              0.1451
+            ]
+          },
+          {
+            "faces": 17,
+            "vertices": 24,
+            "materials": [
+              "Metal"
+            ],
+            "min": [
+              1.1016,
+              0.3266,
+              -0.1538
+            ],
+            "max": [
+              1.143,
+              0.5748,
+              0.1538
+            ]
+          },
+          {
+            "faces": 17,
+            "vertices": 24,
+            "materials": [
+              "Metal"
+            ],
+            "min": [
+              1.2051,
+              0.3266,
+              -0.1538
+            ],
+            "max": [
+              1.2465,
+              0.5748,
+              0.1538
+            ]
+          },
+          {
+            "faces": 17,
+            "vertices": 24,
+            "materials": [
+              "Metal"
+            ],
+            "min": [
+              1.3087,
+              0.3266,
+              -0.1538
+            ],
+            "max": [
+              1.3501,
+              0.5748,
+              0.1538
+            ]
+          },
+          {
+            "faces": 17,
+            "vertices": 24,
+            "materials": [
+              "Metal"
+            ],
+            "min": [
+              1.4122,
+              0.3266,
+              -0.1538
+            ],
+            "max": [
+              1.4536,
+              0.5748,
+              0.1538
+            ]
+          }
+        ],
+        "classification": "unclassified geometry islands"
+      }
+    },
+    {
+      "id": "smg_heavy",
+      "type": "smg",
+      "path": "models/guns-obj/SubmachineGun_5.obj",
+      "exists": true,
+      "geometry": {
+        "objectGroups": [
+          "SubmachineGun_5_Cube.096"
+        ],
+        "sourceVertices": 830,
+        "sourceFaces": 638,
+        "disconnectedSurfaceCount": 41,
+        "largestSurfaces": [
+          {
+            "faces": 114,
+            "vertices": 126,
+            "materials": [
+              "DarkMetal",
+              "Metal"
+            ],
+            "min": [
+              -0.2919,
+              -0.4341,
+              -0.106
+            ],
+            "max": [
+              2.7848,
+              0.5107,
+              0.106
+            ]
+          },
+          {
+            "faces": 91,
+            "vertices": 92,
+            "materials": [
+              "Metal"
+            ],
+            "min": [
+              -1.7903,
+              -0.1035,
+              -0.1137
+            ],
+            "max": [
+              -0.2709,
+              0.787,
+              0.1137
+            ]
+          },
+          {
+            "faces": 71,
+            "vertices": 80,
+            "materials": [
+              "DarkMetal"
+            ],
+            "min": [
+              2.7864,
+              0.5148,
+              -0.0602
+            ],
+            "max": [
+              3.2388,
+              0.6294,
+              0.0602
+            ]
+          },
+          {
+            "faces": 43,
+            "vertices": 52,
+            "materials": [
+              "DarkMetal"
+            ],
+            "min": [
+              2.568,
+              0.8411,
+              -0.131
+            ],
+            "max": [
+              2.7792,
+              0.9915,
+              0.131
+            ]
+          },
+          {
+            "faces": 30,
+            "vertices": 32,
+            "materials": [
+              "Black",
+              "DarkMetal"
+            ],
+            "min": [
+              0.6955,
+              -0.7391,
+              -0.0755
+            ],
+            "max": [
+              1.0065,
+              0.1889,
+              0.0755
+            ]
+          },
+          {
+            "faces": 25,
+            "vertices": 30,
+            "materials": [
+              "Black"
+            ],
+            "min": [
+              0.3346,
+              0.0584,
+              -0.0282
+            ],
+            "max": [
+              0.4366,
+              0.2595,
+              0.0302
+            ]
+          },
+          {
+            "faces": 16,
+            "vertices": 20,
+            "materials": [
+              "DarkMetal"
+            ],
+            "min": [
+              -0.2958,
+              0.496,
+              -0.1593
+            ],
+            "max": [
+              2.8749,
+              0.8476,
+              0.1593
+            ]
+          },
+          {
+            "faces": 10,
+            "vertices": 12,
+            "materials": [
+              "DarkMetal"
+            ],
+            "min": [
+              -0.2852,
+              0.3194,
+              -0.1219
+            ],
+            "max": [
+              -0.225,
+              0.5358,
+              0.1219
+            ]
+          },
+          {
+            "faces": 8,
+            "vertices": 12,
+            "materials": [
+              "Metal"
+            ],
+            "min": [
+              0.1701,
+              0.007,
+              -0.0345
+            ],
+            "max": [
+              0.6234,
+              0.0994,
+              0.0347
+            ]
+          },
+          {
+            "faces": 8,
+            "vertices": 12,
+            "materials": [
+              "Grey"
+            ],
+            "min": [
+              1.1539,
+              0.3409,
+              -0.1292
+            ],
+            "max": [
+              1.2065,
+              0.427,
+              0.1287
+            ]
+          },
+          {
+            "faces": 8,
+            "vertices": 12,
+            "materials": [
+              "Grey"
+            ],
+            "min": [
+              1.296,
+              0.3409,
+              -0.1292
+            ],
+            "max": [
+              1.3486,
+              0.427,
+              0.1287
+            ]
+          },
+          {
+            "faces": 8,
+            "vertices": 12,
+            "materials": [
+              "Grey"
+            ],
+            "min": [
+              1.438,
+              0.3409,
+              -0.1292
+            ],
+            "max": [
+              1.4907,
+              0.427,
+              0.1287
+            ]
+          }
+        ],
+        "classification": "unclassified geometry islands"
+      }
+    },
+    {
+      "id": "carbine",
+      "type": "rifle",
+      "path": "models/guns-obj/AssaultRifle2_1.obj",
+      "exists": true,
+      "geometry": {
+        "objectGroups": [
+          "AssaultRifle2_1_Cube.156"
+        ],
+        "sourceVertices": 1017,
+        "sourceFaces": 913,
+        "disconnectedSurfaceCount": 18,
+        "largestSurfaces": [
+          {
+            "faces": 425,
+            "vertices": 432,
+            "materials": [
+              "Main",
+              "MainDark"
+            ],
+            "min": [
+              1.1189,
+              0.4649,
+              -0.1715
+            ],
+            "max": [
+              3.6092,
+              0.8113,
+              0.1749
+            ]
+          },
+          {
+            "faces": 85,
+            "vertices": 94,
+            "materials": [
+              "MainDark",
+              "MainLight"
+            ],
+            "min": [
+              -0.0579,
+              0.1032,
+              -0.1041
+            ],
+            "max": [
+              1.0899,
+              0.464,
+              0.1045
+            ]
+          },
+          {
+            "faces": 74,
+            "vertices": 83,
+            "materials": [
+              "Main",
+              "MainDark"
+            ],
+            "min": [
+              -1.5596,
+              -0.0508,
+              -0.1118
+            ],
+            "max": [
+              -0.2233,
+              0.7831,
+              0.1118
+            ]
+          },
+          {
+            "faces": 62,
+            "vertices": 64,
+            "materials": [
+              "Main",
+              "MainDark"
+            ],
+            "min": [
+              0.6476,
+              -0.7185,
+              -0.0646
+            ],
+            "max": [
+              1.1968,
+              0.363,
+              0.067
+            ]
+          },
+          {
+            "faces": 54,
+            "vertices": 64,
+            "materials": [
+              "Main",
+              "MainDark"
+            ],
+            "min": [
+              -0.3166,
+              -0.2929,
+              -0.1187
+            ],
+            "max": [
+              0.2417,
+              0.3283,
+              0.1187
+            ]
+          },
+          {
+            "faces": 54,
+            "vertices": 54,
+            "materials": [
+              "MainDark"
+            ],
+            "min": [
+              2.321,
+              0.6218,
+              -0.0214
+            ],
+            "max": [
+              2.6325,
+              1.072,
+              0.025
+            ]
+          },
+          {
+            "faces": 52,
+            "vertices": 64,
+            "materials": [
+              "Main",
+              "MainDark"
+            ],
+            "min": [
+              -0.1435,
+              0.4285,
+              -0.1224
+            ],
+            "max": [
+              1.148,
+              0.7699,
+              0.1224
+            ]
+          },
+          {
+            "faces": 21,
+            "vertices": 26,
+            "materials": [
+              "MainDark"
+            ],
+            "min": [
+              -0.1004,
+              0.7599,
+              -0.0901
+            ],
+            "max": [
+              0.4237,
+              0.9497,
+              0.0873
+            ]
+          },
+          {
+            "faces": 18,
+            "vertices": 20,
+            "materials": [
+              "Main"
+            ],
+            "min": [
+              0.3426,
+              0.1853,
+              -0.0227
+            ],
+            "max": [
+              0.4136,
+              0.3691,
+              0.0227
+            ]
+          },
+          {
+            "faces": 12,
+            "vertices": 20,
+            "materials": [
+              "Main"
+            ],
+            "min": [
+              -0.354,
+              0.5464,
+              -0.1035
+            ],
+            "max": [
+              -0.061,
+              0.7432,
+              0.1035
+            ]
+          },
+          {
+            "faces": 7,
+            "vertices": 12,
+            "materials": [
+              "MainDark"
+            ],
+            "min": [
+              1.0697,
+              0.7561,
+              -0.0885
+            ],
+            "max": [
+              1.1092,
+              0.8146,
+              0.0885
+            ]
+          },
+          {
+            "faces": 7,
+            "vertices": 12,
+            "materials": [
+              "MainDark"
+            ],
+            "min": [
+              0.9828,
+              0.7561,
+              -0.0885
+            ],
+            "max": [
+              1.0223,
+              0.8146,
+              0.0885
+            ]
+          }
+        ],
+        "classification": "unclassified geometry islands"
+      }
+    },
+    {
+      "id": "bullpup",
+      "type": "rifle",
+      "path": "models/guns-obj/Bullpup_1.obj",
+      "exists": true,
+      "geometry": {
+        "objectGroups": [
+          "Bullpup_1_Cylinder.051"
+        ],
+        "sourceVertices": 1490,
+        "sourceFaces": 1160,
+        "disconnectedSurfaceCount": 36,
+        "largestSurfaces": [
+          {
+            "faces": 392,
+            "vertices": 400,
+            "materials": [
+              "MainDark"
+            ],
+            "min": [
+              1.9035,
+              0.044,
+              -0.1385
+            ],
+            "max": [
+              2.1669,
+              0.7108,
+              0.1385
+            ]
+          },
+          {
+            "faces": 232,
+            "vertices": 400,
+            "materials": [
+              "Main",
+              "MainDark",
+              "MainLight"
+            ],
+            "min": [
+              -2.4824,
+              0.666,
+              -0.1298
+            ],
+            "max": [
+              2.3384,
+              1.0075,
+              0.1298
+            ]
+          },
+          {
+            "faces": 135,
+            "vertices": 144,
+            "materials": [
+              "MainDark"
+            ],
+            "min": [
+              -0.3212,
+              -0.4209,
+              -0.062
+            ],
+            "max": [
+              0.3146,
+              0.4049,
+              0.062
+            ]
+          },
+          {
+            "faces": 92,
+            "vertices": 100,
+            "materials": [
+              "MainDark"
+            ],
+            "min": [
+              2.2597,
+              0.7474,
+              -0.0699
+            ],
+            "max": [
+              2.7192,
+              0.8805,
+              0.0699
+            ]
+          },
+          {
+            "faces": 30,
+            "vertices": 32,
+            "materials": [
+              "MainDark",
+              "MainLight"
+            ],
+            "min": [
+              -1.21,
+              -0.3109,
+              -0.0641
+            ],
+            "max": [
+              -0.7779,
+              0.3348,
+              0.0641
+            ]
+          },
+          {
+            "faces": 26,
+            "vertices": 28,
+            "materials": [
+              "MainDark"
+            ],
+            "min": [
+              0.2887,
+              0.1378,
+              -0.046
+            ],
+            "max": [
+              0.8736,
+              0.4103,
+              0.046
+            ]
+          },
+          {
+            "faces": 20,
+            "vertices": 24,
+            "materials": [
+              "MainLight"
+            ],
+            "min": [
+              -2.5123,
+              0.3828,
+              -0.1026
+            ],
+            "max": [
+              1.0781,
+              0.7234,
+              0.1026
+            ]
+          },
+          {
+            "faces": 18,
+            "vertices": 20,
+            "materials": [
+              "Main"
+            ],
+            "min": [
+              0.3502,
+              0.1892,
+              -0.046
+            ],
+            "max": [
+              0.4393,
+              0.403,
+              0.046
+            ]
+          },
+          {
+            "faces": 14,
+            "vertices": 16,
+            "materials": [
+              "MainDark"
+            ],
+            "min": [
+              -2.5289,
+              0.207,
+              -0.1551
+            ],
+            "max": [
+              -2.4678,
+              1.0271,
+              0.1551
+            ]
+          },
+          {
+            "faces": 14,
+            "vertices": 16,
+            "materials": [
+              "Main"
+            ],
+            "min": [
+              1.071,
+              0.4592,
+              -0.07
+            ],
+            "max": [
+              1.3199,
+              0.6788,
+              0.07
+            ]
+          },
+          {
+            "faces": 12,
+            "vertices": 20,
+            "materials": [
+              "MainDark"
+            ],
+            "min": [
+              1.129,
+              0.4783,
+              -0.0627
+            ],
+            "max": [
+              1.2364,
+              0.5975,
+              0.0627
+            ]
+          },
+          {
+            "faces": 10,
+            "vertices": 12,
+            "materials": [
+              "MainDark"
+            ],
+            "min": [
+              -0.3636,
+              0.9958,
+              -0.0666
+            ],
+            "max": [
+              2.3132,
+              1.0808,
+              0.0666
+            ]
+          }
+        ],
+        "classification": "unclassified geometry islands"
+      }
+    },
+    {
+      "id": "sawnoff",
+      "type": "shotgun",
+      "path": "models/guns-obj/Shotgun_SawedOff.obj",
+      "exists": true,
+      "geometry": {
+        "objectGroups": [
+          "Shotgun_SawedOff_Cylinder.004"
+        ],
+        "sourceVertices": 500,
+        "sourceFaces": 451,
+        "disconnectedSurfaceCount": 8,
+        "largestSurfaces": [
+          {
+            "faces": 120,
+            "vertices": 124,
+            "materials": [
+              "DarkWood",
+              "Wood"
+            ],
+            "min": [
+              -0.403,
+              -0.4554,
+              -0.1033
+            ],
+            "max": [
+              0.808,
+              0.5193,
+              0.1033
+            ]
+          },
+          {
+            "faces": 98,
+            "vertices": 108,
+            "materials": [
+              "DarkMetal"
+            ],
+            "min": [
+              0.8307,
+              0.2813,
+              -0.0335
+            ],
+            "max": [
+              3.2852,
+              0.5261,
+              0.2112
+            ]
+          },
+          {
+            "faces": 98,
+            "vertices": 108,
+            "materials": [
+              "DarkMetal"
+            ],
+            "min": [
+              0.8307,
+              0.2813,
+              -0.2112
+            ],
+            "max": [
+              3.2852,
+              0.5261,
+              0.0335
+            ]
+          },
+          {
+            "faces": 46,
+            "vertices": 48,
+            "materials": [
+              "Metal"
+            ],
+            "min": [
+              0.2921,
+              -0.1701,
+              -0.0394
+            ],
+            "max": [
+              0.7618,
+              0.0994,
+              0.0394
+            ]
+          },
+          {
+            "faces": 29,
+            "vertices": 36,
+            "materials": [
+              "Metal"
+            ],
+            "min": [
+              0.7697,
+              0.0433,
+              -0.1232
+            ],
+            "max": [
+              1.5869,
+              0.5348,
+              0.1232
+            ]
+          },
+          {
+            "faces": 25,
+            "vertices": 30,
+            "materials": [
+              "Black"
+            ],
+            "min": [
+              0.3676,
+              -0.1255,
+              -0.0303
+            ],
+            "max": [
+              0.5026,
+              0.0689,
+              0.0303
+            ]
+          },
+          {
+            "faces": 20,
+            "vertices": 24,
+            "materials": [
+              "DarkMetal"
+            ],
+            "min": [
+              0.4269,
+              0.4201,
+              -0.0217
+            ],
+            "max": [
+              0.6471,
+              0.5647,
+              0.0217
+            ]
+          },
+          {
+            "faces": 15,
+            "vertices": 22,
+            "materials": [
+              "DarkWood"
+            ],
+            "min": [
+              1.5728,
+              0.0859,
+              -0.1632
+            ],
+            "max": [
+              2.9498,
+              0.3408,
+              0.1632
+            ]
+          }
+        ],
+        "classification": "unclassified geometry islands"
+      }
+    },
+    {
+      "id": "autoshotgun",
+      "type": "shotgun",
+      "path": "models/guns-obj/Shotgun_ShortStock.obj",
+      "exists": true,
+      "geometry": {
+        "objectGroups": [
+          "Shotgun_ShortStock_Cube.036"
+        ],
+        "sourceVertices": 839,
+        "sourceFaces": 743,
+        "disconnectedSurfaceCount": 10,
+        "largestSurfaces": [
+          {
+            "faces": 421,
+            "vertices": 449,
+            "materials": [
+              "Wood"
+            ],
+            "min": [
+              2.6472,
+              0.0471,
+              -0.1173
+            ],
+            "max": [
+              3.7159,
+              0.2949,
+              0.1173
+            ]
+          },
+          {
+            "faces": 85,
+            "vertices": 96,
+            "materials": [
+              "DarkMetal"
+            ],
+            "min": [
+              1.6943,
+              0.3102,
+              -0.0886
+            ],
+            "max": [
+              4.049,
+              0.4874,
+              0.0886
+            ]
+          },
+          {
+            "faces": 52,
+            "vertices": 56,
+            "materials": [
+              "Wood"
+            ],
+            "min": [
+              -0.4223,
+              -0.4269,
+              -0.0991
+            ],
+            "max": [
+              0.5501,
+              0.4615,
+              0.0991
+            ]
+          },
+          {
+            "faces": 46,
+            "vertices": 48,
+            "materials": [
+              "Metal"
+            ],
+            "min": [
+              0.5654,
+              -0.1278,
+              -0.0441
+            ],
+            "max": [
+              1.014,
+              0.0872,
+              0.0441
+            ]
+          },
+          {
+            "faces": 37,
+            "vertices": 48,
+            "materials": [
+              "DarkMetal"
+            ],
+            "min": [
+              1.6943,
+              0.1025,
+              -0.0913
+            ],
+            "max": [
+              3.9954,
+              0.2851,
+              0.0913
+            ]
+          },
+          {
+            "faces": 33,
+            "vertices": 44,
+            "materials": [
+              "Metal"
+            ],
+            "min": [
+              0.4497,
+              0.0555,
+              -0.1157
+            ],
+            "max": [
+              1.7337,
+              0.4945,
+              0.1157
+            ]
+          },
+          {
+            "faces": 28,
+            "vertices": 44,
+            "materials": [
+              "Black"
+            ],
+            "min": [
+              3.7487,
+              0.102,
+              -0.0908
+            ],
+            "max": [
+              3.8166,
+              0.4917,
+              0.0908
+            ]
+          },
+          {
+            "faces": 25,
+            "vertices": 30,
+            "materials": [
+              "Black"
+            ],
+            "min": [
+              0.6394,
+              -0.0851,
+              -0.0303
+            ],
+            "max": [
+              0.7773,
+              0.1083,
+              0.0303
+            ]
+          },
+          {
+            "faces": 10,
+            "vertices": 16,
+            "materials": [
+              "Black"
+            ],
+            "min": [
+              1.7197,
+              0.0442,
+              -0.1233
+            ],
+            "max": [
+              1.7562,
+              0.5028,
+              0.1233
+            ]
+          },
+          {
+            "faces": 6,
+            "vertices": 8,
+            "materials": [
+              "Black"
+            ],
+            "min": [
+              3.7205,
+              0.4592,
+              -0.0101
+            ],
+            "max": [
+              3.8217,
+              0.54,
+              0.0101
+            ]
+          }
+        ],
+        "classification": "unclassified geometry islands"
+      }
+    },
+    {
+      "id": "antimateriel",
+      "type": "sniper",
+      "path": "models/guns-obj/SniperRifle_6.obj",
+      "exists": true,
+      "geometry": {
+        "objectGroups": [
+          "SniperRifle_6_Cube.180"
+        ],
+        "sourceVertices": 738,
+        "sourceFaces": 635,
+        "disconnectedSurfaceCount": 20,
+        "largestSurfaces": [
+          {
+            "faces": 210,
+            "vertices": 216,
+            "materials": [
+              "Black",
+              "DarkMetal",
+              "Glass"
+            ],
+            "min": [
+              0.0403,
+              0.341,
+              -0.1892
+            ],
+            "max": [
+              1.9635,
+              0.7597,
+              0.1892
+            ]
+          },
+          {
+            "faces": 138,
+            "vertices": 152,
+            "materials": [
+              "Black",
+              "DarkWood"
+            ],
+            "min": [
+              -1.9594,
+              -0.7586,
+              -0.1335
+            ],
+            "max": [
+              2.9555,
+              0.2753,
+              0.1335
+            ]
+          },
+          {
+            "faces": 64,
+            "vertices": 70,
+            "materials": [
+              "DarkMetal"
+            ],
+            "min": [
+              0.0723,
+              0.2312,
+              -0.0661
+            ],
+            "max": [
+              5.2466,
+              0.3634,
+              0.0661
+            ]
+          },
+          {
+            "faces": 58,
+            "vertices": 60,
+            "materials": [
+              "Black"
+            ],
+            "min": [
+              0.1508,
+              -0.2325,
+              -0.0538
+            ],
+            "max": [
+              0.6694,
+              0.0032,
+              0.0538
+            ]
+          },
+          {
+            "faces": 30,
+            "vertices": 36,
+            "materials": [
+              "DarkMetal"
+            ],
+            "min": [
+              0.2342,
+              0.1609,
+              -0.0779
+            ],
+            "max": [
+              0.2952,
+              0.3753,
+              0.3044
+            ]
+          },
+          {
+            "faces": 22,
+            "vertices": 24,
+            "materials": [
+              "DarkMetal"
+            ],
+            "min": [
+              0.4864,
+              0.3278,
+              -0.045
+            ],
+            "max": [
+              1.3788,
+              0.387,
+              0.045
+            ]
+          },
+          {
+            "faces": 22,
+            "vertices": 24,
+            "materials": [
+              "Grey"
+            ],
+            "min": [
+              0.3417,
+              -0.1952,
+              -0.006
+            ],
+            "max": [
+              0.4079,
+              0.0058,
+              0.0157
+            ]
+          },
+          {
+            "faces": 7,
+            "vertices": 12,
+            "materials": [
+              "Black"
+            ],
+            "min": [
+              0.4961,
+              0.382,
+              -0.0395
+            ],
+            "max": [
+              0.5206,
+              0.4124,
+              0.0395
+            ]
+          },
+          {
+            "faces": 7,
+            "vertices": 12,
+            "materials": [
+              "Black"
+            ],
+            "min": [
+              0.5599,
+              0.382,
+              -0.0395
+            ],
+            "max": [
+              0.5844,
+              0.4124,
+              0.0395
+            ]
+          },
+          {
+            "faces": 7,
+            "vertices": 12,
+            "materials": [
+              "Black"
+            ],
+            "min": [
+              0.6379,
+              0.382,
+              -0.0395
+            ],
+            "max": [
+              0.6625,
+              0.4124,
+              0.0395
+            ]
+          },
+          {
+            "faces": 7,
+            "vertices": 12,
+            "materials": [
+              "Black"
+            ],
+            "min": [
+              0.7017,
+              0.382,
+              -0.0395
+            ],
+            "max": [
+              0.7263,
+              0.4124,
+              0.0395
+            ]
+          },
+          {
+            "faces": 7,
+            "vertices": 12,
+            "materials": [
+              "Black"
+            ],
+            "min": [
+              0.7655,
+              0.382,
+              -0.0395
+            ],
+            "max": [
+              0.79,
+              0.4124,
+              0.0395
+            ]
+          }
+        ],
+        "classification": "unclassified geometry islands"
+      }
+    },
+    {
+      "id": "knife",
+      "type": "melee",
+      "path": "models/guns-real/CombatKnife_CC0.glb",
+      "exists": true,
+      "geometry": {
+        "nodes": 4,
+        "namedNodes": [
+          "combat-knife",
+          "combat-knife_0",
+          "combat-knife_1",
+          "combat-knife_2"
+        ],
+        "meshes": 3,
+        "primitives": 3,
+        "materialNames": [
+          "steelBright",
+          "gunmetal",
+          "polymerBlack"
+        ],
+        "skins": 0,
+        "animationNames": [],
+        "classification": "primitives represent material groups, not necessarily moving parts"
+      }
+    }
+  ]
+}

@@ -164,7 +164,7 @@ export function pollGamepads(dt, { lookScale = 1, allowLook = true } = {}) {
 
   let active = null;
   // Stay with the pad already chosen, while it's still attached.
-  if (state.index !== null && list[state.index]) {
+  if (state.index !== null && list[state.index]?.mapping === 'standard') {
     active = list[state.index];
   } else {
     state.index = null;
@@ -182,7 +182,10 @@ export function pollGamepads(dt, { lookScale = 1, allowLook = true } = {}) {
     }
   }
 
-  if (!active) return false;
+  if (!active) {
+    releaseGamepad();
+    return false;
+  }
   const now = performance.now();
 
   // ---- sticks ----
@@ -203,6 +206,7 @@ export function pollGamepads(dt, { lookScale = 1, allowLook = true } = {}) {
   // ---- held ----
   input.padFiring = analogue(active, BUTTON.RT) >= TRIGGER_THRESHOLD;
   input.padJump = isDown(active, BUTTON.A);
+  input.padUse = isDown(active, BUTTON.Y);
   input.padCrouch = isDown(active, BUTTON.B);
   input.padSprint = isDown(active, BUTTON.L3);
   input.padScoreboard = isDown(active, BUTTON.BACK);
@@ -220,7 +224,7 @@ export function pollGamepads(dt, { lookScale = 1, allowLook = true } = {}) {
     }
   }
 
-  if (input.padFiring || input.padJump || input.padCrouch || input.padSprint || adsDown) {
+  if (input.padFiring || input.padJump || input.padUse || input.padCrouch || input.padSprint || adsDown) {
     state.lastActivityAt = now;
   }
 
@@ -270,6 +274,7 @@ export function releaseGamepad() {
   input.padFiring = false;
   input.padAds = false;
   input.padJump = false;
+  input.padUse = false;
   input.padCrouch = false;
   input.padSprint = false;
   input.padScoreboard = false;

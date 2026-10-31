@@ -80,6 +80,41 @@ function noiseSource() {
   return src;
 }
 
+/** Short, surface-dependent footfall with no additional audio downloads. */
+export function playFootstep({ surface = 'stone', landed = false, sprinting = false, crouched = false } = {}) {
+  if (!ctx || ctx.state !== 'running') return;
+  const t = now();
+  const profiles = {
+    stone: { freq: 900, gain: 0.14, duration: 0.11 },
+    dirt: { freq: 470, gain: 0.12, duration: 0.15 },
+    wood: { freq: 650, gain: 0.14, duration: 0.12 },
+    metal: { freq: 1700, gain: 0.13, duration: 0.095 },
+  };
+  const profile = profiles[surface] ?? profiles.stone;
+  const duration = profile.duration * (landed ? 1.5 : 1);
+  const loudness = (landed ? 1.5 : sprinting ? 1.12 : crouched ? 0.44 : 1)
+    * profile.gain * (0.88 + Math.random() * 0.24);
+
+  const step = noiseSource();
+  const filter = ctx.createBiquadFilter();
+  filter.type = 'bandpass';
+  filter.frequency.value = profile.freq * (0.9 + Math.random() * 0.2);
+  filter.Q.value = surface === 'metal' ? 1.7 : 0.6;
+  const envelope = ctx.createGain();
+  envelope.gain.setValueAtTime(loudness, t);
+  envelope.gain.exponentialRampToValueAtTime(0.0001, t + duration);
+  step.connect(filter);
+  filter.connect(envelope);
+  envelope.connect(master);
+  step.onended = () => {
+    step.disconnect();
+    filter.disconnect();
+    envelope.disconnect();
+  };
+  step.start(t, Math.random() * 0.8);
+  step.stop(t + duration + 0.015);
+}
+
 // The quietest shot worth building a node graph for.
 //
 // This used to be 0.002, which sounds like a reasonable floor and is in practice

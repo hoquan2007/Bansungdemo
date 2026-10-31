@@ -1,0 +1,136 @@
+CROWN / STRIKE — THIRD-PARTY GAME ASSET CREDITS
+================================================
+
+This original browser FPS uses independently licensed third-party models and
+recordings. No proprietary AstraStrike game files are included.
+
+TACTICAL OPERATOR (Operator_Tactical.glb)
+Creator: DanlyVostok (1799danly)
+Title: Military tactical suit (LowPolyGameReady)
+Original: https://sketchfab.com/3d-models/military-tactical-suit-lowpolygameready-ef698ce36b1545a78ce592dd3db4c7ed
+License: Creative Commons Attribution 4.0 International (CC BY 4.0)
+https://creativecommons.org/licenses/by/4.0/
+Distribution/conversion: IRONLINE / 3d-fps
+https://github.com/cktang88/3d-fps
+Modifications: IRONLINE mesh merging and texture optimization; this game
+adjusts display position, scale, rotation and lighting, dynamically recolors
+the suit map to blue-gray at runtime, and mounts a separately licensed gas
+mask (with an original procedural fallback) over its face (source GLB unchanged).
+
+OPERATOR GAS MASK (models/characters/Operator_GasMask_CC0.glb)
+Creator: 3D Assets / Battle Royale Town and Airfield
+Original: https://3dassets.dev/assets/battle-royale-town-and-airfield-gas-mask-e76f0a62
+License: CC0 1.0 Universal, https://creativecommons.org/publicdomain/zero/1.0/
+Source GLB: https://cdn.3dassets.dev/assets/28235/v1/model.glb
+AI-generated asset according to source; 3,796 triangles, four materials.
+Adaptation: 90-degree rotation and head fit at runtime; model bytes unchanged.
+
+FIRST-PERSON M4A1 AND ARMS (models/fp/m4a1.glb; arms_*.webp)
+Rifle creator: Firewarden
+Original: https://sketchfab.com/3d-models/m4a1-40d8ef818c7549a896371cbb1f64fec6
+Arms creator: bumstrum / DJMaesen
+Original: https://sketchfab.com/3d-models/fps-arms-9452ce4cddde4110a4fd73e555a8e412
+License: Creative Commons Attribution 4.0 International (CC BY 4.0)
+https://creativecommons.org/licenses/by/4.0/
+Distribution/conversion: IRONLINE / 3d-fps, public/assets/models/fp
+https://github.com/cktang88/3d-fps/tree/main/public/assets/models/fp
+Modifications: source conversion and meshopt compression by IRONLINE; this
+game changes the on-screen fit, tint and offset without rewriting mesh bytes.
+
+FALLBACK M4A1 (models/characters/Operator_Rifle.glb and guns-real/)
+Original CC0 M4A1: nisu / 3DModelsCC0
+https://opengameart.org/content/m4a1-assault-rifle
+Supplemental CC0 components: Quaternius
+https://quaternius.com/packs/ultimategun.html
+IRONLINE's modified model: https://github.com/cktang88/3d-fps
+License: CC0 1.0 Universal, https://creativecommons.org/publicdomain/zero/1.0/
+Modifications: converted/optimized original geometry and textures by the
+distribution project; fallback positioning and staged spare-magazine hiding.
+The lobby applies a runtime graphite-blue tint to the independent rifle model.
+
+OTHER GUNS, CHARACTERS AND PROPS
+Creator: Quaternius — Toon Shooter Game Kit and Ultimate Guns
+https://quaternius.com/
+License: CC0 1.0 Universal
+
+DETAILED BOLT-ACTION SNIPER (models/guns-real/ChassisSniper_CC0.glb)
+Creator: 3D Assets / Mega Weapon Pack
+Title: Chassis Sniper, Scoped
+Original: https://3dassets.dev/assets/mega-weapon-pack-bolt-sniper-chassis-scoped-891e227c
+License: CC0 1.0 Universal, https://creativecommons.org/publicdomain/zero/1.0/
+Original CC0 asset generated with AI tools. Self-contained 2.3 MB GLB,
+94,284 triangles, 6 original rigid-part animations (not currently played).
+Downloaded from: https://cdn.3dassets.dev/assets/33449/v1/model.glb
+Adaptation: runtime scaling/orientation and studio lighting in the Arsenal and
+first-person scenes; source mesh and its materials are preserved.
+
+COMBAT KNIFE (models/guns-real/CombatKnife_CC0.glb)
+Creator: 3D Assets / Mega Weapon Pack
+Title: Combat Knife
+Original: https://3dassets.dev/assets/mega-weapon-pack-combat-knife-be1b3598
+License: CC0 1.0 Universal, https://creativecommons.org/publicdomain/zero/1.0/
+Downloaded from: https://cdn.3dassets.dev/assets/33395/v1/model.glb
+SHA256: BB0E7563DEB120AE4A8196A2AD6472D4B5109DC87B7A58E1E0E3D304E705F115
+Adaptation: runtime orientation and first-person fitting; the tactical glove and
+forearm are independently authored geometry, not extracted from AstraStrike.
+
+LIGHTWEIGHT BOLT SNIPER FALLBACK (models/guns-real/BoltSniper_CC0.glb)
+Creator: 3D Assets / FPS Guns and Shooting Range
+Original: https://3dassets.dev/assets/fps-weapon-set-and-firing-range-bolt-sniper-b3944481
+License: CC0 1.0 Universal, https://creativecommons.org/publicdomain/zero/1.0/
+Original CC0 asset generated with AI tools. Alternative 10,560-triangle GLB.
+Downloaded from: https://cdn.3dassets.dev/assets/19438/v1/model.glb
+Further fallback: Quaternius SniperRifle_1.obj / MTL, already bundled.
+
+ENVIRONMENT TEXTURES
+Creator: Screaming Brain Studios — Tiny Texture Packs 1 and 2
+License: CC0 1.0 Universal; source license copies accompany textures.
+
+ROAD SURFACE PBR (textures/ambientcg/road012a/)
+Creator: ambientCG, asset Road012A
+Source: https://ambientcg.com/view?id=Road012A
+License: CC0 1.0 Universal, https://creativecommons.org/publicdomain/zero/1.0/
+Includes 1K JPG color, OpenGL normal, and roughness maps. The material is
+used on the independently modeled menu street; it is not AstraStrike artwork.
+
+FIREARM AUDIO (audio/guns/*.wav)
+The Free Firearm Sound Library
+Creators: Ben Jaszczak, Brian Nelson, Kevin Heras, Matthew Nanney
+https://opengameart.org/content/the-free-firearm-sound-library
+Source archive: https://github.com/petroulacl/fps-asset-kit
+License: CC0 1.0 Universal
+Modifications: five selected recordings trimmed, resampled to 24 kHz,
+downmixed to mono and normalized for playback.
+
+For the individual sound mapping and exact model paths, see:
+docs/GUN_AUDIO_ASSETS.md and docs/LOBBY_ASSETS.md in the source project.
+
+RETAKE PLANTED OBJECTIVE (models/objectives/ObjectiveDevice_CC0.glb)
+Creator: 3D Assets, Tactical Shooter Hill Town collection
+Title: Objective Device Case (Tactical Shooter Hill Town)
+Original: https://3dassets.dev/assets/tactical-shooter-hill-town-objective-device-24da01ad
+Downloaded from: https://cdn.3dassets.dev/assets/27560/v1/model.glb
+License: CC0 1.0 Universal, https://creativecommons.org/publicdomain/zero/1.0/
+The source metadata states that AI tools were used to create the model.
+Seven meshes, five materials, 3,376 triangles and open/close lid animations.
+Adaptation: scaled to Retake objective dimensions and displayed with its lid
+opened. Original GLB geometry and materials retained; a primitive box remains
+as a runtime fallback. No model was extracted from AstraStrike.
+
+TACTICAL COURTYARD PROPS (models/props/hilltown/*.glb)
+Creator: 3D Assets, Tactical Shooter Hill Town collection (AI-generated assets)
+Pack: https://3dassets.dev/packs/tactical-shooter-hill-town
+Manifest: https://3dassets.dev/api/v1/packs/tactical-shooter-hill-town
+License: CC0 1.0 Universal, https://creativecommons.org/publicdomain/zero/1.0/
+SandbagWall_CC0.glb: https://cdn.3dassets.dev/assets/27532/v1/model.glb
+TimberCrateStack_CC0.glb: https://cdn.3dassets.dev/assets/27530/v1/model.glb
+MarketAwningStall_CC0.glb: https://cdn.3dassets.dev/assets/27529/v1/model.glb
+TownFountain_CC0.glb: https://cdn.3dassets.dev/assets/27528/v1/model.glb
+PlasterWallBay_CC0.glb: https://cdn.3dassets.dev/assets/27512/v1/model.glb
+OchreWallBay_CC0.glb: https://cdn.3dassets.dev/assets/27514/v1/model.glb
+ShutteredWindowBay_CC0.glb: https://cdn.3dassets.dev/assets/27511/v1/model.glb
+Adaptation: render-only Three.js scaling, orientation and shadows on Courtyard.
+Each prop's authored box remains the authoritative server/client collision.
+An ordinary colored box is rendered if its independently licensed GLB fails.
+Perimeter wall bays are render-only modules backed by existing solid walls;
+their default state has closed shutters. Map rotation unloads their instances.

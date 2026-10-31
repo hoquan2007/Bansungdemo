@@ -1,0 +1,133 @@
+{
+  "Pistol": {
+    "sourceTriangles": 990,
+    "islands": 12,
+    "parts": {
+      "Body": {
+        "triangles": 582,
+        "sourceIslands": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ]
+      },
+      "Slide": {
+        "triangles": 408,
+        "sourceIslands": [
+          0
+        ]
+      }
+    }
+  },
+  "SMG": {
+    "sourceTriangles": 1008,
+    "islands": 11,
+    "parts": {
+      "Body": {
+        "triangles": 708,
+        "sourceIslands": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10
+        ]
+      },
+      "Magazine": {
+        "triangles": 300,
+        "sourceIslands": [
+          0
+        ]
+      }
+    }
+  },
+  "Shotgun": {
+    "sourceTriangles": 1264,
+    "islands": 9,
+    "parts": {
+      "Body": {
+        "triangles": 540,
+        "sourceIslands": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ]
+      },
+      "Pump": {
+        "triangles": 724,
+        "sourceIslands": [
+          0
+        ]
+      }
+    }
+  },
+  "ShortCannon": {
+    "sourceTriangles": 462,
+    "islands": 7,
+    "parts": {
+      "Body": {
+        "triangles": 352,
+        "sourceIslands": [
+          0,
+          2,
+          3,
+          4,
+          5,
+          6
+        ]
+      },
+      "Barrel": {
+        "triangles": 110,
+        "sourceIslands": [
+          1
+        ]
+      }
+    }
+  },
+  "Sniper_2": {
+    "sourceTriangles": 1298,
+    "islands": 12,
+    "parts": {
+      "Body": {
+        "triangles": 974,
+        "sourceIslands": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ]
+      },
+      "Magazine": {
+        "triangles": 324,
+        "sourceIslands": [
+          0
+        ]
+      }
+    }
+  }
+}

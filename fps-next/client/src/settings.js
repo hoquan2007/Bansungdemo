@@ -27,6 +27,7 @@ const DEFAULTS = {
   sensitivity: DEFAULT_SENSITIVITY,
   fov: DEFAULT_FOV,
   volume: 0.7,
+  lastAudibleVolume: 0.7,
   invertY: false,
   // Whichever gun you picked last. People settle on one and shouldn't have to
   // re-pick it every time they open the tab.
@@ -65,6 +66,7 @@ function load() {
       sensitivity: clamp(Number(parsed.sensitivity) || DEFAULT_SENSITIVITY, 0.2, 4),
       fov: clamp(Number(parsed.fov) || DEFAULT_FOV, MIN_FOV, MAX_FOV),
       volume: clamp(Number(parsed.volume ?? DEFAULTS.volume), 0, 1),
+      lastAudibleVolume: clamp(Number(parsed.lastAudibleVolume) || Number(parsed.volume) || DEFAULTS.lastAudibleVolume, 0.01, 1),
       invertY: Boolean(parsed.invertY),
       primaryId: getPrimary(parsed.primaryId),
       scheme: SCHEME_DEFAULTS[parsed.scheme] ? parsed.scheme : null,

@@ -14,6 +14,9 @@ import { EMOTES, FLAG, hasFlag } from '@shared/protocol.js';
 import { getWeapon } from '@shared/weapons.js';
 import { hasLineOfSight } from '@shared/collision.js';
 import { loadModel, instantiate } from './models.js';
+import { chooseRemoteClip, remoteReloadPose } from './characterAnimation.js';
+import { prepareTacticalCharacter, updateTacticalCrouchVisual } from './tacticalAnimation.js';
+import { selectHeldWeapon } from './heldWeapon.js';
 
 const SKIN = 0xc8a583;
 
@@ -30,7 +33,11 @@ const ANIM_MID = 100; // every 3rd frame
 const ANIM_FAR_EVERY = 10; // beyond that, every 10th
 
 const CHARACTER_URL = 'models/characters/Character_Soldier.gltf';
+const TACTICAL_URL = 'models/characters/Operator_Tactical.glb';
+const TACTICAL_RIFLE_URL = 'models/characters/Operator_Rifle.glb';
 const EMOTE_DURATION_MS = 1_750;
+// A single confirmed shot can occur entirely between interpolated snapshots.
+// Keep the third-person firing pose briefly so semi-auto shots remain visible.
 
 // The material the kit leaves for team colour. Everything else — skin, boots,
 // webbing — stays as authored, so a blue and a red soldier still read as the same
@@ -74,33 +81,33 @@ function heldMeshFor(weaponId) {
 
 const ALL_HELD = [...new Set([...Object.values(HELD_MESH), ...Object.values(HELD_BY_TYPE)])];
 
-/**
- * Which clip suits a given state. The kit's 17 clips happen to line up almost
- * exactly with the flags already in the snapshot, which is why this is a lookup
- * and not an animation system.
- */
-function clipFor({ dead, airborne, crouched, moving, sprinting, firing }) {
-  if (dead) return 'Death';
-  if (airborne) return 'Jump_Idle';
-  if (crouched) return 'Duck';
-  if (moving) {
-    if (sprinting) return firing ? 'Run_Shoot' : 'Run';
-    return firing ? 'Walk_Shoot' : 'Walk';
-  }
-  return firing ? 'Idle_Shoot' : 'Idle';
-}
+const CHARACTER_FINISH = {
+  Character_Main: [0.87, 0], // dyed fabric: team colour stays readable
+  Pants: [0.93, 0],
+  DarkGrey: [0.76, 0.04],
+  Black: [0.62, 0.13],
+  Grey: [0.65, 0.15],
+  Grey2: [0.66, 0.13],
+};
+// These clips describe a single transition. Their terminal poses are held
+// until the state machine selects the next looping locomotion clip.
+const ONE_SHOT_CLIPS = new Set(['Jump', 'Jump_Land', 'HitReact']);
 
 export function createRemotePlayers(scene) {
   // Loaded once and cloned per player. Fire-and-forget: until it arrives (or if
   // it never does) everyone is a box figure, which is playable, just plainer.
-  const character = { model: null };
-  loadModel(CHARACTER_URL).then((loaded) => {
-    character.model = loaded;
-  });
+  const character = { model: null, rifle: null };
+  Promise.all([loadModel(CHARACTER_URL), loadModel(TACTICAL_URL), loadModel(TACTICAL_RIFLE_URL)])
+    .then(([soldier, tactical, rifle]) => {
+      character.model = prepareTacticalCharacter(tactical, soldier) ?? soldier;
+      character.rifle = rifle;
+    });
   return {
     scene,
     entities: new Map(),
     emotes: new Map(),
+    shotPulses: new Map(),
+    reloads: new Map(),
     labelLayer: createLabelLayer(),
     character,
   };
@@ -109,6 +116,7 @@ export function createRemotePlayers(scene) {
 /** Queue a cosmetic animation even if the player's model has not appeared yet. */
 export function playRemoteEmote(rp, id, emote, now = performance.now()) {
   if (!id || !Object.hasOwn(EMOTES, emote)) return false;
+  rp.reloads.delete(id);
   rp.emotes.set(id, {
     clip: EMOTES[emote],
     name: emote,
@@ -224,7 +232,7 @@ function buildParachute(color) {
  * game, and nothing about hitboxes, collision or the network changes — those come
  * from the snapshot, not from whatever is drawn at that position.
  */
-function attachCharacter(entity, loaded, color) {
+function attachCharacter(entity, loaded, color, rifle = null) {
   const root = instantiate(loaded);
 
   // Authored a shade over 1.8m; make it exactly the player's height so feet meet
@@ -259,23 +267,83 @@ function attachCharacter(entity, loaded, color) {
     }
     if (!node.isMesh && !node.isSkinnedMesh) return;
     const mats = Array.isArray(node.material) ? node.material : [node.material];
-    for (const m of mats) if (m.name === TEAM_MATERIAL) teamMats.push(m);
+    for (const m of mats) {
+      if (m.name === TEAM_MATERIAL || (loaded.tactical && /Mil_Suit_R5__Plate|Mil_Suit_Pads__R5/.test(m.name))) {
+        m.userData.teamBase = m.color.clone();
+        teamMats.push(m);
+      }
+      // Materials were cloned per player. Restore subtle fabric/armor response
+      // without changing the skinned mesh or sharing tint across teams.
+      const finish = CHARACTER_FINISH[m.name];
+      if (m.isMeshStandardMaterial && finish) {
+        m.roughness = finish[0];
+        m.metalness = finish[1];
+      }
+    }
   });
 
-  const mixer = new THREE.AnimationMixer(root);
+  let reloadRig = null;
+  if (loaded.tactical && rifle) {
+    const hand = root.getObjectByName('mixamorigRightHand_011')
+      ?? root.getObjectByName('mixamorig:RightHand_011')
+      ?? root.getObjectByName('RightHand');
+    if (hand) {
+      const heldRifle = instantiate(rifle);
+      const size = new THREE.Box3().setFromObject(heldRifle).getSize(new THREE.Vector3());
+      const length = Math.max(size.x, size.y, size.z);
+      if (length > 0) heldRifle.scale.setScalar(0.77 / length);
+      heldRifle.position.set(0.03, -0.025, -0.08);
+      heldRifle.rotation.set(-Math.PI / 2, 0, Math.PI / 2);
+      // The weapon is made of many tiny independent meshes. Shadow-rendering
+      // each one multiplies shadow draw calls across every visible player,
+      // while the body/armor silhouette already supplies the useful shadow.
+      // Keep every gun mesh fully visible in the world and in ray-tested combat.
+      heldRifle.traverse((part) => {
+        if (part.isMesh) part.castShadow = false;
+      });
+      hand.add(heldRifle);
+      held.set('AK', heldRifle);
+      heldRifle.visible = false;
+      const magazine = heldRifle.getObjectByName('Magazine');
+      const chargingHandle = heldRifle.getObjectByName('ChargingHandle');
+      reloadRig = {
+        rifle: heldRifle, magazine, chargingHandle,
+        riflePosition: heldRifle.position.clone(), rifleRotation: heldRifle.rotation.clone(),
+        magazinePosition: magazine?.position.clone(),
+        chargingHandlePosition: chargingHandle?.position.clone(),
+        active: false,
+      };
+    }
+  }
+
+  // SkeletonUtils.retargetClip emits `.bones[...].quaternion` tracks. These
+  // resolve against a SkinnedMesh's skeleton, not the visual Group wrapper.
+  const mixerRoot = loaded.tactical
+    ? root.getObjectByProperty('isSkinnedMesh', true)
+    : root;
+  const mixer = new THREE.AnimationMixer(mixerRoot ?? root);
   const clips = new Map();
   for (const clip of loaded.animations) clips.set(clip.name, clip);
 
   entity.group.add(root);
   for (const mesh of entity.boxMeshes) mesh.visible = false;
 
-  entity.character = { root, mixer, clips, held, teamMats, action: null, clipName: null };
+  entity.character = {
+    root, mixerRoot: mixerRoot ?? root, mixer, clips, held, teamMats, reloadRig,
+    motion: {}, action: null, clipName: null,
+    tactical: Boolean(loaded.tactical), baseScaleY: root.scale.y,
+    baseRootY: root.position.y, crouchVisual: 0,
+    setCrouchVisual(crouched, dt) { updateTacticalCrouchVisual(this, crouched, dt); },
+  };
   setCharacterColor(entity, color);
   return entity.character;
 }
 
 function setCharacterColor(entity, color) {
-  for (const m of entity.character.teamMats) m.color.setHex(color);
+  for (const m of entity.character.teamMats) {
+    if (m.userData.teamBase) m.color.copy(m.userData.teamBase).lerp(new THREE.Color(color), 0.64);
+    else m.color.setHex(color);
+  }
 }
 
 /** Crossfade to a clip, or do nothing if it's already the one playing. */
@@ -286,7 +354,7 @@ function playClip(character, name, { loop = true } = {}) {
 
   const next = character.mixer.clipAction(clip);
   next.reset();
-  next.setLoop(loop ? THREE.LoopRepeat : THREE.LoopOnce, Infinity);
+  next.setLoop(loop ? THREE.LoopRepeat : THREE.LoopOnce, loop ? Infinity : 1);
   next.clampWhenFinished = !loop;
   next.fadeIn(0.15).play();
 
@@ -296,10 +364,39 @@ function playClip(character, name, { loop = true } = {}) {
 }
 
 function showHeldWeapon(character, weaponId) {
-  const wanted = weaponId ? heldMeshFor(weaponId) : null;
+  const preferred = weaponId ? heldMeshFor(weaponId) : null;
+  // The tactical operator currently has one properly hand-mounted rifle.
+  // Until separate third-person weapon sockets are fitted, other firearms
+  // must keep a readable gun silhouette rather than appearing empty-handed.
+  // Melee stays empty-handed because a rifle would misrepresent knife range.
+  const wanted = selectHeldWeapon(character.held, preferred, character.tactical,
+    weaponId ? getWeapon(weaponId)?.type : null);
   if (character.heldName === wanted) return;
   character.heldName = wanted;
   for (const [name, mesh] of character.held) mesh.visible = name === wanted;
+}
+
+/** Animate detachable weapon pieces in their own local space, after the arm mixer. */
+function updateRemoteReloadRig(character, reload, now) {
+  const rig = character.reloadRig;
+  if (!rig || (!reload && !rig.active)) return;
+  const pose = reload ? remoteReloadPose((now - reload.startedAt) / reload.durationMs) : null;
+
+  rig.rifle.position.copy(rig.riflePosition);
+  rig.rifle.rotation.copy(rig.rifleRotation);
+  if (rig.magazine) rig.magazine.position.copy(rig.magazinePosition);
+  if (rig.chargingHandle) rig.chargingHandle.position.copy(rig.chargingHandlePosition);
+  rig.active = Boolean(pose);
+  if (!pose) return;
+
+  // Use the single tactical rifle proxy for all long guns until unique sockets ship.
+  rig.rifle.position.y -= 0.075 * pose.dip;
+  rig.rifle.rotation.x += 0.2 * pose.dip;
+  if (rig.magazine) {
+    rig.magazine.position.y -= 0.32 * pose.magazine;
+    rig.magazine.position.z += 0.06 * pose.magazine;
+  }
+  if (rig.chargingHandle) rig.chargingHandle.position.z += 0.13 * pose.handle;
 }
 
 function makeLabel(layer, name) {
@@ -338,6 +435,12 @@ export function syncRemotePlayers(rp, states, { myId, mode, myTeam, roster, came
   for (const [id, emote] of rp.emotes) {
     if (emote.until <= now) rp.emotes.delete(id);
   }
+  for (const [id, expiresAt] of rp.shotPulses) {
+    if (expiresAt <= now) rp.shotPulses.delete(id);
+  }
+  for (const [id, reload] of rp.reloads) {
+    if (reload.until <= now) rp.reloads.delete(id);
+  }
 
   for (const [id, state] of states) {
     if (id === myId) continue;
@@ -364,7 +467,7 @@ export function syncRemotePlayers(rp, states, { myId, mode, myTeam, roster, came
     // The model may finish loading long after the first players appear, so this
     // is checked here rather than only at creation.
     if (!entity.character && rp.character.model) {
-      attachCharacter(entity, rp.character.model, colorFor(mode, myTeam, info?.team));
+      attachCharacter(entity, rp.character.model, colorFor(mode, myTeam, info?.team), rp.character.rifle);
     }
 
     // Team can change when the server rebalances.
@@ -388,6 +491,9 @@ export function syncRemotePlayers(rp, states, { myId, mode, myTeam, roster, came
     if (dead) {
       entity.parachute.visible = false;
       rp.emotes.delete(id);
+      rp.shotPulses.delete(id);
+      rp.reloads.delete(id);
+      if (entity.character) updateRemoteReloadRig(entity.character, null, now);
       entity.label.style.display = 'none';
       entity.group.visible = true;
       // Freeze where they fell. The server stops updating a dead player's
@@ -396,7 +502,9 @@ export function syncRemotePlayers(rp, states, { myId, mode, myTeam, roster, came
 
       if (entity.character) {
         entity.group.scale.y = 1;
+        entity.character.setCrouchVisual(false, 1);
         // LoopOnce and clamped, so it settles on the floor instead of looping.
+        chooseRemoteClip(entity.character.motion, { dead: true, health: state.health }, now);
         playClip(entity.character, 'Death', { loop: false });
         advanceAnimation(entity, camera, dt);
       } else {
@@ -411,6 +519,11 @@ export function syncRemotePlayers(rp, states, { myId, mode, myTeam, roster, came
     const parachuting = hasFlag(state.flags, FLAG.PARACHUTE);
     const driving = hasFlag(state.flags, FLAG.VEHICLE);
     entity.parachute.visible = parachuting;
+    let reload = rp.reloads.get(id) ?? null;
+    if (reload && (reload.weaponId !== state.weapon || emote || parachuting || driving)) {
+      rp.reloads.delete(id);
+      reload = null;
+    }
 
     // ---- pose ----
     entity.group.position.set(state.pos[0], state.pos[1], state.pos[2]);
@@ -428,25 +541,28 @@ export function syncRemotePlayers(rp, states, { myId, mode, myTeam, roster, came
     const crouched = hasFlag(state.flags, FLAG.CROUCH) || driving;
 
     if (entity.character) {
-      // The rig has a Duck clip, so squashing the whole figure — which is what the
-      // box version has to do — would be crouching twice.
+      // Keep the scene group and hitbox origin at ground level; only the visual
+      // tactical rig changes height while the Duck leg animation plays.
       entity.group.scale.y = 1;
+      entity.character.setCrouchVisual(crouched && !emote, dt);
       showHeldWeapon(entity.character, emote || parachuting || driving ? null : state.weapon);
+      const desiredClip = chooseRemoteClip(entity.character.motion, {
+        airborne: hasFlag(state.flags, FLAG.AIRBORNE),
+        crouched,
+        // Snapshot positions are already interpolated, so this is render-only.
+        moving: moved > 0.004,
+        sprinting: hasFlag(state.flags, FLAG.SPRINT),
+        firing: !reload && (hasFlag(state.flags, FLAG.FIRING) || rp.shotPulses.has(id)),
+        armed: Boolean(state.weapon && state.weapon !== 'knife'),
+        health: state.health,
+      }, now);
       if (emote) {
         playClip(entity.character, emote.clip, { loop: false });
       } else {
-        playClip(entity.character, clipFor({
-          dead: false,
-          airborne: hasFlag(state.flags, FLAG.AIRBORNE),
-          crouched,
-          // Snapshots arrive at 20Hz and are interpolated, so a threshold on
-          // distance moved is steadier than trusting a velocity we don't have.
-          moving: moved > 0.004,
-          sprinting: hasFlag(state.flags, FLAG.SPRINT),
-          firing: hasFlag(state.flags, FLAG.FIRING),
-        }));
+        playClip(entity.character, desiredClip, { loop: !ONE_SHOT_CLIPS.has(desiredClip) });
       }
       advanceAnimation(entity, camera, dt);
+      updateRemoteReloadRig(entity.character, reload, now);
     } else {
       const scaleY = driving ? 0.62 : crouched ? PLAYER_CROUCH_HEIGHT / PLAYER_HEIGHT : 1;
       entity.group.scale.y += (scaleY - entity.group.scale.y) * 0.3;
@@ -480,6 +596,8 @@ export function syncRemotePlayers(rp, states, { myId, mode, myTeam, roster, came
     destroyEntity(rp, entity);
     rp.entities.delete(id);
     rp.emotes.delete(id);
+    rp.shotPulses.delete(id);
+    rp.reloads.delete(id);
   }
 }
 
@@ -511,10 +629,10 @@ function advanceAnimation(entity, camera, dt) {
 
   entity.animDebt = (entity.animDebt ?? 0) + dt;
 
-  const d = entity.group.position.distanceTo(camera.position);
+  const distanceSq = entity.group.position.distanceToSquared(camera.position);
   let every = 1;
-  if (d > ANIM_MID) every = ANIM_FAR_EVERY;
-  else if (d > ANIM_NEAR) every = 3;
+  if (distanceSq > ANIM_MID * ANIM_MID) every = ANIM_FAR_EVERY;
+  else if (distanceSq > ANIM_NEAR * ANIM_NEAR) every = 3;
 
   entity.animTick = (entity.animTick + 1) % every;
   if (entity.animTick !== 0) return;
@@ -585,7 +703,7 @@ function destroyEntity(rp, entity) {
 
   if (entity.character) {
     entity.character.mixer.stopAllAction();
-    entity.character.mixer.uncacheRoot(entity.character.root);
+    entity.character.mixer.uncacheRoot(entity.character.mixerRoot);
   }
 
   entity.group.traverse((o) => {
@@ -604,6 +722,8 @@ export function clearRemotePlayers(rp) {
   for (const [, entity] of rp.entities) destroyEntity(rp, entity);
   rp.entities.clear();
   rp.emotes.clear();
+  rp.shotPulses.clear();
+  rp.reloads.clear();
 }
 
 /** Collision targets for our own shooting, built from the interpolated states. */

@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 140" role="img" aria-label="Original aim training arena artwork">
+<defs>
+  <linearGradient id="sky" x2=".35" y2="1"><stop stop-color="#7c8d92"/><stop offset="1" stop-color="#c4b5a2"/></linearGradient>
+  <linearGradient id="shade" x2="0" y2="1"><stop stop-color="#07111b" stop-opacity="0"/><stop offset="1" stop-color="#07111b" stop-opacity=".72"/></linearGradient>
+  <filter id="haze"><feGaussianBlur stdDeviation="2"/></filter>
+</defs>
+<rect width="320" height="140" fill="url(#sky)"/>
+<circle cx="251" cy="25" r="32" fill="#f5e7c8" opacity=".34" filter="url(#haze)"/>
+
+  <path d="M0 12H320V105H0Z" fill="#68787a"/><path d="M6 20H314V99H6Z" fill="#9a9a8e"/>
+  <path d="M6 45H314V49H6ZM6 79H314V84H6Z" fill="#5e6664"/>
+  <path d="M60 19V97M130 19V97M205 19V97M278 19V97" stroke="#576466" stroke-width="7"/>
+  <path d="M0 99H320V140H0Z" fill="#666c69"/>
+  <path d="M160 100L112 140H207Z" fill="#c4b49b" opacity=".55"/>
+  <g stroke="#f0e3cc" stroke-width="4" fill="#202d35">
+  <circle cx="82" cy="65" r="18"/><circle cx="168" cy="51" r="15"/><circle cx="265" cy="72" r="20"/></g>
+  <g fill="none" stroke="#e89377" stroke-width="4"><circle cx="82" cy="65" r="9"/><circle cx="168" cy="51" r="8"/><circle cx="265" cy="72" r="11"/></g>
+  <path d="M156 85V115M141 100H171" stroke="#dff5e3" stroke-width="2"/>
+<rect width="320" height="140" fill="url(#shade)"/>
+<path d="M0 2H320M1 0V140" fill="none" stroke="#fff" stroke-opacity=".13"/>
+</svg>

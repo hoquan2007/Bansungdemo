@@ -15,7 +15,8 @@ import {
   WAVE_BASE_ENEMIES, WAVE_ENEMIES_PER_WAVE,
   EMOTE_COOLDOWN_MS, BR_DROP_HEIGHT, BR_VICTORY_MS, BR_SCOREBOARD_MS,
   VEHICLE_MAX_SPEED, VEHICLE_USE_RADIUS, VEHICLE_HEALTH, VEHICLE_DESTRUCTION_DAMAGE,
-  BOT_DIFFICULTIES,
+  BOT_DIFFICULTIES, SCORE_LIMIT, RETAKE_BOMB_POS, RETAKE_BOMB_MS,
+  RETAKE_DEFUSE_MS, RETAKE_DEFUSE_RADIUS, RETAKE_HOLD_TIMEOUT_MS,
 } from '../shared/constants.js';
 import {
   S2C, PHASE, FLAG, MODES, EMOTES, encode, encodeSnapshot, sanitiseChat,
@@ -64,9 +65,9 @@ export class Room {
     this.teamScores = modes.emptyScores(this);
 
     // Battle royale has exactly one map; the arena modes rotate.
-    this.mapId = modes.isBattleRoyale(mode) || mode === 'tdm'
-      ? 'island'
-      : ROTATION[Math.floor(Math.random() * ROTATION.length)];
+    this.mapId = mode === 'retake' ? 'courtyard' :
+      modes.isBattleRoyale(mode) || mode === 'tdm'
+        ? 'island' : ROTATION[Math.floor(Math.random() * ROTATION.length)];
     this.map = getMap(this.mapId);
     this.resetBarrels();
     this.resetPickups();
@@ -79,6 +80,10 @@ export class Room {
     this.closed = false;
     this.lastResult = null;
     this.roundPrepared = false;
+    this.eliminationRound = 0;
+    this.eliminationBreakAt = 0;
+    this.eliminationRoundWinner = null;
+    this.bomb = null;
 
     // Lobby: whoever got here first picks the mode and the map and can force the
     // start; everyone readies up individually.
@@ -136,6 +141,7 @@ export class Room {
    */
   minPlayers() {
     if (modes.isSurvival(this.mode) || modes.isBattleRoyale(this.mode)) return 1;
+    if (this.mode === 'retake') return 6;
     if (this.mode === 'squads') return 4;
     return MIN_PLAYERS_TO_START;
   }
@@ -197,6 +203,7 @@ export class Room {
       rejectedMoves: 0,
       chatTimes: [],
       lastEmoteAt: 0,
+      nextCosmeticReloadAt: 0,
       vehicleId: null,
     };
 
@@ -217,6 +224,8 @@ export class Room {
       you: { id, team: player.team, primaryId: player.primaryId },
       phase: this.phase,
       phaseMsLeft: Math.max(0, this.phaseEndsAt - Date.now()),
+      elimination: this.phasePayload().elimination,
+      bomb: this.bombPayload(),
       roster: this.roster(),
       teamScores: this.teamScores,
       inventory: player.inventory,
@@ -234,7 +243,9 @@ export class Room {
     // A prepared countdown already has everybody at their start position. A
     // late joiner belongs there too, not at [0,0,0] falling under the map.
     if (this.phase === PHASE.LIVE || (this.phase === PHASE.COUNTDOWN && this.roundPrepared)) {
-      this.spawn(player);
+      // A joiner waits for the next elimination round: joining alive mid-duel
+      // could resurrect a side that already lost its last player.
+      if (!modes.isEliminationMode(this.mode) || this.phase === PHASE.COUNTDOWN) this.spawn(player);
     }
     else this.evaluateLobby();
 
@@ -244,6 +255,7 @@ export class Room {
   removePlayer(id) {
     const player = this.players.get(id);
     if (!player) return;
+    if (this.bomb?.defuserId === id) this.cancelDefuse();
     this.releaseVehicle(player);
     this.players.delete(id);
     // Someone who has left shouldn't still be holding the room in the lobby.
@@ -266,7 +278,9 @@ export class Room {
       this.broadcastRoster();
       // Everyone else left mid-match — back to the lobby rather than a 1-player
       // "match" running its clock down.
-      if (this.phase !== PHASE.LOBBY && this.players.size < MIN_PLAYERS_TO_START) {
+      if (this.phase !== PHASE.LOBBY && this.humanCount() < this.minPlayers()) {
+        this.eliminationBreakAt = 0;
+        this.bomb = null;
         this.setPhase(PHASE.LOBBY, 0);
       }
       if (this.phase === PHASE.LOBBY) this.evaluateLobby();
@@ -392,9 +406,16 @@ export class Room {
       mapId: this.mapId,
       // The results screen names the map you're about to play.
       nextMapId: this.phase === PHASE.SCOREBOARD
-        ? (modes.isBattleRoyale(this.mode) ? 'island' : (this.mode === 'tdm' && LARGE_TEAM_MAPS.includes(this.mapId) ? this.mapId : nextMap(this.mapId)))
+        ? (this.mode === 'retake' ? 'courtyard' : modes.isBattleRoyale(this.mode) ? 'island' : (this.mode === 'tdm' && LARGE_TEAM_MAPS.includes(this.mapId) ? this.mapId : nextMap(this.mapId)))
         : null,
       teamScores: this.teamScores,
+      elimination: modes.isEliminationMode(this.mode) ? {
+        round: this.eliminationRound,
+        firstTo: SCORE_LIMIT[this.mode],
+        breakMs: this.eliminationBreakAt ? Math.max(0, this.eliminationBreakAt - Date.now()) : 0,
+        roundWinner: this.eliminationRoundWinner,
+      } : null,
+      bomb: this.bombPayload(),
       roster: this.roster(),
       result: this.lastResult,
       resultText: this.lastResult ? modes.describeResult(this, this.lastResult) : null,
@@ -494,7 +515,11 @@ export class Room {
       MODES.includes(msg.mode)
     ) {
       this.mode = msg.mode;
-      if (this.mode === 'duel' || this.mode === 'squads') this.teamCount = 2;
+      this.eliminationRound = 0;
+      this.eliminationBreakAt = 0;
+      this.eliminationRoundWinner = null;
+      this.bomb = null;
+      if (this.mode === 'duel' || this.mode === 'squads' || this.mode === 'retake') this.teamCount = 2;
       this.teamScores = modes.emptyScores(this);
 
       // Team assignment has to be redone from scratch. Reusing it would leave
@@ -518,7 +543,7 @@ export class Room {
       // Switching out of battle royale leaves auto-fill bots behind. A smaller
       // mode can retain only the bots that fit alongside the real players.
       if (!modes.isBattleRoyale(this.mode)) {
-        this.botTarget = Math.min(this.botTarget, Math.max(0, this.capacity() - this.humanCount()));
+        this.botTarget = this.mode === 'retake' ? 0 : Math.min(this.botTarget, Math.max(0, this.capacity() - this.humanCount()));
         this.removeAiPlayers(Math.max(0, (this.players.size - this.humanCount()) - this.botTarget));
       }
 
@@ -546,7 +571,7 @@ export class Room {
     }
 
     if (
-      !modes.isBattleRoyale(this.mode) &&
+      !modes.isBattleRoyale(this.mode) && this.mode !== 'retake' &&
       typeof msg?.mapId === 'string' &&
       msg.mapId !== this.mapId &&
       (ROTATION.includes(msg.mapId) || (this.mode === 'tdm' && LARGE_TEAM_MAPS.includes(msg.mapId))) &&
@@ -589,6 +614,10 @@ export class Room {
   prepareRound() {
     if (this.roundPrepared) return;
     modes.resetScores(this);
+    this.eliminationRound = modes.isEliminationMode(this.mode) ? 1 : 0;
+    this.eliminationBreakAt = 0;
+    this.eliminationRoundWinner = null;
+    this.bomb = null;
 
     // Wipe the previous round's mode state before installing this round's.
     // Without this, switching out of battle royale left this.br set, so the old
@@ -621,12 +650,124 @@ export class Room {
 
   beginRound() {
     this.prepareRound();
+    if (this.mode === 'retake') this.plantBomb();
     this.setPhase(PHASE.LIVE, this.roundMs());
+    if (this.bomb) this.broadcast(S2C.BOMB_STATE, this.bombPayload());
+  }
+
+  // A pre-planted, server-owned objective. The client never supplies progress.
+  plantBomb() {
+    this.bomb = {
+      pos: [...RETAKE_BOMB_POS], deadline: Date.now() + RETAKE_BOMB_MS,
+      defuserId: null, defuseStartedAt: 0, lastHoldAt: 0,
+    };
+  }
+
+  bombPayload(now = Date.now()) {
+    if (this.mode !== 'retake' || !this.bomb) return null;
+    return {
+      pos: [...this.bomb.pos],
+      active: this.phase === PHASE.LIVE && !this.eliminationBreakAt,
+      remainingMs: Math.max(0, this.bomb.deadline - now),
+      defuserId: this.bomb.defuserId,
+      defuseMs: RETAKE_DEFUSE_MS,
+      defuseElapsedMs: this.bomb.defuserId ? Math.min(RETAKE_DEFUSE_MS, now - this.bomb.defuseStartedAt) : 0,
+    };
+  }
+
+  nearBomb(player) {
+    if (!this.bomb || !Array.isArray(player.pos)) return false;
+    const [x, y, z] = this.bomb.pos;
+    return Math.hypot(player.pos[0] - x, player.pos[2] - z) <= RETAKE_DEFUSE_RADIUS &&
+      Math.abs(player.pos[1] - y) <= 2.1;
+  }
+
+  cancelDefuse() {
+    if (!this.bomb?.defuserId) return;
+    this.bomb.defuserId = null;
+    this.bomb.defuseStartedAt = 0;
+    this.bomb.lastHoldAt = 0;
+    this.broadcast(S2C.BOMB_STATE, this.bombPayload());
+  }
+
+  handleBombInteract(player, msg) {
+    if (this.mode !== 'retake' || !this.bomb) return;
+    if (msg?.action === 'cancel') {
+      if (this.bomb.defuserId === player.id) this.cancelDefuse();
+      return;
+    }
+    const now = Date.now();
+    if (msg?.action !== 'hold' || this.phase !== PHASE.LIVE || this.eliminationBreakAt ||
+        now >= this.bomb.deadline || !player.alive || player.team !== TEAMS.A || !this.nearBomb(player)) return;
+    if (this.bomb.defuserId && this.bomb.defuserId !== player.id) return;
+    if (!this.bomb.defuserId) {
+      this.bomb.defuserId = player.id;
+      this.bomb.defuseStartedAt = now;
+      this.broadcast(S2C.BOMB_STATE, this.bombPayload(now));
+    }
+    this.bomb.lastHoldAt = now;
+  }
+
+  tickBomb(now) {
+    if (this.mode !== 'retake' || !this.bomb || this.phase !== PHASE.LIVE || this.eliminationBreakAt) return;
+    const player = this.players.get(this.bomb.defuserId);
+    if (this.bomb.defuserId && (!player?.alive || player.team !== TEAMS.A ||
+        !this.nearBomb(player) || now - this.bomb.lastHoldAt > RETAKE_HOLD_TIMEOUT_MS)) this.cancelDefuse();
+    // When both deadlines pass between server ticks, compare the actual completion times.
+    if (this.bomb.defuserId && this.bomb.defuseStartedAt + RETAKE_DEFUSE_MS <= now &&
+        this.bomb.defuseStartedAt + RETAKE_DEFUSE_MS <= this.bomb.deadline) {
+      this.finishEliminationRound({ reason: 'defused', winnerTeam: TEAMS.A });
+    } else if (now >= this.bomb.deadline) {
+      this.finishEliminationRound({ reason: 'bomb', winnerTeam: TEAMS.B });
+    }
+  }
+
+  /** Resolve a single no-respawn duel/squads round without ending the match. */
+  finishEliminationRound(outcome) {
+    if (!modes.isEliminationMode(this.mode) || this.phase !== PHASE.LIVE || this.eliminationBreakAt) return;
+    if (outcome?.winnerTeam) {
+      this.teamScores[outcome.winnerTeam] += 1;
+    }
+    this.eliminationRoundWinner = outcome?.winnerTeam ?? null;
+    if (this.bomb) this.cancelDefuse();
+    this.broadcastRoster();
+    const win = modes.checkWin(this);
+    if (win) {
+      this.endRound(win);
+      return;
+    }
+
+    // Hold a short visible break while the next round prepares. Dead players
+    // cannot respawn or shoot, and the match-wide round scores are retained.
+    for (const player of this.players.values()) {
+      player.alive = false;
+      player.respawnAt = 0;
+    }
+    this.eliminationBreakAt = Date.now() + 3500;
+    this.setPhase(PHASE.LIVE, 3500);
+    if (this.bomb) this.broadcast(S2C.BOMB_STATE, this.bombPayload());
+  }
+
+  beginEliminationRound() {
+    this.eliminationBreakAt = 0;
+    this.eliminationRoundWinner = null;
+    this.eliminationRound += 1;
+    this.resetBarrels();
+    this.resetPickups();
+    this.broadcast(S2C.BARRELS, { gone: [] });
+    this.broadcast(S2C.PICKUPS, { taken: [] });
+    for (const player of this.players.values()) player.alive = false;
+    for (const player of this.players.values()) this.spawn(player);
+    this.broadcastRoster();
+    if (this.mode === 'retake') this.plantBomb();
+    this.setPhase(PHASE.LIVE, this.roundMs());
+    if (this.bomb) this.broadcast(S2C.BOMB_STATE, this.bombPayload());
   }
 
   endRound(result) {
     this.lastResult = result;
     this.roundPrepared = false;
+    this.eliminationBreakAt = 0;
     this.regroupRequests.clear();
     for (const p of this.players.values()) {
       p.alive = false;
@@ -955,7 +1096,7 @@ export class Room {
    */
   handleSetBots(player, msg) {
     if (!this.isHost(player)) return;
-    if (modes.isSurvival(this.mode)) return; // survival manages its own enemies
+    if (modes.isSurvival(this.mode) || this.mode === 'retake') return;
 
     const capacity = this.capacity() - this.humanCount();
     const want = Math.max(0, Math.min(capacity, Math.floor(Number(msg.n) || 0)));
@@ -1238,6 +1379,13 @@ export class Room {
   }
 
   rotateMap() {
+    if (this.mode === 'retake') {
+      this.mapId = 'courtyard';
+      this.map = getMap(this.mapId);
+      this.resetBarrels();
+      this.resetPickups();
+      return;
+    }
     // Battle royale stays on its dedicated island; large TDM maps persist across rounds.
     if (modes.isBattleRoyale(this.mode) ||
         (this.mode === 'tdm' && (LARGE_TEAM_MAPS.includes(this.mapId) || this.teamCount > 2 || this.players.size > ARENA_MAX_PLAYERS))) {
@@ -1372,6 +1520,10 @@ export class Room {
     const dt = (now - player.lastStateAt) / 1000;
     player.lastStateAt = now;
 
+    // Dead competitors and everyone waiting between rounds cannot relocate
+    // their server-authoritative position via forged or delayed state packets.
+    if (modes.isEliminationMode(this.mode) && (!player.alive || this.eliminationBreakAt)) return;
+
     const driving = player.vehicleId !== null && player.vehicleId !== undefined;
     const maxSpeed = driving ? VEHICLE_MAX_SPEED * 1.5 : undefined;
     const result = validateMove(
@@ -1440,6 +1592,20 @@ export class Room {
     player.weapon = msg.w;
   }
 
+  /** Cosmetic reload cue; magazine counts remain local to the shooter. */
+  handleReload(player, msg) {
+    if (this.phase !== PHASE.LIVE || !player.alive || this.eliminationBreakAt ||
+        player.parachuting || player.vehicleId != null) return;
+    const weaponId = msg?.w;
+    if (weaponId !== player.weapon || !player.inventory.includes(weaponId)) return;
+    const weapon = getWeapon(weaponId);
+    if (!weapon || !Number.isFinite(weapon.reloadMs) || !Number.isFinite(weapon.mag)) return;
+    const now = Date.now();
+    if (now < player.nextCosmeticReloadAt) return;
+    player.nextCosmeticReloadAt = now + weapon.reloadMs;
+    this.broadcast(S2C.RELOAD, { id: player.id, w: weaponId, ms: weapon.reloadMs }, player);
+  }
+
   /**
    * Pick a class. Takes effect at once if you aren't currently alive — in the
    * lobby, or on the death screen, which are the two moments anyone actually
@@ -1466,7 +1632,7 @@ export class Room {
   }
 
   handleShoot(player, msg) {
-    if (this.phase !== PHASE.LIVE || !player.alive || player.parachuting || player.vehicleId != null) return;
+    if (this.phase !== PHASE.LIVE || !player.alive || this.eliminationBreakAt || player.parachuting || player.vehicleId != null) return;
     if (this.br && Date.now() < this.br.combatStartsAt) return;
 
     const weaponId = msg.w;
@@ -1617,12 +1783,13 @@ export class Room {
   }
 
   killPlayer(victim, attacker, weaponId, headshot = false) {
+    if (this.bomb?.defuserId === victim.id) this.cancelDefuse();
     this.releaseVehicle(victim);
     victim.alive = false;
     victim.health = 0;
     // No respawns in survival or battle royale: being killed is the end of your
     // match, which is what makes either mode tense.
-    const noRespawn = modes.isSurvival(this.mode) || modes.isBattleRoyale(this.mode);
+    const noRespawn = modes.isSurvival(this.mode) || modes.isBattleRoyale(this.mode) || modes.isEliminationMode(this.mode);
     victim.respawnAt = noRespawn ? 0 : Date.now() + RESPAWN_DELAY_MS;
     victim.lastKilledBy = attacker?.name ?? null;
 
@@ -1649,7 +1816,7 @@ export class Room {
       // Where the victim finished. In a mode with no respawns that's the only
       // score there is, so it rides along with the kill rather than needing its
       // own message. aliveCount has already excluded the victim, hence the +1.
-      placed: noRespawn ? aliveCount(this) + 1 : 0,
+      placed: modes.isBattleRoyale(this.mode) ? aliveCount(this) + 1 : 0,
     });
 
     this.broadcastRoster();
@@ -1659,8 +1826,13 @@ export class Room {
     // match while everyone dies in front of you.
     if (modes.isBattleRoyale(this.mode)) this.broadcastAlive();
 
-    const win = modes.checkWin(this);
-    if (win) this.endRound(win);
+    if (modes.isEliminationMode(this.mode)) {
+      const outcome = modes.eliminationOutcome(this);
+      if (outcome) this.finishEliminationRound(outcome);
+    } else {
+      const win = modes.checkWin(this);
+      if (win) this.endRound(win);
+    }
   }
 
   // ------------------------------------------------------------------- tick
@@ -1710,8 +1882,20 @@ export class Room {
         break;
 
       case PHASE.LIVE:
-        this.tickLive(now);
-        if (now >= this.phaseEndsAt) this.endRound(modes.resultAtTimeUp(this));
+        if (modes.isEliminationMode(this.mode)) {
+          if (this.eliminationBreakAt) {
+            if (now >= this.eliminationBreakAt) this.beginEliminationRound();
+          } else {
+            this.tickLive(now);
+            this.tickBomb(now);
+            if (this.phase === PHASE.LIVE && !this.eliminationBreakAt && now >= this.phaseEndsAt) {
+              this.finishEliminationRound(modes.eliminationAtTimeUp(this));
+            }
+          }
+        } else {
+          this.tickLive(now);
+          if (this.phase === PHASE.LIVE && now >= this.phaseEndsAt) this.endRound(modes.resultAtTimeUp(this));
+        }
         break;
 
       case PHASE.SCOREBOARD:
@@ -1742,7 +1926,7 @@ export class Room {
   tickLive(now) {
     // AI move and fight on the server's clock; there's no client to wait for.
     this.stepAllAi(TICK_MS / 1000, now);
-    this.tickPickups(now);
+    if (!modes.isEliminationMode(this.mode)) this.tickPickups(now);
     if (this.wave) this.tickWaves(now);
     if (this.br) this.tickBattleRoyale(now);
 
@@ -1764,7 +1948,7 @@ export class Room {
       }
 
       // Health regen, CoD-style: nothing for a few seconds, then fills fast.
-      if (player.health < MAX_HEALTH && now - player.lastDamageAt > REGEN_DELAY_MS) {
+      if (!modes.isEliminationMode(this.mode) && player.health < MAX_HEALTH && now - player.lastDamageAt > REGEN_DELAY_MS) {
         player.health = Math.min(MAX_HEALTH, player.health + (REGEN_PER_SECOND * TICK_MS) / 1000);
       }
 

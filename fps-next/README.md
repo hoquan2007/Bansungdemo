@@ -5,7 +5,7 @@ FPS game portals, including AstraStrike. No accounts or installs are needed:
 share a room code and play. Crown Island supports up to 16 people in TDM
 (2–4 balanced teams) or solo Battle Royale (remaining seats can be AI bots).
 Six compact arenas support up to 8 people in the smaller modes, plus a
-single-player practice range. The visual style is currently stylized; a
+single-player practice range and two solo Surf time-trial courses. The visual style is currently stylized; a
 realistic character/terrain upgrade is planned in [the roadmap](docs/DEVELOPMENT_ROADMAP.md).
 
 **Gameplay is desktop only.** The landing page adapts to mobile screens, but
@@ -78,6 +78,13 @@ for you, and it won't engage through a wall, which would otherwise quietly revea
 where people are hiding. It applies to stick input only, so mouse and trackpad
 players are unaffected, and it can be switched off in Settings.
 
+**Surf time trials.** The lobby includes two original solo courses: **BOREAS**
+(four banks, three checkpoint gates) and **UTOPIA** (five banks, four gates).
+Choose either Surf row in Play, steer with `W A S D` and mouse, and use `Space`
+to jump. Press `R` to return to the most recent checkpoint or `Shift+R` to
+restart the whole course. Each course saves its own personal-best time locally.
+These courses use original map geometry and are not AstraStrike game assets.
+
 **Accessibility.** Aim can be a toggle rather than a hold in any scheme, not just
 the trackpad one. Camera shake follows `prefers-reduced-motion` by default —
 rotational shake on a first-person camera is a common motion-sickness trigger, and
@@ -98,12 +105,13 @@ scheme, so it always shows the bindings you actually have.
 | Full tactical map | `M` |
 | Chat / team chat | `Enter` / `Shift` + `Enter` |
 | Emotes | `Z` wave · `X` yes · `V` no |
-| Reset practice targets | `T` |
+| Reset practice targets / return to free practice | `T` |
+| Start/retry 60-second precision challenge | `G` (practice range) |
 | Quick-pick gun type | `1`–`6` while dead or paused |
 | Back to lobby | `L` on the results screen |
 
-**Modes.** Sniper Duel (1v1, two teams, fixed sniper loadout, first to ten),
-Rifle 2v2 (four players, two teams, fixed rifle loadout, first to 25),
+**Modes.** Sniper Duel (1v1, two teams, fixed sniper loadout, first to five round wins),
+Rifle 2v2 (four players, two teams, fixed rifle loadout, first to nine round wins),
 Team Warfare/Team Deathmatch (up to 16 players, 2–4 auto-balanced teams,
 friendly fire off),
 Free-for-all, Gun Game (every kill promotes you up
@@ -189,7 +197,10 @@ the match.
 
 The Quaternius kit and both Screaming Brain Studios packs are **CC0** (public
 domain) — their `License.txt` files say so explicitly, and a copy travels with the
-textures. Everything shipped is either CC0 or generated at runtime.
+textures. The newer tactical operator and first-person M4A1/arms rig are
+**CC BY 4.0** and require creator attribution. See the publicly served
+[`ASSET_CREDITS.txt`](client/public/ASSET_CREDITS.txt) and the detailed
+[lobby](docs/LOBBY_ASSETS.md) and [weapon](docs/GUN_AUDIO_ASSETS.md) notes.
 
 Two things were removed when this repo went public, both for the same reason:
 
@@ -228,9 +239,10 @@ persistent `wss://` game server. No remote deployment is done automatically.
 npm test
 ```
 
-The suite includes unit, room and real WebSocket integration tests. For an
-additional headless Chrome 3D rendering/lobby smoke check, run `npm run build`
-followed by `npm run smoke:browser`. A real desktop browser playtest is still
+The suite includes unit, room and real WebSocket integration tests. For
+headless Chrome 3D rendering, lobby and solo Surf smoke checks, run
+`npm run build` followed by `npm run smoke:browser` and `npm run smoke:menu`.
+A real desktop browser playtest is still
 required to confirm pointer lock, mouse aim and WASD gameplay. Tests include:
 
 - **`shared/collision.js`** — swept AABB movement, ray/box and ray/cylinder

@@ -1,0 +1,701 @@
+{
+  "minSeconds": 60,
+  "validRunCount": 8,
+  "excluded": [
+    {
+      "file": "two-chrome-2026-10-31T00-41-12-504Z.json",
+      "reason": "incomplete, too short, failed, or hardware GPU unverified"
+    },
+    {
+      "file": "two-chrome-2026-10-31T01-11-46-185Z.json",
+      "reason": "incomplete, too short, failed, or hardware GPU unverified"
+    },
+    {
+      "file": "two-chrome-2026-10-31T01-13-48-550Z.json",
+      "reason": "incomplete, too short, failed, or hardware GPU unverified"
+    },
+    {
+      "file": "two-chrome-2026-10-31T01-21-46-936Z.json",
+      "reason": "incomplete, too short, failed, or hardware GPU unverified"
+    },
+    {
+      "file": "two-chrome-2026-10-31T01-40-41-635Z.json",
+      "reason": "incomplete, too short, failed, or hardware GPU unverified"
+    },
+    {
+      "file": "two-chrome-2026-10-31T02-04-20-162Z.json",
+      "reason": "incomplete, too short, failed, or hardware GPU unverified"
+    },
+    {
+      "file": "two-chrome-2026-10-31T02-14-30-263Z.json",
+      "reason": "incomplete, too short, failed, or hardware GPU unverified"
+    },
+    {
+      "file": "two-chrome-2026-10-31T02-26-39-777Z.json",
+      "reason": "incomplete, too short, failed, or hardware GPU unverified"
+    },
+    {
+      "file": "two-chrome-2026-10-31T02-40-41-807Z.json",
+      "reason": "incomplete, too short, failed, or hardware GPU unverified"
+    },
+    {
+      "file": "two-chrome-2026-10-31T03-02-51-562Z.json",
+      "reason": "incomplete, too short, failed, or hardware GPU unverified"
+    },
+    {
+      "file": "two-chrome-2026-10-31T03-05-33-856Z.json",
+      "reason": "incomplete, too short, failed, or hardware GPU unverified"
+    },
+    {
+      "file": "two-chrome-2026-10-31T03-14-30-303Z.json",
+      "reason": "incomplete, too short, failed, or hardware GPU unverified"
+    },
+    {
+      "file": "two-chrome-2026-10-31T03-25-03-202Z.json",
+      "reason": "incomplete, too short, failed, or hardware GPU unverified"
+    },
+    {
+      "file": "two-chrome-2026-10-31T04-37-42-807Z.json",
+      "reason": "incomplete, too short, failed, or hardware GPU unverified"
+    },
+    {
+      "file": "two-chrome-2026-10-31T04-38-19-813Z.json",
+      "reason": "incomplete, too short, failed, or hardware GPU unverified"
+    },
+    {
+      "file": "two-chrome-2026-10-31T04-55-36-411Z.json",
+      "reason": "incomplete, too short, failed, or hardware GPU unverified"
+    },
+    {
+      "file": "two-chrome-2026-10-31T05-00-20-416Z.json",
+      "reason": "incomplete, too short, failed, or hardware GPU unverified"
+    }
+  ],
+  "uniqueGpuRendererCount": 1,
+  "multiGpuModelsVerified": false,
+  "labeledGpuConfigurationCount": 2,
+  "multiGpuConfigurationsReported": true,
+  "gpuConfigurations": [
+    {
+      "machineLabel": "local-rtx5060",
+      "gpuRenderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5060 Laptop GPU (0x00002D19) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+    },
+    {
+      "machineLabel": "rtx5060-laptop-local",
+      "gpuRenderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5060 Laptop GPU (0x00002D19) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+    }
+  ],
+  "gpuRenderers": [
+    "ANGLE (NVIDIA, NVIDIA GeForce RTX 5060 Laptop GPU (0x00002D19) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+  ],
+  "groups": [
+    {
+      "machineLabel": null,
+      "gpuRenderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5060 Laptop GPU (0x00002D19) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "mapId": "courtyard",
+      "quality": "auto",
+      "viewport": "1920x1080",
+      "renderDpr": 1,
+      "runs": [
+        "two-chrome-2026-10-31T00-41-47-138Z.json"
+      ],
+      "minMeanFps": 179.2,
+      "worstP95Ms": 5.7,
+      "worstP99Ms": 5.7,
+      "maxLateMinusEarlyP95Ms": null
+    },
+    {
+      "machineLabel": null,
+      "gpuRenderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5060 Laptop GPU (0x00002D19) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "mapId": "courtyard",
+      "quality": "high",
+      "viewport": "1920x1080",
+      "renderDpr": 2,
+      "runs": [
+        "two-chrome-2026-10-31T01-14-27-051Z.json",
+        "two-chrome-2026-10-31T01-41-13-200Z.json",
+        "two-chrome-2026-10-31T02-15-57-143Z.json",
+        "two-chrome-2026-10-31T02-45-04-150Z.json"
+      ],
+      "minMeanFps": 100,
+      "worstP95Ms": 11.2,
+      "worstP99Ms": 16.7,
+      "maxLateMinusEarlyP95Ms": 0
+    },
+    {
+      "machineLabel": null,
+      "gpuRenderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5060 Laptop GPU (0x00002D19) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "mapId": "island",
+      "quality": "high",
+      "viewport": "1920x1080",
+      "renderDpr": 2,
+      "runs": [
+        "two-chrome-2026-10-31T01-18-47-759Z.json"
+      ],
+      "minMeanFps": 179.9,
+      "worstP95Ms": 5.7,
+      "worstP99Ms": 5.7,
+      "maxLateMinusEarlyP95Ms": 0
+    },
+    {
+      "machineLabel": "local-rtx5060",
+      "gpuRenderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5060 Laptop GPU (0x00002D19) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "mapId": "courtyard",
+      "quality": "high",
+      "viewport": "1920x1080",
+      "renderDpr": 2,
+      "runs": [
+        "two-chrome-2026-10-31T03-28-19-051Z.json"
+      ],
+      "minMeanFps": 92.3,
+      "worstP95Ms": 16.6,
+      "worstP99Ms": 16.8,
+      "maxLateMinusEarlyP95Ms": -0.1
+    },
+    {
+      "machineLabel": "rtx5060-laptop-local",
+      "gpuRenderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5060 Laptop GPU (0x00002D19) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "mapId": "courtyard",
+      "quality": "high",
+      "viewport": "1920x1080",
+      "renderDpr": 2,
+      "runs": [
+        "two-chrome-2026-10-31T05-01-24-676Z.json"
+      ],
+      "minMeanFps": 174.6,
+      "worstP95Ms": 5.7,
+      "worstP99Ms": 11.1,
+      "maxLateMinusEarlyP95Ms": 0
+    }
+  ],
+  "validRuns": [
+    {
+      "file": "two-chrome-2026-10-31T00-41-47-138Z.json",
+      "createdAt": "2026-10-31T00:43:30.235Z",
+      "mapId": "courtyard",
+      "gpuRenderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5060 Laptop GPU (0x00002D19) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "quality": "auto",
+      "machineLabel": null,
+      "viewport": "1920x1080",
+      "browserDpr": 1,
+      "renderDpr": 1,
+      "durationSeconds": 90.01,
+      "minMeanFps": 179.2,
+      "worstP95Ms": 5.7,
+      "worstP99Ms": 5.7,
+      "clients": [
+        {
+          "chromePid": 27896,
+          "name": "guest",
+          "meanFps": 179.4,
+          "p95Ms": 5.7,
+          "p99Ms": 5.7,
+          "framesOver16ms": 2,
+          "framesOver33ms": 0,
+          "sampleCount": 16146,
+          "earlyP95Ms": null,
+          "lateP95Ms": null,
+          "heapDeltaMb": null,
+          "render": {
+            "drawCalls": 711,
+            "triangles": 278056
+          },
+          "network": {
+            "remotePlayers": 1,
+            "movementMeters": 5.58,
+            "crouchObserved": null,
+            "shotsObserved": 4,
+            "reloadsObserved": null
+          }
+        },
+        {
+          "chromePid": 19476,
+          "name": "host",
+          "meanFps": 179.2,
+          "p95Ms": 5.7,
+          "p99Ms": 5.7,
+          "framesOver16ms": 0,
+          "framesOver33ms": 0,
+          "sampleCount": 16130,
+          "earlyP95Ms": null,
+          "lateP95Ms": null,
+          "heapDeltaMb": null,
+          "render": {
+            "drawCalls": 712,
+            "triangles": 284742
+          },
+          "network": {
+            "remotePlayers": 1,
+            "movementMeters": 5.68,
+            "crouchObserved": null,
+            "shotsObserved": 4,
+            "reloadsObserved": null
+          }
+        }
+      ]
+    },
+    {
+      "file": "two-chrome-2026-10-31T01-14-27-051Z.json",
+      "createdAt": "2026-10-31T01:17:40.736Z",
+      "mapId": "courtyard",
+      "gpuRenderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5060 Laptop GPU (0x00002D19) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "quality": "high",
+      "machineLabel": null,
+      "viewport": "1920x1080",
+      "browserDpr": 2,
+      "renderDpr": 2,
+      "durationSeconds": 180,
+      "minMeanFps": 178.7,
+      "worstP95Ms": 5.7,
+      "worstP99Ms": 5.7,
+      "clients": [
+        {
+          "chromePid": 18384,
+          "name": "host",
+          "meanFps": 178.7,
+          "p95Ms": 5.7,
+          "p99Ms": 5.7,
+          "framesOver16ms": 5,
+          "framesOver33ms": 0,
+          "sampleCount": 32161,
+          "earlyP95Ms": 5.7,
+          "lateP95Ms": 5.7,
+          "heapDeltaMb": -13.65,
+          "render": {
+            "drawCalls": 720,
+            "triangles": 278188
+          },
+          "network": {
+            "remotePlayers": 1,
+            "movementMeters": 5.58,
+            "crouchObserved": true,
+            "shotsObserved": 4,
+            "reloadsObserved": 1
+          }
+        },
+        {
+          "chromePid": 6104,
+          "name": "guest",
+          "meanFps": 178.8,
+          "p95Ms": 5.7,
+          "p99Ms": 5.7,
+          "framesOver16ms": 1,
+          "framesOver33ms": 0,
+          "sampleCount": 32191,
+          "earlyP95Ms": 5.7,
+          "lateP95Ms": 5.7,
+          "heapDeltaMb": -12.35,
+          "render": {
+            "drawCalls": 721,
+            "triangles": 284922
+          },
+          "network": {
+            "remotePlayers": 1,
+            "movementMeters": 5.68,
+            "crouchObserved": true,
+            "shotsObserved": 4,
+            "reloadsObserved": 1
+          }
+        }
+      ]
+    },
+    {
+      "file": "two-chrome-2026-10-31T01-18-47-759Z.json",
+      "createdAt": "2026-10-31T01:20:01.245Z",
+      "mapId": "island",
+      "gpuRenderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5060 Laptop GPU (0x00002D19) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "quality": "high",
+      "machineLabel": null,
+      "viewport": "1920x1080",
+      "browserDpr": 2,
+      "renderDpr": 2,
+      "durationSeconds": 60.01,
+      "minMeanFps": 179.9,
+      "worstP95Ms": 5.7,
+      "worstP99Ms": 5.7,
+      "clients": [
+        {
+          "chromePid": 27332,
+          "name": "host",
+          "meanFps": 180,
+          "p95Ms": 5.7,
+          "p99Ms": 5.7,
+          "framesOver16ms": 0,
+          "framesOver33ms": 0,
+          "sampleCount": 10801,
+          "earlyP95Ms": 5.7,
+          "lateP95Ms": 5.7,
+          "heapDeltaMb": 21.52,
+          "render": {
+            "drawCalls": 485,
+            "triangles": 305071
+          },
+          "network": {
+            "remotePlayers": 1,
+            "movementMeters": 5.66,
+            "crouchObserved": true,
+            "shotsObserved": 4,
+            "reloadsObserved": 1
+          }
+        },
+        {
+          "chromePid": 24232,
+          "name": "guest",
+          "meanFps": 179.9,
+          "p95Ms": 5.7,
+          "p99Ms": 5.7,
+          "framesOver16ms": 0,
+          "framesOver33ms": 0,
+          "sampleCount": 10798,
+          "earlyP95Ms": 5.7,
+          "lateP95Ms": 5.7,
+          "heapDeltaMb": -8.03,
+          "render": {
+            "drawCalls": 600,
+            "triangles": 276223
+          },
+          "network": {
+            "remotePlayers": 1,
+            "movementMeters": 5.68,
+            "crouchObserved": true,
+            "shotsObserved": 4,
+            "reloadsObserved": 1
+          }
+        }
+      ]
+    },
+    {
+      "file": "two-chrome-2026-10-31T01-41-13-200Z.json",
+      "createdAt": "2026-10-31T01:51:29.447Z",
+      "mapId": "courtyard",
+      "gpuRenderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5060 Laptop GPU (0x00002D19) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "quality": "high",
+      "machineLabel": null,
+      "viewport": "1920x1080",
+      "browserDpr": 2,
+      "renderDpr": 2,
+      "durationSeconds": 600.01,
+      "minMeanFps": 147.7,
+      "worstP95Ms": 11.2,
+      "worstP99Ms": 11.3,
+      "clients": [
+        {
+          "chromePid": 17936,
+          "name": "host",
+          "meanFps": 148.4,
+          "p95Ms": 11.2,
+          "p99Ms": 11.3,
+          "framesOver16ms": 439,
+          "framesOver33ms": 6,
+          "sampleCount": 89065,
+          "earlyP95Ms": 11.2,
+          "lateP95Ms": 11.1,
+          "heapDeltaMb": 21.33,
+          "render": {
+            "drawCalls": 295,
+            "triangles": 159014
+          },
+          "network": {
+            "remotePlayers": 1,
+            "movementMeters": 5.68,
+            "crouchObserved": true,
+            "shotsObserved": 4,
+            "reloadsObserved": 1
+          }
+        },
+        {
+          "chromePid": 4228,
+          "name": "guest",
+          "meanFps": 147.7,
+          "p95Ms": 11.2,
+          "p99Ms": 11.3,
+          "framesOver16ms": 423,
+          "framesOver33ms": 6,
+          "sampleCount": 88619,
+          "earlyP95Ms": 11.2,
+          "lateP95Ms": 11.1,
+          "heapDeltaMb": -9.2,
+          "render": {
+            "drawCalls": 286,
+            "triangles": 158330
+          },
+          "network": {
+            "remotePlayers": 1,
+            "movementMeters": 5.7,
+            "crouchObserved": true,
+            "shotsObserved": 4,
+            "reloadsObserved": 1
+          }
+        }
+      ]
+    },
+    {
+      "file": "two-chrome-2026-10-31T02-15-57-143Z.json",
+      "createdAt": "2026-10-31T02:26:13.443Z",
+      "mapId": "courtyard",
+      "gpuRenderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5060 Laptop GPU (0x00002D19) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "quality": "high",
+      "machineLabel": null,
+      "viewport": "1920x1080",
+      "browserDpr": 2,
+      "renderDpr": 2,
+      "durationSeconds": 600.01,
+      "minMeanFps": 148.8,
+      "worstP95Ms": 11.2,
+      "worstP99Ms": 11.2,
+      "clients": [
+        {
+          "chromePid": 25588,
+          "name": "host",
+          "meanFps": 150.4,
+          "p95Ms": 11.2,
+          "p99Ms": 11.2,
+          "framesOver16ms": 331,
+          "framesOver33ms": 9,
+          "sampleCount": 90261,
+          "earlyP95Ms": 11.2,
+          "lateP95Ms": 11.1,
+          "heapDeltaMb": 7.98,
+          "render": {
+            "drawCalls": 312,
+            "triangles": 160744
+          },
+          "network": {
+            "remotePlayers": 1,
+            "movementMeters": 5.68,
+            "crouchObserved": true,
+            "shotsObserved": 4,
+            "reloadsObserved": 1
+          }
+        },
+        {
+          "chromePid": 29268,
+          "name": "guest",
+          "meanFps": 148.8,
+          "p95Ms": 11.2,
+          "p99Ms": 11.2,
+          "framesOver16ms": 298,
+          "framesOver33ms": 9,
+          "sampleCount": 89254,
+          "earlyP95Ms": 11.2,
+          "lateP95Ms": 11.1,
+          "heapDeltaMb": -16.45,
+          "render": {
+            "drawCalls": 284,
+            "triangles": 153492
+          },
+          "network": {
+            "remotePlayers": 1,
+            "movementMeters": 5.67,
+            "crouchObserved": true,
+            "shotsObserved": 4,
+            "reloadsObserved": 1
+          }
+        }
+      ]
+    },
+    {
+      "file": "two-chrome-2026-10-31T02-45-04-150Z.json",
+      "createdAt": "2026-10-31T02:46:20.308Z",
+      "mapId": "courtyard",
+      "gpuRenderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5060 Laptop GPU (0x00002D19) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "quality": "high",
+      "machineLabel": null,
+      "viewport": "1920x1080",
+      "browserDpr": 2,
+      "renderDpr": 2,
+      "durationSeconds": 60.01,
+      "minMeanFps": 100,
+      "worstP95Ms": 11.2,
+      "worstP99Ms": 16.7,
+      "clients": [
+        {
+          "chromePid": 22060,
+          "name": "host",
+          "meanFps": 100,
+          "p95Ms": 11.2,
+          "p99Ms": 16.7,
+          "framesOver16ms": 68,
+          "framesOver33ms": 0,
+          "sampleCount": 6001,
+          "earlyP95Ms": 11.2,
+          "lateP95Ms": 11.2,
+          "heapDeltaMb": 5.91,
+          "render": {
+            "drawCalls": 712,
+            "triangles": 279736
+          },
+          "network": {
+            "remotePlayers": 1,
+            "movementMeters": 5.69,
+            "crouchObserved": true,
+            "shotsObserved": 4,
+            "reloadsObserved": 1
+          }
+        },
+        {
+          "chromePid": 10188,
+          "name": "guest",
+          "meanFps": 130.4,
+          "p95Ms": 11.2,
+          "p99Ms": 11.2,
+          "framesOver16ms": 3,
+          "framesOver33ms": 0,
+          "sampleCount": 7823,
+          "earlyP95Ms": 11.2,
+          "lateP95Ms": 11.2,
+          "heapDeltaMb": -27,
+          "render": {
+            "drawCalls": 568,
+            "triangles": 204526
+          },
+          "network": {
+            "remotePlayers": 1,
+            "movementMeters": 5.68,
+            "crouchObserved": true,
+            "shotsObserved": 4,
+            "reloadsObserved": 1
+          }
+        }
+      ]
+    },
+    {
+      "file": "two-chrome-2026-10-31T03-28-19-051Z.json",
+      "createdAt": "2026-10-31T03:29:35.929Z",
+      "mapId": "courtyard",
+      "gpuRenderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5060 Laptop GPU (0x00002D19) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "quality": "high",
+      "machineLabel": "local-rtx5060",
+      "viewport": "1920x1080",
+      "browserDpr": 2,
+      "renderDpr": 2,
+      "durationSeconds": 60.02,
+      "minMeanFps": 92.3,
+      "worstP95Ms": 16.6,
+      "worstP99Ms": 16.8,
+      "clients": [
+        {
+          "chromePid": 32764,
+          "name": "host",
+          "meanFps": 92.3,
+          "p95Ms": 16.6,
+          "p99Ms": 16.8,
+          "framesOver16ms": 248,
+          "framesOver33ms": 1,
+          "sampleCount": 5541,
+          "earlyP95Ms": 16.7,
+          "lateP95Ms": 16.6,
+          "heapDeltaMb": -4.97,
+          "render": {
+            "drawCalls": 720,
+            "triangles": 278188
+          },
+          "network": {
+            "remotePlayers": 1,
+            "movementMeters": 5.67,
+            "crouchObserved": true,
+            "shotsObserved": 4,
+            "reloadsObserved": 1
+          }
+        },
+        {
+          "chromePid": 27892,
+          "name": "guest",
+          "meanFps": 93.3,
+          "p95Ms": 16.6,
+          "p99Ms": 16.7,
+          "framesOver16ms": 209,
+          "framesOver33ms": 1,
+          "sampleCount": 5601,
+          "earlyP95Ms": 16.6,
+          "lateP95Ms": 11.3,
+          "heapDeltaMb": 11.33,
+          "render": {
+            "drawCalls": 721,
+            "triangles": 284922
+          },
+          "network": {
+            "remotePlayers": 1,
+            "movementMeters": 5.68,
+            "crouchObserved": true,
+            "shotsObserved": 4,
+            "reloadsObserved": 1
+          }
+        }
+      ]
+    },
+    {
+      "file": "two-chrome-2026-10-31T05-01-24-676Z.json",
+      "createdAt": "2026-10-31T05:11:40.419Z",
+      "mapId": "courtyard",
+      "gpuRenderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5060 Laptop GPU (0x00002D19) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "quality": "high",
+      "machineLabel": "rtx5060-laptop-local",
+      "viewport": "1920x1080",
+      "browserDpr": 2,
+      "renderDpr": 2,
+      "durationSeconds": 600.01,
+      "minMeanFps": 174.6,
+      "worstP95Ms": 5.7,
+      "worstP99Ms": 11.1,
+      "clients": [
+        {
+          "chromePid": 12372,
+          "name": "host",
+          "meanFps": 174.6,
+          "p95Ms": 5.7,
+          "p99Ms": 11.1,
+          "framesOver16ms": 28,
+          "framesOver33ms": 6,
+          "sampleCount": 104763,
+          "earlyP95Ms": 5.7,
+          "lateP95Ms": 5.7,
+          "heapDeltaMb": -25.02,
+          "render": {
+            "drawCalls": 214,
+            "triangles": 110772
+          },
+          "network": {
+            "remotePlayers": 1,
+            "movementMeters": 5.67,
+            "crouchObserved": true,
+            "shotsObserved": 4,
+            "reloadsObserved": 1
+          }
+        },
+        {
+          "chromePid": 17668,
+          "name": "guest",
+          "meanFps": 175.9,
+          "p95Ms": 5.7,
+          "p99Ms": 11.1,
+          "framesOver16ms": 27,
+          "framesOver33ms": 6,
+          "sampleCount": 105522,
+          "earlyP95Ms": 5.7,
+          "lateP95Ms": 5.7,
+          "heapDeltaMb": -23.67,
+          "render": {
+            "drawCalls": 248,
+            "triangles": 111104
+          },
+          "network": {
+            "remotePlayers": 1,
+            "movementMeters": 5.68,
+            "crouchObserved": true,
+            "shotsObserved": 4,
+            "reloadsObserved": 1
+          }
+        }
+      ]
+    }
+  ],
+  "caveats": [
+    "Two independent Chrome processes on one computer generally share the same physical GPU.",
+    "DUAL_MACHINE_LABEL is optional and self-reported: separate labels do not prove separate physical GPUs.",
+    "rAF measures frame intervals; it is not GPU timestamp query or VRAM telemetry.",
+    "JS heap change is affected by garbage collection and is not proof of absence of memory leaks.",
+    "Headless Chrome uses emulated pointer-lock state; physical keyboard/mouse feel is untested."
+  ],
+  "generatedAt": "2026-10-31T05:13:08.846Z"
+}

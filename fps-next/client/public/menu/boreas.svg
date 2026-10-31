@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 140" role="img" aria-label="Original surf boreas arena artwork">
+<defs>
+  <linearGradient id="sky" x2=".35" y2="1"><stop stop-color="#699fb7"/><stop offset="1" stop-color="#dde9ed"/></linearGradient>
+  <linearGradient id="shade" x2="0" y2="1"><stop stop-color="#07111b" stop-opacity="0"/><stop offset="1" stop-color="#07111b" stop-opacity=".72"/></linearGradient>
+  <filter id="haze"><feGaussianBlur stdDeviation="2"/></filter>
+</defs>
+<rect width="320" height="140" fill="url(#sky)"/>
+<circle cx="251" cy="25" r="32" fill="#f5e7c8" opacity=".34" filter="url(#haze)"/>
+
+  <path d="M0 70L27 54 51 69 86 18 116 59 147 32 178 69 225 18 267 67 299 44 320 65V140H0Z" fill="#a1bbcb"/>
+  <path d="M66 43L86 18 106 43 94 38 88 47 82 38ZM197 50L225 18 252 48 238 42 224 53 215 41Z" fill="#f4f8f7"/>
+  <path d="M0 78L44 67 80 79 125 59 159 81 208 58 266 77 320 65V140H0Z" fill="#e9f0ee"/>
+  <path d="M0 91Q68 76 132 94T320 86V140H0" fill="#b9d0d6"/>
+  <path d="M0 102L320 77V108L0 134Z" fill="#647e8a"/>
+  <path d="M0 104L320 79V86L0 113Z" fill="#e9f5f4"/>
+  <path d="M0 119L320 94V104L0 131Z" fill="#a2bac4"/>
+  <path d="M0 116L320 91" stroke="#d7edee" stroke-width="2"/>
+  <path d="M0 135L320 111V140H0Z" fill="#e9f0f0"/>
+  <path d="M0 135L320 111" stroke="#718c97" stroke-width="2"/>
+  <path d="M0 139L320 117M0 126L320 102" stroke="#f8ffff" stroke-opacity=".58" stroke-width="1"/>
+  <path d="M8 88L8 110M41 85L41 107M81 82L81 104M121 79L121 101M163 76L163 98M208 72L208 95M258 68L258 91M307 64L307 87" stroke="#a3bcc7" stroke-width="1"/>
+  <path d="M0 60L30 54 48 61 67 53 96 63 130 52 167 60 215 52 262 60 320 50" fill="none" stroke="#ecf5f6" stroke-opacity=".48" stroke-width="3"/>
+<rect width="320" height="140" fill="url(#shade)"/>
+<path d="M0 2H320M1 0V140" fill="none" stroke="#fff" stroke-opacity=".13"/>
+</svg>

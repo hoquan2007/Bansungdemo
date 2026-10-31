@@ -326,9 +326,11 @@ test('host can add and remove bots in a normal lobby', () => {
 
 // ------------------------------------------------------------- health packs
 
-test('every map carries health packs, and none sits inside geometry', () => {
+test('every combat map carries health packs, and none sits inside geometry', () => {
   for (const id of MAP_IDS) {
     const map = getMap(id);
+    // Solo surf is a timed traversal course with no combat or healing.
+    if (map.surf) continue;
     assert.ok(map.healthPacks.length > 0, `${id} has no health packs`);
     for (const pack of map.healthPacks) {
       // Packs are walked over, so they must not be part of the collision set.

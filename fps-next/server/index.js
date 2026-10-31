@@ -251,6 +251,10 @@ function handleMessage(session, ws, msg) {
       if (session.room && session.player) session.room.handleTakeLoot(session.player);
       return;
 
+    case C2S.BOMB_INTERACT:
+      if (session.room && session.player) session.room.handleBombInteract(session.player, msg);
+      return;
+
     case C2S.VEHICLE:
       if (session.room && session.player) session.room.handleVehicle(session.player, msg);
       return;
@@ -269,6 +273,10 @@ function handleMessage(session, ws, msg) {
 
     case C2S.SHOOT:
       if (session.room && session.player) session.room.handleShoot(session.player, msg);
+      return;
+
+    case C2S.RELOAD:
+      if (session.room && session.player) session.room.handleReload(session.player, msg);
       return;
 
     case C2S.SWITCH:

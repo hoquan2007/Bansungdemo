@@ -70,6 +70,11 @@ export function syncPickups(pickups, takenIndices) {
   for (const index of pickups.entities.keys()) setPickupTaken(pickups, index, taken.has(index));
 }
 
+/** Competitive elimination rounds have neither automatic nor pickup healing. */
+export function setPickupsEnabled(pickups, enabled) {
+  for (const entity of pickups.entities.values()) entity.group.visible = enabled;
+}
+
 export function updatePickups(pickups, now) {
   const t = now / 1000;
   for (const e of pickups.entities.values()) {

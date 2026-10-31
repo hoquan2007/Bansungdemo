@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 140" role="img" aria-label="Original sniper duel arena artwork">
+<defs>
+  <linearGradient id="sky" x2=".35" y2="1"><stop stop-color="#98b0bb"/><stop offset="1" stop-color="#e3c4a1"/></linearGradient>
+  <linearGradient id="shade" x2="0" y2="1"><stop stop-color="#07111b" stop-opacity="0"/><stop offset="1" stop-color="#07111b" stop-opacity=".72"/></linearGradient>
+  <filter id="haze"><feGaussianBlur stdDeviation="2"/></filter>
+</defs>
+<rect width="320" height="140" fill="url(#sky)"/>
+<circle cx="251" cy="25" r="32" fill="#f5e7c8" opacity=".34" filter="url(#haze)"/>
+
+  <path d="M0 42L71 32 88 82 0 94Z" fill="#a19b87"/><path d="M0 66L60 48 78 85 0 99Z" fill="#4a5856"/>
+  <path d="M105 13L236 22 243 108 104 102Z" fill="#c5b59b"/><path d="M114 24H224V105H114Z" fill="#948e80"/>
+  <rect x="122" y="31" width="8" height="12" fill="#394f59" opacity="0.33"/><rect x="139" y="31" width="8" height="12" fill="#394f59" opacity="0.78"/><rect x="156" y="31" width="8" height="12" fill="#394f59" opacity="0.78"/><rect x="173" y="31" width="8" height="12" fill="#394f59" opacity="0.78"/><rect x="190" y="31" width="8" height="12" fill="#394f59" opacity="0.78"/><rect x="207" y="31" width="8" height="12" fill="#394f59" opacity="0.78"/><rect x="122" y="54" width="8" height="12" fill="#394f59" opacity="0.78"/><rect x="139" y="54" width="8" height="12" fill="#394f59" opacity="0.33"/><rect x="156" y="54" width="8" height="12" fill="#394f59" opacity="0.78"/><rect x="173" y="54" width="8" height="12" fill="#394f59" opacity="0.78"/><rect x="190" y="54" width="8" height="12" fill="#394f59" opacity="0.78"/><rect x="207" y="54" width="8" height="12" fill="#394f59" opacity="0.78"/><rect x="122" y="77" width="8" height="12" fill="#394f59" opacity="0.78"/><rect x="139" y="77" width="8" height="12" fill="#394f59" opacity="0.78"/><rect x="156" y="77" width="8" height="12" fill="#394f59" opacity="0.33"/><rect x="173" y="77" width="8" height="12" fill="#394f59" opacity="0.78"/><rect x="190" y="77" width="8" height="12" fill="#394f59" opacity="0.78"/><rect x="207" y="77" width="8" height="12" fill="#394f59" opacity="0.78"/>
+  <path d="M229 15L320 27V97L232 98Z" fill="#918c7f"/><rect x="250" y="33" width="8" height="12" fill="#38494d" opacity="0.33"/><rect x="267" y="33" width="8" height="12" fill="#38494d" opacity="0.78"/><rect x="284" y="33" width="8" height="12" fill="#38494d" opacity="0.78"/><rect x="301" y="33" width="8" height="12" fill="#38494d" opacity="0.78"/><rect x="250" y="52" width="8" height="12" fill="#38494d" opacity="0.78"/><rect x="267" y="52" width="8" height="12" fill="#38494d" opacity="0.78"/><rect x="284" y="52" width="8" height="12" fill="#38494d" opacity="0.78"/><rect x="301" y="52" width="8" height="12" fill="#38494d" opacity="0.33"/><rect x="250" y="71" width="8" height="12" fill="#38494d" opacity="0.78"/><rect x="267" y="71" width="8" height="12" fill="#38494d" opacity="0.78"/><rect x="284" y="71" width="8" height="12" fill="#38494d" opacity="0.78"/><rect x="301" y="71" width="8" height="12" fill="#38494d" opacity="0.78"/>
+  <path d="M0 105L108 83 320 101V140H0Z" fill="#777a71"/><path d="M116 87L300 140H182Z" fill="#c5bd9f" opacity=".48"/>
+  <path d="M64 108V69H83V103M249 110V61H264V109" fill="#555e58"/>
+  <g transform="translate(196 112) scale(0.95)" fill="#424b48">
+<path d="M-8-36L-6-46 7-46 10-36 4-30 -6-30Z"/><path d="M-12-30L12-30 16-4 8 4 -9 4 -16-4Z"/>
+<path d="M-12-21L-23-8-19-3-7-14 8-18 30-13 32-18 7-25Z"/>
+<path d="M-11 0H-2L-5 25-10 45-17 45-14 20ZM3 0H12L16 44H9L5 21Z"/>
+<path d="M-19-18L37-22 39-17-10-12Z" fill="#202729"/></g><g transform="translate(60 113) scale(0.72)" fill="#626964">
+<path d="M-8-36L-6-46 7-46 10-36 4-30 -6-30Z"/><path d="M-12-30L12-30 16-4 8 4 -9 4 -16-4Z"/>
+<path d="M-12-21L-23-8-19-3-7-14 8-18 30-13 32-18 7-25Z"/>
+<path d="M-11 0H-2L-5 25-10 45-17 45-14 20ZM3 0H12L16 44H9L5 21Z"/>
+<path d="M-19-18L37-22 39-17-10-12Z" fill="#202729"/></g>
+<rect width="320" height="140" fill="url(#shade)"/>
+<path d="M0 2H320M1 0V140" fill="none" stroke="#fff" stroke-opacity=".13"/>
+</svg>

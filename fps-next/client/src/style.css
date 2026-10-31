@@ -848,6 +848,33 @@ button.wide {
   text-shadow: 0 2px 8px #000;
 }
 
+/* Preplanted retake objective, below the round score and clear of the reticle. */
+#retake-objective {
+  position: absolute;
+  top: 108px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(340px, calc(100vw - 40px));
+  padding: 13px 17px 11px;
+  border: 1px solid rgba(251, 176, 85, 0.34);
+  border-radius: 11px;
+  background: linear-gradient(140deg, rgba(22, 25, 30, .87), rgba(42, 30, 24, .82));
+  box-shadow: 0 10px 32px rgba(0, 0, 0, .22);
+  backdrop-filter: blur(10px);
+  text-align: center;
+  pointer-events: none;
+}
+.retake-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+#retake-role { font-size: .68rem; font-weight: 800; letter-spacing: .15em; color: #ffce92; }
+#retake-clock { font-family: var(--mono); font-size: 1.3rem; color: #ffe0ad; }
+#retake-status { margin-top: 5px; font-size: .79rem; letter-spacing: .06em; font-weight: 700; }
+.retake-track { margin-top: 9px; height: 5px; overflow: hidden; border-radius: 9px; background: rgba(255,255,255,.13); }
+#retake-progress-fill { width: 0; height: 100%; border-radius: inherit; background: #80cfff; transition: width .08s linear; }
+#retake-progress-fill.enemy { background: #f1ab6d; }
+#retake-prompt { margin-top: 9px; font-size: .69rem; letter-spacing: .04em; color: #bac2d0; }
+#retake-objective.inactive { opacity: .7; }
+@media (max-height: 650px) { #retake-objective { top: 90px; padding: 8px 12px; } }
+
 #emote-toast {
   position: absolute;
   top: 108px;
@@ -966,7 +993,8 @@ button.wide {
   margin-top: 0.25rem;
 }
 
-#practice-stats {
+#practice-stats,
+#surf-stats {
   position: absolute;
   top: 90px;
   left: 26px;
@@ -977,6 +1005,20 @@ button.wide {
   min-width: 180px;
   backdrop-filter: blur(6px);
 }
+.surf-speed { display: flex; align-items: baseline; gap: 0.55rem; margin: 0.6rem 0; color: #66ffe0; }
+.surf-speed b { font: 800 2.9rem/1 var(--mono); letter-spacing: -0.07em; }
+.surf-speed span { font: 700 0.62rem var(--mono); letter-spacing: 0.09em; }
+#surf-event { margin-top: 0.65rem; color: #7fffdc; font: 800 0.7rem var(--mono); letter-spacing: 0.06em; }
+.pr-challenge-title {
+  margin: -0.1rem 0 0.55rem;
+  padding-bottom: 0.55rem;
+  border-bottom: 1px solid rgba(255, 178, 84, 0.3);
+  color: #ffc477;
+  font: 800 0.72rem var(--mono);
+  letter-spacing: 0.08em;
+}
+#pr-challenge-status { color: #ffc477; }
+#pr-challenge-time { font-size: 1.1rem; }
 .pr-row {
   display: flex;
   justify-content: space-between;
@@ -997,6 +1039,14 @@ button.wide {
   color: #5f6879;
   line-height: 1.45;
 }
+.pr-drill-row { border-bottom: 1px solid rgba(255, 255, 255, 0.1); margin-bottom: 0.35rem; padding-bottom: 0.4rem; }
+.pr-drill-row b { font-size: 0.66rem; text-align: right; color: #ffc477; }
+.range-config-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.8rem; margin-top: 0.7rem; }
+.range-config-grid label { display: grid; gap: 0.35rem; font-size: 0.8rem; color: var(--muted); }
+.range-config-grid select { min-width: 0; width: 100%; padding: 0.55rem 0.7rem; background: #131d1c; border: 1px solid rgba(66, 239, 168, 0.3); color: var(--text); font: 0.78rem var(--mono); }
+.range-infinite { display: flex; gap: 0.65rem; align-items: center; margin-top: 0.85rem; color: var(--text); font-size: 0.85rem; }
+.range-infinite input { width: auto; accent-color: var(--accent); }
+.range-config-note { color: var(--muted); font-size: 0.74rem; line-height: 1.5; }
 
 /* A weapon-type heading inside a picker. */
 .pick-group {
@@ -2027,6 +2077,7 @@ select:focus {
 
 #hud-top,
 #practice-stats,
+#surf-stats,
 #br-alive,
 #br-zone,
 #hud-bottom-left,

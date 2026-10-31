@@ -1,0 +1,1302 @@
+{
+  "ok": true,
+  "createdAt": "2026-10-31T05:00:39.197Z",
+  "mapId": "courtyard",
+  "roomCode": "68UD",
+  "machineLabel": null,
+  "hardwareGpuRequired": true,
+  "requestedDurationMs": 3000,
+  "quality": "high",
+  "deviceScaleFactor": 2,
+  "gpuTelemetry": {
+    "provider": "nvidia-smi",
+    "sampleIntervalMs": 5000,
+    "scope": "host-wide; includes unrelated GPU processes",
+    "samples": [
+      {
+        "elapsedMs": 86,
+        "devices": [
+          {
+            "index": 0,
+            "name": "NVIDIA GeForce RTX 5060 Laptop GPU",
+            "utilizationPercent": 55,
+            "memoryUsedMiB": 3956,
+            "memoryTotalMiB": 8151,
+            "temperatureC": 72,
+            "powerW": 54.85
+          }
+        ]
+      }
+    ]
+  },
+  "independentChromeProcesses": true,
+  "clients": [
+    {
+      "name": "host",
+      "chromePid": 28652,
+      "cdpPort": 59259,
+      "id": "p1",
+      "serverSnapshots": 243,
+      "serverShotEvents": 4,
+      "remotePlayers": 1,
+      "actions": {
+        "movedMeters": 5.67,
+        "crouchFlagSeenByOtherChrome": true,
+        "shotsSeenByOtherChrome": 4,
+        "reloadEventsSeenByOtherChrome": 1
+      },
+      "actualDurationMs": 3012,
+      "sampleCount": 507,
+      "meanFps": 168.3,
+      "p50Ms": 5.6,
+      "p95Ms": 11.1,
+      "p99Ms": 11.2,
+      "segments": [
+        {
+          "startSeconds": 0,
+          "endSeconds": 3,
+          "frameCount": 507,
+          "p95Ms": 11.1,
+          "p99Ms": 11.2,
+          "over16ms": 0,
+          "over33ms": 0
+        }
+      ],
+      "heapSamples": [
+        {
+          "elapsedMs": 0,
+          "usedJSHeapBytes": 49946459
+        },
+        {
+          "elapsedMs": 3012,
+          "usedJSHeapBytes": 71548767
+        }
+      ],
+      "framesOver16ms": 0,
+      "framesOver33ms": 0,
+      "maxFrameMs": 11.200000000000728,
+      "browserResolution": {
+        "width": 1920,
+        "height": 1080,
+        "pixelRatio": 2
+      },
+      "remoteEntities": 1,
+      "gpuRenderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5060 Laptop GPU (0x00002D19) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "render": {
+        "calls": 720,
+        "triangles": 290374,
+        "lines": 0,
+        "points": 0,
+        "geometries": 111,
+        "textures": 60,
+        "gpuRenderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5060 Laptop GPU (0x00002D19) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+        "pixelRatio": 2,
+        "averageFrameMs": 16.7,
+        "quality": "high"
+      },
+      "heapBytes": 71548767,
+      "visible": "visible",
+      "weaponModels": {
+        "rifle": {
+          "status": "ready",
+          "source": "models/fp/m4a1.glb",
+          "authored": true,
+          "sourceSeparatedParts": [],
+          "supplementalMechanism": null,
+          "proceduralHands": false,
+          "skinnedHands": true,
+          "skinnedBones": 68,
+          "handAnimation": "weapon-specific-keyframes"
+        },
+        "carbine": {
+          "status": "ready",
+          "source": "models/guns-obj/AssaultRifle2_1_Rigged.obj",
+          "authored": false,
+          "sourceSeparatedParts": [
+            "Magazine"
+          ],
+          "supplementalMechanism": null,
+          "proceduralHands": false,
+          "skinnedHands": true,
+          "skinnedBones": 68,
+          "handAnimation": "weapon-specific-keyframes"
+        },
+        "bullpup": {
+          "status": "ready",
+          "source": "models/guns-obj/Bullpup_1_Rigged.obj",
+          "authored": false,
+          "sourceSeparatedParts": [
+            "Magazine"
+          ],
+          "supplementalMechanism": null,
+          "proceduralHands": false,
+          "skinnedHands": true,
+          "skinnedBones": 68,
+          "handAnimation": "weapon-specific-keyframes"
+        },
+        "smg": {
+          "status": "ready",
+          "source": "models/guns/SMG_Rigged.gltf",
+          "authored": false,
+          "sourceSeparatedParts": [
+            "Magazine"
+          ],
+          "supplementalMechanism": null,
+          "proceduralHands": false,
+          "skinnedHands": true,
+          "skinnedBones": 68,
+          "handAnimation": "weapon-specific-keyframes"
+        },
+        "smg_compact": {
+          "status": "ready",
+          "source": "models/guns-obj/SubmachineGun_3_Rigged.obj",
+          "authored": false,
+          "sourceSeparatedParts": [
+            "Magazine"
+          ],
+          "supplementalMechanism": null,
+          "proceduralHands": false,
+          "skinnedHands": true,
+          "skinnedBones": 68,
+          "handAnimation": "weapon-specific-keyframes"
+        },
+        "smg_heavy": {
+          "status": "ready",
+          "source": "models/guns-obj/SubmachineGun_5_Rigged.obj",
+          "authored": false,
+          "sourceSeparatedParts": [
+            "Magazine"
+          ],
+          "supplementalMechanism": null,
+          "proceduralHands": false,
+          "skinnedHands": true,
+          "skinnedBones": 68,
+          "handAnimation": "weapon-specific-keyframes"
+        },
+        "shotgun": {
+          "status": "ready",
+          "source": "models/guns/Shotgun_Rigged.gltf",
+          "authored": false,
+          "sourceSeparatedParts": [
+            "Pump"
+          ],
+          "supplementalMechanism": null,
+          "proceduralHands": false,
+          "skinnedHands": true,
+          "skinnedBones": 68,
+          "handAnimation": "weapon-specific-keyframes"
+        },
+        "sawnoff": {
+          "status": "ready",
+          "source": "models/guns-obj/Shotgun_SawedOff_Rigged.obj",
+          "authored": false,
+          "sourceSeparatedParts": [
+            "Barrels"
+          ],
+          "supplementalMechanism": null,
+          "proceduralHands": false,
+          "skinnedHands": true,
+          "skinnedBones": 68,
+          "handAnimation": "weapon-specific-keyframes"
+        },
+        "autoshotgun": {
+          "status": "ready",
+          "source": "models/guns-obj/Shotgun_ShortStock_Rigged.obj",
+          "authored": false,
+          "sourceSeparatedParts": [
+            "Pump"
+          ],
+          "supplementalMechanism": null,
+          "proceduralHands": false,
+          "skinnedHands": true,
+          "skinnedBones": 68,
+          "handAnimation": "weapon-specific-keyframes"
+        },
+        "sniper": {
+          "status": "ready",
+          "source": "models/guns-real/ChassisSniper_CC0.glb",
+          "authored": true,
+          "sourceSeparatedParts": [],
+          "supplementalMechanism": null,
+          "proceduralHands": false,
+          "skinnedHands": true,
+          "skinnedBones": 68,
+          "handAnimation": "weapon-specific-keyframes"
+        },
+        "dmr": {
+          "status": "ready",
+          "source": "models/guns/Sniper_2_Rigged.gltf",
+          "authored": false,
+          "sourceSeparatedParts": [
+            "Magazine"
+          ],
+          "supplementalMechanism": null,
+          "proceduralHands": false,
+          "skinnedHands": true,
+          "skinnedBones": 68,
+          "handAnimation": "weapon-specific-keyframes"
+        },
+        "antimateriel": {
+          "status": "ready",
+          "source": "models/guns-obj/SniperRifle_6_Rigged.obj",
+          "authored": false,
+          "sourceSeparatedParts": [
+            "Bolt"
+          ],
+          "supplementalMechanism": null,
+          "proceduralHands": false,
+          "skinnedHands": true,
+          "skinnedBones": 68,
+          "handAnimation": "weapon-specific-keyframes"
+        },
+        "lmg": {
+          "status": "ready",
+          "source": "models/guns/ShortCannon_Rigged.gltf",
+          "authored": false,
+          "sourceSeparatedParts": [
+            "Barrel"
+          ],
+          "supplementalMechanism": null,
+          "proceduralHands": false,
+          "skinnedHands": true,
+          "skinnedBones": 68,
+          "handAnimation": "weapon-specific-keyframes"
+        },
+        "pistol": {
+          "status": "ready",
+          "source": "models/guns/Pistol_Rigged.gltf",
+          "authored": false,
+          "sourceSeparatedParts": [
+            "Slide"
+          ],
+          "supplementalMechanism": null,
+          "proceduralHands": false,
+          "skinnedHands": true,
+          "skinnedBones": 68,
+          "handAnimation": "weapon-specific-keyframes"
+        },
+        "revolver": {
+          "status": "ready",
+          "source": "models/guns-obj/Revolver_1_Rigged.obj",
+          "authored": false,
+          "sourceSeparatedParts": [
+            "Cylinder"
+          ],
+          "supplementalMechanism": null,
+          "proceduralHands": false,
+          "skinnedHands": true,
+          "skinnedBones": 68,
+          "handAnimation": "weapon-specific-keyframes"
+        },
+        "machinepistol": {
+          "status": "ready",
+          "source": "models/guns-obj/Pistol_4_Rigged.obj",
+          "authored": false,
+          "sourceSeparatedParts": [
+            "Slide"
+          ],
+          "supplementalMechanism": null,
+          "proceduralHands": false,
+          "skinnedHands": true,
+          "skinnedBones": 68,
+          "handAnimation": "weapon-specific-keyframes"
+        },
+        "knife": {
+          "status": "ready",
+          "source": "models/guns-real/CombatKnife_CC0.glb",
+          "authored": false,
+          "sourceSeparatedParts": [],
+          "supplementalMechanism": null,
+          "proceduralHands": false,
+          "skinnedHands": true,
+          "skinnedBones": 68,
+          "handAnimation": "weapon-specific-keyframes"
+        }
+      },
+      "errors": [],
+      "warnings": [
+        "THREE.sigmaRadians, 0.05, is too large and will clip, as it requested 25 samples when the maximum is set to 20",
+        "THREE.sigmaRadians, 0.05, is too large and will clip, as it requested 25 samples when the maximum is set to 20",
+        "THREE.WebGLProgram: Program Info Log: (210,86-138): warning X4122: sum of 0.996094 and -2.98545e-017 cannot be represented accurately in double precision\n(209,39-65): warning X4122: sum of 1 and -1.49272e-017 cannot be represented accurately in double precision\n(210,87-113): warning X4122: sum of 1 and -1.49272e-017 cannot be represented accurately in double precision\n(209,39-65): warning X4122: sum of 1 and -1.66644e-018 cannot be represented accurately in double precision\n(210,87-113): warning X4122: sum of 1 and -1.66644e-018 cannot be represented accurately in double precision",
+        "THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.",
+        "THREE.WebGLShadowMap: PCFSoftShadowMap has been deprecated. Using PCFShadowMap instead."
+      ]
+    },
+    {
+      "name": "guest",
+      "chromePid": 26412,
+      "cdpPort": 49871,
+      "id": "p2",
+      "serverSnapshots": 225,
+      "serverShotEvents": 4,
+      "remotePlayers": 1,
+      "actions": {
+        "movedMeters": 5.77,
+        "crouchFlagSeenByOtherChrome": true,
+        "shotsSeenByOtherChrome": 4,
+        "reloadEventsSeenByOtherChrome": 1
+      },
+      "actualDurationMs": 3011,
+      "sampleCount": 527,
+      "meanFps": 175.1,
+      "p50Ms": 5.6,
+      "p95Ms": 5.7,
+      "p99Ms": 11.1,
+      "segments": [
+        {
+          "startSeconds": 0,
+          "endSeconds": 3,
+          "frameCount": 527,
+          "p95Ms": 5.7,
+          "p99Ms": 11.1,
+          "over16ms": 0,
+          "over33ms": 0
+        }
+      ],
+      "heapSamples": [
+        {
+          "elapsedMs": 0,
+          "usedJSHeapBytes": 43206432
+        },
+        {
+          "elapsedMs": 3011,
+          "usedJSHeapBytes": 65700056
+        }
+      ],
+      "framesOver16ms": 0,
+      "framesOver33ms": 0,
+      "maxFrameMs": 11.200000000000728,
+      "browserResolution": {
+        "width": 1920,
+        "height": 1080,
+        "pixelRatio": 2
+      },
+      "remoteEntities": 1,
+      "gpuRenderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5060 Laptop GPU (0x00002D19) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "render": {
+        "calls": 721,
+        "triangles": 284922,
+        "lines": 0,
+        "points": 0,
+        "geometries": 110,
+        "textures": 60,
+        "gpuRenderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5060 Laptop GPU (0x00002D19) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+        "pixelRatio": 2,
+        "averageFrameMs": 16.7,
+        "quality": "high"
+      },
+      "heapBytes": 65700056,
+      "visible": "visible",
+      "weaponModels": {
+        "rifle": {
+          "status": "ready",
+          "source": "models/fp/m4a1.glb",
+          "authored": true,
+          "sourceSeparatedParts": [],
+          "supplementalMechanism": null,
+          "proceduralHands": false,
+          "skinnedHands": true,
+          "skinnedBones": 68,
+          "handAnimation": "weapon-specific-keyframes"
+        },
+        "carbine": {
+          "status": "ready",
+          "source": "models/guns-obj/AssaultRifle2_1_Rigged.obj",
+          "authored": false,
+          "sourceSeparatedParts": [
+            "Magazine"
+          ],
+          "supplementalMechanism": null,
+          "proceduralHands": false,
+          "skinnedHands": true,
+          "skinnedBones": 68,
+          "handAnimation": "weapon-specific-keyframes"
+        },
+        "bullpup": {
+          "status": "ready",
+          "source": "models/guns-obj/Bullpup_1_Rigged.obj",
+          "authored": false,
+          "sourceSeparatedParts": [
+            "Magazine"
+          ],
+          "supplementalMechanism": null,
+          "proceduralHands": false,
+          "skinnedHands": true,
+          "skinnedBones": 68,
+          "handAnimation": "weapon-specific-keyframes"
+        },
+        "smg": {
+          "status": "ready",
+          "source": "models/guns/SMG_Rigged.gltf",
+          "authored": false,
+          "sourceSeparatedParts": [
+            "Magazine"
+          ],
+          "supplementalMechanism": null,
+          "proceduralHands": false,
+          "skinnedHands": true,
+          "skinnedBones": 68,
+          "handAnimation": "weapon-specific-keyframes"
+        },
+        "smg_compact": {
+          "status": "ready",
+          "source": "models/guns-obj/SubmachineGun_3_Rigged.obj",
+          "authored": false,
+          "sourceSeparatedParts": [
+            "Magazine"
+          ],
+          "supplementalMechanism": null,
+          "proceduralHands": false,
+          "skinnedHands": true,
+          "skinnedBones": 68,
+          "handAnimation": "weapon-specific-keyframes"
+        },
+        "smg_heavy": {
+          "status": "ready",
+          "source": "models/guns-obj/SubmachineGun_5_Rigged.obj",
+          "authored": false,
+          "sourceSeparatedParts": [
+            "Magazine"
+          ],
+          "supplementalMechanism": null,
+          "proceduralHands": false,
+          "skinnedHands": true,
+          "skinnedBones": 68,
+          "handAnimation": "weapon-specific-keyframes"
+        },
+        "shotgun": {
+          "status": "ready",
+          "source": "models/guns/Shotgun_Rigged.gltf",
+          "authored": false,
+          "sourceSeparatedParts": [
+            "Pump"
+          ],
+          "supplementalMechanism": null,
+          "proceduralHands": false,
+          "skinnedHands": true,
+          "skinnedBones": 68,
+          "handAnimation": "weapon-specific-keyframes"
+        },
+        "sawnoff": {
+          "status": "ready",
+          "source": "models/guns-obj/Shotgun_SawedOff_Rigged.obj",
+          "authored": false,
+          "sourceSeparatedParts": [
+            "Barrels"
+          ],
+          "supplementalMechanism": null,
+          "proceduralHands": false,
+          "skinnedHands": true,
+          "skinnedBones": 68,
+          "handAnimation": "weapon-specific-keyframes"
+        },
+        "autoshotgun": {
+          "status": "ready",
+          "source": "models/guns-obj/Shotgun_ShortStock_Rigged.obj",
+          "authored": false,
+          "sourceSeparatedParts": [
+            "Pump"
+          ],
+          "supplementalMechanism": null,
+          "proceduralHands": false,
+          "skinnedHands": true,
+          "skinnedBones": 68,
+          "handAnimation": "weapon-specific-keyframes"
+        },
+        "sniper": {
+          "status": "ready",
+          "source": "models/guns-real/ChassisSniper_CC0.glb",
+          "authored": true,
+          "sourceSeparatedParts": [],
+          "supplementalMechanism": null,
+          "proceduralHands": false,
+          "skinnedHands": true,
+          "skinnedBones": 68,
+          "handAnimation": "weapon-specific-keyframes"
+        },
+        "dmr": {
+          "status": "ready",
+          "source": "models/guns/Sniper_2_Rigged.gltf",
+          "authored": false,
+          "sourceSeparatedParts": [
+            "Magazine"
+          ],
+          "supplementalMechanism": null,
+          "proceduralHands": false,
+          "skinnedHands": true,
+          "skinnedBones": 68,
+          "handAnimation": "weapon-specific-keyframes"
+        },
+        "antimateriel": {
+          "status": "ready",
+          "source": "models/guns-obj/SniperRifle_6_Rigged.obj",
+          "authored": false,
+          "sourceSeparatedParts": [
+            "Bolt"
+          ],
+          "supplementalMechanism": null,
+          "proceduralHands": false,
+          "skinnedHands": true,
+          "skinnedBones": 68,
+          "handAnimation": "weapon-specific-keyframes"
+        },
+        "lmg": {
+          "status": "ready",
+          "source": "models/guns/ShortCannon_Rigged.gltf",
+          "authored": false,
+          "sourceSeparatedParts": [
+            "Barrel"
+          ],
+          "supplementalMechanism": null,
+          "proceduralHands": false,
+          "skinnedHands": true,
+          "skinnedBones": 68,
+          "handAnimation": "weapon-specific-keyframes"
+        },
+        "pistol": {
+          "status": "ready",
+          "source": "models/guns/Pistol_Rigged.gltf",
+          "authored": false,
+          "sourceSeparatedParts": [
+            "Slide"
+          ],
+          "supplementalMechanism": null,
+          "proceduralHands": false,
+          "skinnedHands": true,
+          "skinnedBones": 68,
+          "handAnimation": "weapon-specific-keyframes"
+        },
+        "revolver": {
+          "status": "ready",
+          "source": "models/guns-obj/Revolver_1_Rigged.obj",
+          "authored": false,
+          "sourceSeparatedParts": [
+            "Cylinder"
+          ],
+          "supplementalMechanism": null,
+          "proceduralHands": false,
+          "skinnedHands": true,
+          "skinnedBones": 68,
+          "handAnimation": "weapon-specific-keyframes"
+        },
+        "machinepistol": {
+          "status": "ready",
+          "source": "models/guns-obj/Pistol_4_Rigged.obj",
+          "authored": false,
+          "sourceSeparatedParts": [
+            "Slide"
+          ],
+          "supplementalMechanism": null,
+          "proceduralHands": false,
+          "skinnedHands": true,
+          "skinnedBones": 68,
+          "handAnimation": "weapon-specific-keyframes"
+        },
+        "knife": {
+          "status": "ready",
+          "source": "models/guns-real/CombatKnife_CC0.glb",
+          "authored": false,
+          "sourceSeparatedParts": [],
+          "supplementalMechanism": null,
+          "proceduralHands": false,
+          "skinnedHands": true,
+          "skinnedBones": 68,
+          "handAnimation": "weapon-specific-keyframes"
+        }
+      },
+      "errors": [],
+      "warnings": [
+        "THREE.sigmaRadians, 0.05, is too large and will clip, as it requested 25 samples when the maximum is set to 20",
+        "THREE.sigmaRadians, 0.05, is too large and will clip, as it requested 25 samples when the maximum is set to 20",
+        "THREE.WebGLProgram: Program Info Log: (210,86-138): warning X4122: sum of 0.996094 and -2.98545e-017 cannot be represented accurately in double precision\n(209,39-65): warning X4122: sum of 1 and -1.49272e-017 cannot be represented accurately in double precision\n(210,87-113): warning X4122: sum of 1 and -1.49272e-017 cannot be represented accurately in double precision\n(209,39-65): warning X4122: sum of 1 and -1.66644e-018 cannot be represented accurately in double precision\n(210,87-113): warning X4122: sum of 1 and -1.66644e-018 cannot be represented accurately in double precision",
+        "THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.",
+        "THREE.WebGLShadowMap: PCFSoftShadowMap has been deprecated. Using PCFShadowMap instead."
+      ]
+    }
+  ],
+  "constraints": [
+    "Automated headless Chrome playtest; native mouse pointer lock not validated",
+    "rAF timings measure frame scheduling, not GPU timestamps or VRAM bytes",
+    "JS heap snapshots fluctuate with garbage collection and cannot alone prove absence of leaks",
+    "Two independent Chrome instances share the same host GPU unless moved to different hardware",
+    "Multi-GPU comparisons require running this script on each actual hardware configuration"
+  ],
+  "screenshots": [
+    {
+      "name": "host",
+      "path": "D:\\Bansungdemo\\fps-next\\docs\\benchmarks\\two-chrome-2026-10-31T05-00-20-416Z-host.png"
+    },
+    {
+      "name": "guest",
+      "path": "D:\\Bansungdemo\\fps-next\\docs\\benchmarks\\two-chrome-2026-10-31T05-00-20-416Z-guest.png"
+    }
+  ],
+  "arsenalScreenshots": [
+    {
+      "name": "host",
+      "weaponId": "rifle",
+      "path": "D:\\Bansungdemo\\fps-next\\docs\\benchmarks\\two-chrome-2026-10-31T05-00-20-416Z-host-rifle.jpg",
+      "selection": "visual-only"
+    },
+    {
+      "name": "host",
+      "weaponId": "carbine",
+      "path": "D:\\Bansungdemo\\fps-next\\docs\\benchmarks\\two-chrome-2026-10-31T05-00-20-416Z-host-carbine.jpg",
+      "selection": "visual-only"
+    },
+    {
+      "name": "host",
+      "weaponId": "bullpup",
+      "path": "D:\\Bansungdemo\\fps-next\\docs\\benchmarks\\two-chrome-2026-10-31T05-00-20-416Z-host-bullpup.jpg",
+      "selection": "visual-only"
+    },
+    {
+      "name": "host",
+      "weaponId": "smg",
+      "path": "D:\\Bansungdemo\\fps-next\\docs\\benchmarks\\two-chrome-2026-10-31T05-00-20-416Z-host-smg.jpg",
+      "selection": "visual-only"
+    },
+    {
+      "name": "host",
+      "weaponId": "smg_compact",
+      "path": "D:\\Bansungdemo\\fps-next\\docs\\benchmarks\\two-chrome-2026-10-31T05-00-20-416Z-host-smg_compact.jpg",
+      "selection": "visual-only"
+    },
+    {
+      "name": "host",
+      "weaponId": "smg_heavy",
+      "path": "D:\\Bansungdemo\\fps-next\\docs\\benchmarks\\two-chrome-2026-10-31T05-00-20-416Z-host-smg_heavy.jpg",
+      "selection": "visual-only"
+    },
+    {
+      "name": "host",
+      "weaponId": "shotgun",
+      "path": "D:\\Bansungdemo\\fps-next\\docs\\benchmarks\\two-chrome-2026-10-31T05-00-20-416Z-host-shotgun.jpg",
+      "selection": "visual-only"
+    },
+    {
+      "name": "host",
+      "weaponId": "sawnoff",
+      "path": "D:\\Bansungdemo\\fps-next\\docs\\benchmarks\\two-chrome-2026-10-31T05-00-20-416Z-host-sawnoff.jpg",
+      "selection": "visual-only"
+    },
+    {
+      "name": "host",
+      "weaponId": "autoshotgun",
+      "path": "D:\\Bansungdemo\\fps-next\\docs\\benchmarks\\two-chrome-2026-10-31T05-00-20-416Z-host-autoshotgun.jpg",
+      "selection": "visual-only"
+    },
+    {
+      "name": "host",
+      "weaponId": "sniper",
+      "path": "D:\\Bansungdemo\\fps-next\\docs\\benchmarks\\two-chrome-2026-10-31T05-00-20-416Z-host-sniper.jpg",
+      "selection": "visual-only"
+    },
+    {
+      "name": "host",
+      "weaponId": "dmr",
+      "path": "D:\\Bansungdemo\\fps-next\\docs\\benchmarks\\two-chrome-2026-10-31T05-00-20-416Z-host-dmr.jpg",
+      "selection": "visual-only"
+    },
+    {
+      "name": "host",
+      "weaponId": "antimateriel",
+      "path": "D:\\Bansungdemo\\fps-next\\docs\\benchmarks\\two-chrome-2026-10-31T05-00-20-416Z-host-antimateriel.jpg",
+      "selection": "visual-only"
+    },
+    {
+      "name": "host",
+      "weaponId": "lmg",
+      "path": "D:\\Bansungdemo\\fps-next\\docs\\benchmarks\\two-chrome-2026-10-31T05-00-20-416Z-host-lmg.jpg",
+      "selection": "visual-only"
+    },
+    {
+      "name": "host",
+      "weaponId": "pistol",
+      "path": "D:\\Bansungdemo\\fps-next\\docs\\benchmarks\\two-chrome-2026-10-31T05-00-20-416Z-host-pistol.jpg",
+      "selection": "visual-only"
+    },
+    {
+      "name": "host",
+      "weaponId": "revolver",
+      "path": "D:\\Bansungdemo\\fps-next\\docs\\benchmarks\\two-chrome-2026-10-31T05-00-20-416Z-host-revolver.jpg",
+      "selection": "visual-only"
+    },
+    {
+      "name": "host",
+      "weaponId": "machinepistol",
+      "path": "D:\\Bansungdemo\\fps-next\\docs\\benchmarks\\two-chrome-2026-10-31T05-00-20-416Z-host-machinepistol.jpg",
+      "selection": "visual-only"
+    },
+    {
+      "name": "host",
+      "weaponId": "knife",
+      "path": "D:\\Bansungdemo\\fps-next\\docs\\benchmarks\\two-chrome-2026-10-31T05-00-20-416Z-host-knife.jpg",
+      "selection": "visual-only"
+    },
+    {
+      "name": "guest",
+      "weaponId": "rifle",
+      "path": "D:\\Bansungdemo\\fps-next\\docs\\benchmarks\\two-chrome-2026-10-31T05-00-20-416Z-guest-rifle.jpg",
+      "selection": "visual-only"
+    },
+    {
+      "name": "guest",
+      "weaponId": "carbine",
+      "path": "D:\\Bansungdemo\\fps-next\\docs\\benchmarks\\two-chrome-2026-10-31T05-00-20-416Z-guest-carbine.jpg",
+      "selection": "visual-only"
+    },
+    {
+      "name": "guest",
+      "weaponId": "bullpup",
+      "path": "D:\\Bansungdemo\\fps-next\\docs\\benchmarks\\two-chrome-2026-10-31T05-00-20-416Z-guest-bullpup.jpg",
+      "selection": "visual-only"
+    },
+    {
+      "name": "guest",
+      "weaponId": "smg",
+      "path": "D:\\Bansungdemo\\fps-next\\docs\\benchmarks\\two-chrome-2026-10-31T05-00-20-416Z-guest-smg.jpg",
+      "selection": "visual-only"
+    },
+    {
+      "name": "guest",
+      "weaponId": "smg_compact",
+      "path": "D:\\Bansungdemo\\fps-next\\docs\\benchmarks\\two-chrome-2026-10-31T05-00-20-416Z-guest-smg_compact.jpg",
+      "selection": "visual-only"
+    },
+    {
+      "name": "guest",
+      "weaponId": "smg_heavy",
+      "path": "D:\\Bansungdemo\\fps-next\\docs\\benchmarks\\two-chrome-2026-10-31T05-00-20-416Z-guest-smg_heavy.jpg",
+      "selection": "visual-only"
+    },
+    {
+      "name": "guest",
+      "weaponId": "shotgun",
+      "path": "D:\\Bansungdemo\\fps-next\\docs\\benchmarks\\two-chrome-2026-10-31T05-00-20-416Z-guest-shotgun.jpg",
+      "selection": "visual-only"
+    },
+    {
+      "name": "guest",
+      "weaponId": "sawnoff",
+      "path": "D:\\Bansungdemo\\fps-next\\docs\\benchmarks\\two-chrome-2026-10-31T05-00-20-416Z-guest-sawnoff.jpg",
+      "selection": "visual-only"
+    },
+    {
+      "name": "guest",
+      "weaponId": "autoshotgun",
+      "path": "D:\\Bansungdemo\\fps-next\\docs\\benchmarks\\two-chrome-2026-10-31T05-00-20-416Z-guest-autoshotgun.jpg",
+      "selection": "visual-only"
+    },
+    {
+      "name": "guest",
+      "weaponId": "sniper",
+      "path": "D:\\Bansungdemo\\fps-next\\docs\\benchmarks\\two-chrome-2026-10-31T05-00-20-416Z-guest-sniper.jpg",
+      "selection": "visual-only"
+    },
+    {
+      "name": "guest",
+      "weaponId": "dmr",
+      "path": "D:\\Bansungdemo\\fps-next\\docs\\benchmarks\\two-chrome-2026-10-31T05-00-20-416Z-guest-dmr.jpg",
+      "selection": "visual-only"
+    },
+    {
+      "name": "guest",
+      "weaponId": "antimateriel",
+      "path": "D:\\Bansungdemo\\fps-next\\docs\\benchmarks\\two-chrome-2026-10-31T05-00-20-416Z-guest-antimateriel.jpg",
+      "selection": "visual-only"
+    },
+    {
+      "name": "guest",
+      "weaponId": "lmg",
+      "path": "D:\\Bansungdemo\\fps-next\\docs\\benchmarks\\two-chrome-2026-10-31T05-00-20-416Z-guest-lmg.jpg",
+      "selection": "visual-only"
+    },
+    {
+      "name": "guest",
+      "weaponId": "pistol",
+      "path": "D:\\Bansungdemo\\fps-next\\docs\\benchmarks\\two-chrome-2026-10-31T05-00-20-416Z-guest-pistol.jpg",
+      "selection": "visual-only"
+    },
+    {
+      "name": "guest",
+      "weaponId": "revolver",
+      "path": "D:\\Bansungdemo\\fps-next\\docs\\benchmarks\\two-chrome-2026-10-31T05-00-20-416Z-guest-revolver.jpg",
+      "selection": "visual-only"
+    },
+    {
+      "name": "guest",
+      "weaponId": "machinepistol",
+      "path": "D:\\Bansungdemo\\fps-next\\docs\\benchmarks\\two-chrome-2026-10-31T05-00-20-416Z-guest-machinepistol.jpg",
+      "selection": "visual-only"
+    },
+    {
+      "name": "guest",
+      "weaponId": "knife",
+      "path": "D:\\Bansungdemo\\fps-next\\docs\\benchmarks\\two-chrome-2026-10-31T05-00-20-416Z-guest-knife.jpg",
+      "selection": "visual-only"
+    }
+  ],
+  "reloadScreenshots": [
+    {
+      "name": "host",
+      "weaponId": "rifle",
+      "path": "D:\\Bansungdemo\\fps-next\\docs\\benchmarks\\two-chrome-2026-10-31T05-00-20-416Z-host-rifle-reload.jpg",
+      "selection": "diagnostic-only",
+      "sourceParts": {},
+      "supportHandTravel": 0.44427459598477853,
+      "skinBoneCount": 68,
+      "diagnosticReloadProgress": 0.45
+    },
+    {
+      "name": "host",
+      "weaponId": "carbine",
+      "path": "D:\\Bansungdemo\\fps-next\\docs\\benchmarks\\two-chrome-2026-10-31T05-00-20-416Z-host-carbine-reload.jpg",
+      "selection": "diagnostic-only",
+      "sourceParts": {
+        "Magazine": {
+          "translation": 0.3471310991541957,
+          "rotation": 0.14
+        }
+      },
+      "supportHandTravel": 0.4273562567467691,
+      "skinBoneCount": 68,
+      "diagnosticReloadProgress": 0.45
+    },
+    {
+      "name": "host",
+      "weaponId": "bullpup",
+      "path": "D:\\Bansungdemo\\fps-next\\docs\\benchmarks\\two-chrome-2026-10-31T05-00-20-416Z-host-bullpup-reload.jpg",
+      "selection": "diagnostic-only",
+      "sourceParts": {
+        "Magazine": {
+          "translation": 0.34713109915419565,
+          "rotation": 0.14
+        }
+      },
+      "supportHandTravel": 0.5594278443431386,
+      "skinBoneCount": 68,
+      "diagnosticReloadProgress": 0.45
+    },
+    {
+      "name": "host",
+      "weaponId": "smg",
+      "path": "D:\\Bansungdemo\\fps-next\\docs\\benchmarks\\two-chrome-2026-10-31T05-00-20-416Z-host-smg-reload.jpg",
+      "selection": "diagnostic-only",
+      "sourceParts": {
+        "Magazine": {
+          "translation": 0.34713109915419565,
+          "rotation": 0.14
+        }
+      },
+      "supportHandTravel": 0.47542896870792795,
+      "skinBoneCount": 68,
+      "diagnosticReloadProgress": 0.45
+    },
+    {
+      "name": "host",
+      "weaponId": "smg_compact",
+      "path": "D:\\Bansungdemo\\fps-next\\docs\\benchmarks\\two-chrome-2026-10-31T05-00-20-416Z-host-smg_compact-reload.jpg",
+      "selection": "diagnostic-only",
+      "sourceParts": {
+        "Magazine": {
+          "translation": 0.3471310991541957,
+          "rotation": 0.14
+        }
+      },
+      "supportHandTravel": 0.4176742292796286,
+      "skinBoneCount": 68,
+      "diagnosticReloadProgress": 0.45
+    },
+    {
+      "name": "host",
+      "weaponId": "smg_heavy",
+      "path": "D:\\Bansungdemo\\fps-next\\docs\\benchmarks\\two-chrome-2026-10-31T05-00-20-416Z-host-smg_heavy-reload.jpg",
+      "selection": "diagnostic-only",
+      "sourceParts": {
+        "Magazine": {
+          "translation": 0.34713109915419565,
+          "rotation": 0.14
+        }
+      },
+      "supportHandTravel": 0.5111551109088333,
+      "skinBoneCount": 68,
+      "diagnosticReloadProgress": 0.45
+    },
+    {
+      "name": "host",
+      "weaponId": "shotgun",
+      "path": "D:\\Bansungdemo\\fps-next\\docs\\benchmarks\\two-chrome-2026-10-31T05-00-20-416Z-host-shotgun-reload.jpg",
+      "selection": "diagnostic-only",
+      "sourceParts": {
+        "Pump": {
+          "translation": 0.1895570661462025,
+          "rotation": 0
+        }
+      },
+      "supportHandTravel": 0.39304419783671185,
+      "skinBoneCount": 68,
+      "diagnosticReloadProgress": 0.86
+    },
+    {
+      "name": "host",
+      "weaponId": "sawnoff",
+      "path": "D:\\Bansungdemo\\fps-next\\docs\\benchmarks\\two-chrome-2026-10-31T05-00-20-416Z-host-sawnoff-reload.jpg",
+      "selection": "diagnostic-only",
+      "sourceParts": {
+        "Barrels": {
+          "translation": 0,
+          "rotation": 0.54
+        }
+      },
+      "supportHandTravel": 0.5837999267129177,
+      "skinBoneCount": 68,
+      "diagnosticReloadProgress": 0.45
+    },
+    {
+      "name": "host",
+      "weaponId": "autoshotgun",
+      "path": "D:\\Bansungdemo\\fps-next\\docs\\benchmarks\\two-chrome-2026-10-31T05-00-20-416Z-host-autoshotgun-reload.jpg",
+      "selection": "diagnostic-only",
+      "sourceParts": {
+        "Pump": {
+          "translation": 0.4190208830600266,
+          "rotation": 0
+        }
+      },
+      "supportHandTravel": 0.20747691713992708,
+      "skinBoneCount": 68,
+      "diagnosticReloadProgress": 0.86
+    },
+    {
+      "name": "host",
+      "weaponId": "sniper",
+      "path": "D:\\Bansungdemo\\fps-next\\docs\\benchmarks\\two-chrome-2026-10-31T05-00-20-416Z-host-sniper-reload.jpg",
+      "selection": "diagnostic-only",
+      "sourceParts": {},
+      "supportHandTravel": 0.4360538122120217,
+      "skinBoneCount": 68,
+      "diagnosticReloadProgress": 0.45
+    },
+    {
+      "name": "host",
+      "weaponId": "dmr",
+      "path": "D:\\Bansungdemo\\fps-next\\docs\\benchmarks\\two-chrome-2026-10-31T05-00-20-416Z-host-dmr-reload.jpg",
+      "selection": "diagnostic-only",
+      "sourceParts": {
+        "Magazine": {
+          "translation": 0.34713109915419565,
+          "rotation": 0.14
+        }
+      },
+      "supportHandTravel": 0.4693227800145513,
+      "skinBoneCount": 68,
+      "diagnosticReloadProgress": 0.45
+    },
+    {
+      "name": "host",
+      "weaponId": "antimateriel",
+      "path": "D:\\Bansungdemo\\fps-next\\docs\\benchmarks\\two-chrome-2026-10-31T05-00-20-416Z-host-antimateriel-reload.jpg",
+      "selection": "diagnostic-only",
+      "sourceParts": {
+        "Bolt": {
+          "translation": 0.2693705676814456,
+          "rotation": 0.1197202523028647
+        }
+      },
+      "supportHandTravel": 0.1940451211053341,
+      "skinBoneCount": 68,
+      "diagnosticReloadProgress": 0.86
+    },
+    {
+      "name": "host",
+      "weaponId": "lmg",
+      "path": "D:\\Bansungdemo\\fps-next\\docs\\benchmarks\\two-chrome-2026-10-31T05-00-20-416Z-host-lmg-reload.jpg",
+      "selection": "diagnostic-only",
+      "sourceParts": {
+        "Barrel": {
+          "translation": 0.058637361185102266,
+          "rotation": 0
+        }
+      },
+      "supportHandTravel": 0.08842552254973854,
+      "skinBoneCount": 68,
+      "diagnosticReloadProgress": 0.86
+    },
+    {
+      "name": "host",
+      "weaponId": "pistol",
+      "path": "D:\\Bansungdemo\\fps-next\\docs\\benchmarks\\two-chrome-2026-10-31T05-00-20-416Z-host-pistol-reload.jpg",
+      "selection": "diagnostic-only",
+      "sourceParts": {
+        "Slide": {
+          "translation": 0.19693592409811359,
+          "rotation": 0
+        }
+      },
+      "supportHandTravel": 0.10093591368717804,
+      "skinBoneCount": 68,
+      "diagnosticReloadProgress": 0.86
+    },
+    {
+      "name": "host",
+      "weaponId": "revolver",
+      "path": "D:\\Bansungdemo\\fps-next\\docs\\benchmarks\\two-chrome-2026-10-31T05-00-20-416Z-host-revolver-reload.jpg",
+      "selection": "diagnostic-only",
+      "sourceParts": {
+        "Cylinder": {
+          "translation": 0.24,
+          "rotation": 0.2
+        }
+      },
+      "supportHandTravel": 0.3971149069391903,
+      "skinBoneCount": 68,
+      "diagnosticReloadProgress": 0.45
+    },
+    {
+      "name": "host",
+      "weaponId": "machinepistol",
+      "path": "D:\\Bansungdemo\\fps-next\\docs\\benchmarks\\two-chrome-2026-10-31T05-00-20-416Z-host-machinepistol-reload.jpg",
+      "selection": "diagnostic-only",
+      "sourceParts": {
+        "Slide": {
+          "translation": 0.19693592409811356,
+          "rotation": 0
+        }
+      },
+      "supportHandTravel": 0.09364152980377122,
+      "skinBoneCount": 68,
+      "diagnosticReloadProgress": 0.86
+    },
+    {
+      "name": "guest",
+      "weaponId": "rifle",
+      "path": "D:\\Bansungdemo\\fps-next\\docs\\benchmarks\\two-chrome-2026-10-31T05-00-20-416Z-guest-rifle-reload.jpg",
+      "selection": "diagnostic-only",
+      "sourceParts": {},
+      "supportHandTravel": 0.4461577737167933,
+      "skinBoneCount": 68,
+      "diagnosticReloadProgress": 0.45
+    },
+    {
+      "name": "guest",
+      "weaponId": "carbine",
+      "path": "D:\\Bansungdemo\\fps-next\\docs\\benchmarks\\two-chrome-2026-10-31T05-00-20-416Z-guest-carbine-reload.jpg",
+      "selection": "diagnostic-only",
+      "sourceParts": {
+        "Magazine": {
+          "translation": 0.3471310991541957,
+          "rotation": 0.14
+        }
+      },
+      "supportHandTravel": 0.4273196260120083,
+      "skinBoneCount": 68,
+      "diagnosticReloadProgress": 0.45
+    },
+    {
+      "name": "guest",
+      "weaponId": "bullpup",
+      "path": "D:\\Bansungdemo\\fps-next\\docs\\benchmarks\\two-chrome-2026-10-31T05-00-20-416Z-guest-bullpup-reload.jpg",
+      "selection": "diagnostic-only",
+      "sourceParts": {
+        "Magazine": {
+          "translation": 0.34713109915419565,
+          "rotation": 0.14
+        }
+      },
+      "supportHandTravel": 0.560518079865144,
+      "skinBoneCount": 68,
+      "diagnosticReloadProgress": 0.45
+    },
+    {
+      "name": "guest",
+      "weaponId": "smg",
+      "path": "D:\\Bansungdemo\\fps-next\\docs\\benchmarks\\two-chrome-2026-10-31T05-00-20-416Z-guest-smg-reload.jpg",
+      "selection": "diagnostic-only",
+      "sourceParts": {
+        "Magazine": {
+          "translation": 0.34713109915419565,
+          "rotation": 0.14
+        }
+      },
+      "supportHandTravel": 0.476845247783079,
+      "skinBoneCount": 68,
+      "diagnosticReloadProgress": 0.45
+    },
+    {
+      "name": "guest",
+      "weaponId": "smg_compact",
+      "path": "D:\\Bansungdemo\\fps-next\\docs\\benchmarks\\two-chrome-2026-10-31T05-00-20-416Z-guest-smg_compact-reload.jpg",
+      "selection": "diagnostic-only",
+      "sourceParts": {
+        "Magazine": {
+          "translation": 0.3471310991541957,
+          "rotation": 0.14
+        }
+      },
+      "supportHandTravel": 0.4192095099723911,
+      "skinBoneCount": 68,
+      "diagnosticReloadProgress": 0.45
+    },
+    {
+      "name": "guest",
+      "weaponId": "smg_heavy",
+      "path": "D:\\Bansungdemo\\fps-next\\docs\\benchmarks\\two-chrome-2026-10-31T05-00-20-416Z-guest-smg_heavy-reload.jpg",
+      "selection": "diagnostic-only",
+      "sourceParts": {
+        "Magazine": {
+          "translation": 0.34713109915419565,
+          "rotation": 0.14
+        }
+      },
+      "supportHandTravel": 0.5142753405043727,
+      "skinBoneCount": 68,
+      "diagnosticReloadProgress": 0.45
+    },
+    {
+      "name": "guest",
+      "weaponId": "shotgun",
+      "path": "D:\\Bansungdemo\\fps-next\\docs\\benchmarks\\two-chrome-2026-10-31T05-00-20-416Z-guest-shotgun-reload.jpg",
+      "selection": "diagnostic-only",
+      "sourceParts": {
+        "Pump": {
+          "translation": 0.1895570661462025,
+          "rotation": 0
+        }
+      },
+      "supportHandTravel": 0.3917124144091266,
+      "skinBoneCount": 68,
+      "diagnosticReloadProgress": 0.86
+    },
+    {
+      "name": "guest",
+      "weaponId": "sawnoff",
+      "path": "D:\\Bansungdemo\\fps-next\\docs\\benchmarks\\two-chrome-2026-10-31T05-00-20-416Z-guest-sawnoff-reload.jpg",
+      "selection": "diagnostic-only",
+      "sourceParts": {
+        "Barrels": {
+          "translation": 0,
+          "rotation": 0.54
+        }
+      },
+      "supportHandTravel": 0.5834413788683378,
+      "skinBoneCount": 68,
+      "diagnosticReloadProgress": 0.45
+    },
+    {
+      "name": "guest",
+      "weaponId": "autoshotgun",
+      "path": "D:\\Bansungdemo\\fps-next\\docs\\benchmarks\\two-chrome-2026-10-31T05-00-20-416Z-guest-autoshotgun-reload.jpg",
+      "selection": "diagnostic-only",
+      "sourceParts": {
+        "Pump": {
+          "translation": 0.4190208830600266,
+          "rotation": 0
+        }
+      },
+      "supportHandTravel": 0.20722388979840609,
+      "skinBoneCount": 68,
+      "diagnosticReloadProgress": 0.86
+    },
+    {
+      "name": "guest",
+      "weaponId": "sniper",
+      "path": "D:\\Bansungdemo\\fps-next\\docs\\benchmarks\\two-chrome-2026-10-31T05-00-20-416Z-guest-sniper-reload.jpg",
+      "selection": "diagnostic-only",
+      "sourceParts": {},
+      "supportHandTravel": 0.4350395181086133,
+      "skinBoneCount": 68,
+      "diagnosticReloadProgress": 0.45
+    },
+    {
+      "name": "guest",
+      "weaponId": "dmr",
+      "path": "D:\\Bansungdemo\\fps-next\\docs\\benchmarks\\two-chrome-2026-10-31T05-00-20-416Z-guest-dmr-reload.jpg",
+      "selection": "diagnostic-only",
+      "sourceParts": {
+        "Magazine": {
+          "translation": 0.34713109915419565,
+          "rotation": 0.14
+        }
+      },
+      "supportHandTravel": 0.46660838900982193,
+      "skinBoneCount": 68,
+      "diagnosticReloadProgress": 0.45
+    },
+    {
+      "name": "guest",
+      "weaponId": "antimateriel",
+      "path": "D:\\Bansungdemo\\fps-next\\docs\\benchmarks\\two-chrome-2026-10-31T05-00-20-416Z-guest-antimateriel-reload.jpg",
+      "selection": "diagnostic-only",
+      "sourceParts": {
+        "Bolt": {
+          "translation": 0.2693705676814456,
+          "rotation": 0.1197202523028647
+        }
+      },
+      "supportHandTravel": 0.1928002386527044,
+      "skinBoneCount": 68,
+      "diagnosticReloadProgress": 0.86
+    },
+    {
+      "name": "guest",
+      "weaponId": "lmg",
+      "path": "D:\\Bansungdemo\\fps-next\\docs\\benchmarks\\two-chrome-2026-10-31T05-00-20-416Z-guest-lmg-reload.jpg",
+      "selection": "diagnostic-only",
+      "sourceParts": {
+        "Barrel": {
+          "translation": 0.058637361185102266,
+          "rotation": 0
+        }
+      },
+      "supportHandTravel": 0.08632318339369657,
+      "skinBoneCount": 68,
+      "diagnosticReloadProgress": 0.86
+    },
+    {
+      "name": "guest",
+      "weaponId": "pistol",
+      "path": "D:\\Bansungdemo\\fps-next\\docs\\benchmarks\\two-chrome-2026-10-31T05-00-20-416Z-guest-pistol-reload.jpg",
+      "selection": "diagnostic-only",
+      "sourceParts": {
+        "Slide": {
+          "translation": 0.19693592409811359,
+          "rotation": 0
+        }
+      },
+      "supportHandTravel": 0.10068675141890619,
+      "skinBoneCount": 68,
+      "diagnosticReloadProgress": 0.86
+    },
+    {
+      "name": "guest",
+      "weaponId": "revolver",
+      "path": "D:\\Bansungdemo\\fps-next\\docs\\benchmarks\\two-chrome-2026-10-31T05-00-20-416Z-guest-revolver-reload.jpg",
+      "selection": "diagnostic-only",
+      "sourceParts": {
+        "Cylinder": {
+          "translation": 0.24,
+          "rotation": 0.2
+        }
+      },
+      "supportHandTravel": 0.3950460353185801,
+      "skinBoneCount": 68,
+      "diagnosticReloadProgress": 0.45
+    },
+    {
+      "name": "guest",
+      "weaponId": "machinepistol",
+      "path": "D:\\Bansungdemo\\fps-next\\docs\\benchmarks\\two-chrome-2026-10-31T05-00-20-416Z-guest-machinepistol-reload.jpg",
+      "selection": "diagnostic-only",
+      "sourceParts": {
+        "Slide": {
+          "translation": 0.19693592409811356,
+          "rotation": 0
+        }
+      },
+      "supportHandTravel": 0.09356819551822144,
+      "skinBoneCount": 68,
+      "diagnosticReloadProgress": 0.86
+    }
+  ]
+}

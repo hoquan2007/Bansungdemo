@@ -16,7 +16,7 @@ const C = {
 function build() {
   const b = [
     box(0, -1, 0, 64, 1, 64, C.floor),
-    ...enclose({ w: 60, d: 60, h: 5.5, thickness: 1.2, color: C.wall }),
+    ...enclose({ w: 60, d: 60, h: 7, thickness: 1.2, color: C.wall }),
     ...platform({ x: 0, y: 1.2, z: 0, w: 13, d: 13, color: C.stone, stairSide: 'z-', stairWidth: 4 }),
     ...stairs({ x: 0, y: 0, z: 8.5, width: 4, rise: 1.2, run: 2, axis: 'z', dir: -1, color: C.stone }),
   ];
@@ -40,8 +40,17 @@ function build() {
   b.push(
     ...crateStack({ x: -24, z: -6, size: 1.5, height: 2, color: C.wood, seed: 41 }),
     ...crateStack({ x: 24, z: 7, size: 1.5, height: 2, color: C.wood, seed: 43 }),
-    prop(-8, 0, 23, 3.35, 1.28, 0.92, C.wood, 'SackTrench'),
-    prop(8, 0, -23, 3.35, 1.28, 0.92, C.wood, 'SackTrench'),
+    // Independent CC0 tactical-town meshes use nearly native metre dimensions.
+    // Every prop is also a normal server-side collision solid and remains a
+    // visible box if its GLB cannot load.
+    prop(-8, 0, 23, 2.15, 1.12, 0.65, C.stone, 'hilltown/SandbagWall_CC0.glb'),
+    prop(8, 0, -23, 2.15, 1.12, 0.65, C.stone, 'hilltown/SandbagWall_CC0.glb'),
+    prop(-23, 0, -14, 1.45, 1.3, 0.99, C.wood, 'hilltown/TimberCrateStack_CC0.glb'),
+    prop(23, 0, 14, 1.45, 1.3, 0.99, C.wood, 'hilltown/TimberCrateStack_CC0.glb'),
+    prop(-22, 0, 13, 2.56, 2.73, 1.78, C.wood, 'hilltown/MarketAwningStall_CC0.glb'),
+    prop(22, 0, -13, 2.56, 2.73, 1.78, C.wood, 'hilltown/MarketAwningStall_CC0.glb'),
+    // The central fountain provides readable, waist-high cover at the site.
+    prop(0, 1.2, 0, 3.44, 2.26, 3.44, C.stone, 'hilltown/TownFountain_CC0.glb'),
     barrel(-24, 0, 19),
     barrel(24, 0, -19),
   );
@@ -58,11 +67,12 @@ export default {
   ambientLight: 0.85,
   sunDirection: [-0.4, 0.9, 0.25],
   sunIntensity: 1.1,
-  wallTexture: 'blockwork',
+  wallTexture: 'plaster',
+  groundTexture: 'road012a',
   bounds: { min: [-34, -12, -34], max: [34, 16, 34] },
   boxes: build(),
   healthPacks: [
-    [0, 1.2, 0],
+    [4.5, 1.2, 0],
     [-25, 0, 0],
     [25, 0, 0],
     [0, 0, -25],

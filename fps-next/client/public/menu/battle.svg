@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 140" role="img" aria-label="Original battle royale arena artwork">
+<defs>
+  <linearGradient id="sky" x2=".35" y2="1"><stop stop-color="#6d9ba7"/><stop offset="1" stop-color="#c8c3a6"/></linearGradient>
+  <linearGradient id="shade" x2="0" y2="1"><stop stop-color="#07111b" stop-opacity="0"/><stop offset="1" stop-color="#07111b" stop-opacity=".72"/></linearGradient>
+  <filter id="haze"><feGaussianBlur stdDeviation="2"/></filter>
+</defs>
+<rect width="320" height="140" fill="url(#sky)"/>
+<circle cx="251" cy="25" r="32" fill="#f5e7c8" opacity=".34" filter="url(#haze)"/>
+
+  <path d="M0 75L45 28 92 80 137 40 180 76 229 22 320 79V140H0Z" fill="#688d82"/>
+  <path d="M0 91L65 56 135 95 217 50 320 79V140H0Z" fill="#557c76"/>
+  <path d="M0 116L71 86 151 105 228 80 320 110V140H0Z" fill="#3e625a"/>
+  <path d="M0 140L84 107 226 111 320 140Z" fill="#8c9778"/>
+  <path d="M44 114L61 69 80 114ZM222 121L240 64 261 121ZM274 124L286 85 301 124Z" fill="#2b5148"/>
+  <g transform="translate(153 122) scale(0.9)" fill="#303e3d">
+<path d="M-8-36L-6-46 7-46 10-36 4-30 -6-30Z"/><path d="M-12-30L12-30 16-4 8 4 -9 4 -16-4Z"/>
+<path d="M-12-21L-23-8-19-3-7-14 8-18 30-13 32-18 7-25Z"/>
+<path d="M-11 0H-2L-5 25-10 45-17 45-14 20ZM3 0H12L16 44H9L5 21Z"/>
+<path d="M-19-18L37-22 39-17-10-12Z" fill="#202729"/></g><g transform="translate(200 123) scale(0.65)" fill="#354b48">
+<path d="M-8-36L-6-46 7-46 10-36 4-30 -6-30Z"/><path d="M-12-30L12-30 16-4 8 4 -9 4 -16-4Z"/>
+<path d="M-12-21L-23-8-19-3-7-14 8-18 30-13 32-18 7-25Z"/>
+<path d="M-11 0H-2L-5 25-10 45-17 45-14 20ZM3 0H12L16 44H9L5 21Z"/>
+<path d="M-19-18L37-22 39-17-10-12Z" fill="#202729"/></g>
+  <path d="M116 27L159 17 199 28 160 35Z" fill="#34494b"/><path d="M157 33L159 52 165 34" fill="#dae6e0"/>
+<rect width="320" height="140" fill="url(#shade)"/>
+<path d="M0 2H320M1 0V140" fill="none" stroke="#fff" stroke-opacity=".13"/>
+</svg>
